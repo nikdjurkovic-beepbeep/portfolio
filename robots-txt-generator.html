@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#0b1220"><meta name="description" content="Generate a robots.txt file with user-agent, allow, disallow, crawl-delay, and sitemap directives. A free browser-based technical SEO utility."><link rel="canonical" href="https://nikdjurkovic-beepbeep.github.io/portfolio/robots-txt-generator.html"><link rel="icon" type="image/svg+xml" href="favicon.svg"><link rel="stylesheet" href="site.css"><title>Robots.txt Generator | Nikola Djurkovic</title></head><body>
+<header><div class="wrap nav"><a href="index.html#top" class="logo" aria-label="Nikola Djurkovic home">ND<span>.</span></a><nav aria-label="Main navigation"><a href="index.html#about">About</a><a href="index.html#experience">Experience</a><details class="nav-dropdown"><summary>SEO Tools</summary><div class="dropdown-panel"><a href="redirect-mapping-validator.html" >Redirect Mapping Validator</a><a href="robots-txt-generator.html" aria-current="page">Robots.txt Generator</a><a href="seo-regex-tester.html" >SEO Regex Tester</a></div></details><a href="index.html#expertise">Expertise</a><a href="index.html#contact">Contact</a></nav></div></header>
+<main><div class="wrap"><section class="page-hero"><div class="breadcrumb"><a href="index.html">Portfolio</a> / SEO Tools</div><div class="eyebrow">Technical SEO utility · Free browser-based tool</div><h1>Robots.txt<br><span>generator.</span></h1><p class="lead">Create a robots.txt file from clear, validated rules. Add crawler directives, allow and disallow paths, and sitemap locations, then copy or download the result.</p></section>
+<section class="tool-shell" aria-labelledby="robotsHeading">
+  <div class="tool-top"><div><h3 id="robotsHeading">Robots.txt configuration</h3><p>Define a crawler group and generate a plain-text robots.txt file. Review every rule against your site's actual URL structure before publishing.</p></div><span class="skill">TXT generation · No account required</span></div>
+  <div class="tool-body">
+    <div class="form-grid">
+      <div class="tool-field"><label for="userAgent">User-agent</label><input id="userAgent" value="*" maxlength="100" autocomplete="off"><span class="field-help">Use * for all compliant crawlers, or a crawler token such as Googlebot.</span></div>
+      <div class="tool-field"><label for="crawlDelay">Crawl-delay (optional)</label><input id="crawlDelay" type="number" min="0" max="120" step="1" placeholder="e.g. 5"><span class="field-help">Not supported by Google. Other crawlers may interpret it differently.</span></div>
+      <div class="tool-field"><label for="allowPaths">Allow paths (one per line)</label><textarea id="allowPaths" spellcheck="false" placeholder="/public/\n/assets/"></textarea><span class="field-help">Paths should begin with /. You can use * and $ pattern characters.</span></div>
+      <div class="tool-field"><label for="disallowPaths">Disallow paths (one per line)</label><textarea id="disallowPaths" spellcheck="false" placeholder="/admin/\n/private/"></textarea><span class="field-help">Avoid blocking resources that search engines need to render pages.</span></div>
+    </div>
+    <div class="tool-field"><label for="sitemapUrls">Sitemap URL(s), one per line (optional)</label><textarea id="sitemapUrls" rows="2" spellcheck="false" placeholder="https://www.example.com/sitemap.xml"></textarea><span class="field-help">Use absolute HTTP or HTTPS sitemap URLs.</span></div>
+    <div class="tool-actions"><button class="btn" id="generateRobots" type="button">Generate robots.txt</button><button class="btn secondary" id="copyRobots" type="button" disabled>Copy</button><button class="btn secondary" id="downloadRobots" type="button" disabled>Download robots.txt</button><button class="btn secondary" id="resetRobots" type="button">Reset</button></div>
+    <div id="robotsMessage" class="tool-message" role="status" aria-live="polite"></div>
+    <div class="results" id="robotsOutputWrap"><div class="results-head"><h4>Generated file</h4><span class="field-help">Review before deploying to the site root.</span></div><pre id="robotsOutput" class="output-box" aria-live="polite"></pre></div>
+    <p class="disclaimer"><strong>Important:</strong> robots.txt is a crawl-control convention, not access control and not a reliable deindexing method. Blocked URLs can still appear in search results. Use authentication for private content and an appropriate noindex strategy for pages that must not be indexed.</p>
+  </div>
+</section>
+<div class="actions"><a class="btn secondary" href="index.html#tools">← All SEO tools</a><a class="btn secondary" href="seo-regex-tester.html">Next tool →</a></div>
+</div></main><footer><div class="wrap foot"><span>© <span id="year">2026</span> Nikola Djurkovic</span><span><a href="index.html">Portfolio</a> · Belgrade, Serbia</span></div></footer>
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script><script>(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const fields = ['userAgent','crawlDelay','allowPaths','disallowPaths','sitemapUrls'];
+  let generated = '';
+  function lines(value) { return value.split(/\r?\n/).map(x => x.trim()).filter(Boolean); }
+  function show(message, type) { const el=$('robotsMessage'); el.textContent=message; el.className='tool-message '+type; }
+  function validatePath(value, label) {
+    if (!value.startsWith('/')) throw new Error(label + ' path must begin with /: ' + value);
+    if (/[\r\n]/.test(value)) throw new Error(label + ' path contains an invalid line break.');
+  }
+  $('generateRobots').addEventListener('click', () => {
+    try {
+      const agent = $('userAgent').value.trim() || '*';
+      if (!/^[A-Za-z0-9*._-]+$/.test(agent)) throw new Error('Enter one valid user-agent token, such as * or Googlebot.');
+      const allow = lines($('allowPaths').value);
+      const disallow = lines($('disallowPaths').value);
+      [...allow].forEach(path => validatePath(path, 'Allow'));
+      [...disallow].forEach(path => validatePath(path, 'Disallow'));
+      const delayRaw = $('crawlDelay').value.trim();
+      let delay = '';
+      if (delayRaw) {
+        const n = Number(delayRaw);
+        if (!Number.isFinite(n) || n < 0 || n > 120) throw new Error('Crawl-delay must be a number between 0 and 120 seconds.');
+        delay = String(n);
+      }
+      const sitemaps = lines($('sitemapUrls').value);
+      sitemaps.forEach(url => { let u; try { u = new URL(url); } catch (_) { throw new Error('Invalid sitemap URL: ' + url); } if (!['http:','https:'].includes(u.protocol)) throw new Error('Sitemap URLs must use HTTP or HTTPS: ' + url); });
+      const out = ['User-agent: ' + agent];
+      allow.forEach(path => out.push('Allow: ' + path));
+      disallow.forEach(path => out.push('Disallow: ' + path));
+      if (delay) out.push('Crawl-delay: ' + delay);
+      if (!allow.length && !disallow.length && !delay) out.push('');
+      if (sitemaps.length) { out.push(''); sitemaps.forEach(url => out.push('Sitemap: ' + url)); }
+      generated = out.join('\n').trimEnd() + '\n';
+      $('robotsOutput').textContent = generated;
+      $('robotsOutputWrap').style.display = 'block';
+      $('copyRobots').disabled = false; $('downloadRobots').disabled = false;
+      show('robots.txt generated. Review the rules carefully before publishing.', 'success');
+    } catch (err) { generated=''; $('robotsOutputWrap').style.display='none'; $('copyRobots').disabled=true; $('downloadRobots').disabled=true; show(err.message, 'error'); }
+  });
+  $('copyRobots').addEventListener('click', async () => { if (!generated) return; try { await navigator.clipboard.writeText(generated); show('Copied robots.txt to clipboard.', 'success'); } catch (_) { show('Clipboard access was blocked by the browser. Use Download robots.txt instead.', 'error'); } });
+  $('downloadRobots').addEventListener('click', () => { if (!generated) return; const blob=new Blob([generated],{type:'text/plain;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='robots.txt'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000); });
+  $('resetRobots').addEventListener('click', () => { fields.forEach(id => $(id).value = id==='userAgent' ? '*' : ''); generated=''; $('robotsOutput').textContent=''; $('robotsOutputWrap').style.display='none'; $('copyRobots').disabled=true; $('downloadRobots').disabled=true; $('robotsMessage').className='tool-message'; });
+})();</script></body></html>

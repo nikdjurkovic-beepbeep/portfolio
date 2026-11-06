@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#0b1220"><meta name="description" content="Test JavaScript regular expressions against URL lists and text, inspect matches and capture groups, and export results. A free browser-based SEO utility."><link rel="canonical" href="https://nikdjurkovic-beepbeep.github.io/portfolio/seo-regex-tester.html"><link rel="icon" type="image/svg+xml" href="favicon.svg"><link rel="stylesheet" href="site.css"><title>SEO Regex Tester | Nikola Djurkovic</title></head><body>
+<header><div class="wrap nav"><a href="index.html#top" class="logo" aria-label="Nikola Djurkovic home">ND<span>.</span></a><nav aria-label="Main navigation"><a href="index.html#about">About</a><a href="index.html#experience">Experience</a><details class="nav-dropdown"><summary>SEO Tools</summary><div class="dropdown-panel"><a href="redirect-mapping-validator.html" >Redirect Mapping Validator</a><a href="robots-txt-generator.html" >Robots.txt Generator</a><a href="seo-regex-tester.html" aria-current="page">SEO Regex Tester</a></div></details><a href="index.html#expertise">Expertise</a><a href="index.html#contact">Contact</a></nav></div></header>
+<main><div class="wrap"><section class="page-hero"><div class="breadcrumb"><a href="index.html">Portfolio</a> / SEO Tools</div><div class="eyebrow">Technical SEO utility · Free browser-based tool</div><h1>SEO regex<br><span>tester.</span></h1><p class="lead">Test URL patterns against real examples, inspect matching lines and capture groups, and export the results. Useful for URL classification, filtering, and pattern QA.</p></section>
+<section class="tool-shell" aria-labelledby="regexHeading">
+  <div class="tool-top"><div><h3 id="regexHeading">Pattern and test data</h3><p>Test JavaScript regular expressions against a list of URLs or text lines. Each non-empty line is evaluated independently.</p></div><span class="skill">URL matching · No account required</span></div>
+  <div class="tool-body">
+    <div class="tool-field"><label for="presetRegex">Example patterns</label><select id="presetRegex"><option value="">Choose a pattern (optional)</option><option value="^https?://[^/]+/blog/|i">Blog directory URLs</option><option value="/page/[0-9]+/?$|i">Pagination URLs</option><option value="\.(pdf|docx?)$|i">PDF and Word documents</option><option value="[?&](utm_[^=]+|gclid|fbclid)=|i">Tracking parameters</option><option value="^https?://[^/]+/category/[^/]+/?$|i">Single-level category URLs</option></select></div>
+    <div class="form-grid">
+      <div class="tool-field"><label for="regexPattern">Regular expression</label><input id="regexPattern" type="text" maxlength="500" placeholder="e.g. ^https?://[^/]+/blog/" spellcheck="false"><span class="field-help">Enter the pattern without surrounding / delimiters.</span></div>
+      <div class="tool-field"><label for="regexFlags">Flags</label><input id="regexFlags" type="text" maxlength="6" value="i" placeholder="gim"><span class="field-help">Supported JavaScript flags: g, i, m, s, u, y. Do not repeat flags.</span></div>
+    </div>
+    <div class="tool-field"><label for="regexTestData">Test data (one URL or text string per line)</label><textarea id="regexTestData" rows="10" spellcheck="false" placeholder="https://example.com/blog/technical-seo\nhttps://example.com/category/news\nhttps://example.com/file.pdf"></textarea><span class="field-help">Maximum 2,000 lines and 4,000 characters per line.</span></div>
+    <div class="tool-actions"><button class="btn" id="runRegex" type="button">Test regex</button><button class="btn secondary" id="clearRegex" type="button">Clear</button><button class="btn secondary" id="exportRegex" type="button" disabled>Download results CSV</button></div>
+    <div id="regexMessage" class="tool-message" role="status" aria-live="polite"></div>
+    <div class="results" id="regexResults"><div class="results-head"><h4>Matching results</h4><span id="regexCounts" class="field-help"></span></div><div id="regexResultList" class="result-list"></div></div>
+    <p class="disclaimer">This tester uses the browser's JavaScript RegExp engine. It is useful for testing patterns for JavaScript-based workflows and URL filtering, but regex syntax and behavior can differ across tools such as RE2, PCRE, Google Analytics, and Google Search Console.</p>
+  </div>
+</section>
+<div class="actions"><a class="btn secondary" href="index.html#tools">← All SEO tools</a><a class="btn secondary" href="redirect-mapping-validator.html">Next tool →</a></div>
+</div></main><footer><div class="wrap foot"><span>© <span id="year">2026</span> Nikola Djurkovic</span><span><a href="index.html">Portfolio</a> · Belgrade, Serbia</span></div></footer>
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script><script>(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  let latest = [];
+  const presets = $('presetRegex');
+  presets.addEventListener('change', () => { if (!presets.value) return; const [pattern, flags] = presets.value.split('|'); $('regexPattern').value=pattern; $('regexFlags').value=flags; });
+  function esc(value) { return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function message(text, type) { $('regexMessage').textContent=text; $('regexMessage').className='tool-message '+type; }
+  $('runRegex').addEventListener('click', () => {
+    try {
+      const pattern=$('regexPattern').value;
+      const flags=$('regexFlags').value.trim();
+      const raw=$('regexTestData').value;
+      if (!pattern) throw new Error('Enter a regular expression first.');
+      if (pattern.length>500) throw new Error('The pattern is too long (maximum 500 characters).');
+      if (/[^gimsuy]/.test(flags) || new Set(flags).size!==flags.length) throw new Error('Use only supported flags (g, i, m, s, u, y), without duplicates.');
+      const lines=raw.split(/\r?\n/).map((text,index)=>({line:index+1,text})).filter(x=>x.text.trim()!=='');
+      if (!lines.length) throw new Error('Paste one or more URLs or text lines to test.');
+      if (lines.length>2000) throw new Error('The input contains more than 2,000 non-empty lines. Split it into smaller batches.');
+      if (lines.some(x=>x.text.length>4000)) throw new Error('At least one line exceeds 4,000 characters. Shorten the input and try again.');
+      let re; try { re=new RegExp(pattern, flags); } catch (err) { throw new Error('Invalid regular expression: '+err.message); }
+      latest=lines.map(item=>{
+        re.lastIndex=0;
+        const match=re.exec(item.text);
+        return {line:item.line,text:item.text,matched:Boolean(match),match:match?match[0]:'',groups:match?match.slice(1):[]};
+      });
+      const matches=latest.filter(x=>x.matched).length;
+      $('regexCounts').textContent=`${matches} matched · ${latest.length-matches} did not match · ${latest.length} lines checked`;
+      $('regexResultList').innerHTML=latest.map(item=>`<div class="result-row ${item.matched?'match':'nomatch'}"><strong>Line ${item.line} · ${item.matched?'MATCH':'NO MATCH'}</strong><span class="result-meta"><code>${esc(item.text)}</code></span>${item.matched?`<span class="result-meta">Matched text: <code>${esc(item.match)}</code>${item.groups.length?` · Capture groups: <code>${esc(JSON.stringify(item.groups))}</code>`:''}</span>`:''}</div>`).join('');
+      $('regexResults').style.display='block'; $('exportRegex').disabled=false;
+      message('Regex test completed in your browser.', 'success');
+    } catch (err) { latest=[]; $('regexResults').style.display='none'; $('exportRegex').disabled=true; message(err.message, 'error'); }
+  });
+  $('clearRegex').addEventListener('click',()=>{$('regexPattern').value='';$('regexFlags').value='i';$('regexTestData').value='';$('presetRegex').value='';$('regexResults').style.display='none';$('exportRegex').disabled=true;latest=[];$('regexMessage').className='tool-message';});
+  $('exportRegex').addEventListener('click',()=>{if(!latest.length)return;const cell=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const rows=[['line','status','test_string','matched_text','capture_groups'].map(cell).join(',')];latest.forEach(x=>rows.push([x.line,x.matched?'match':'no match',x.text,x.match,JSON.stringify(x.groups)].map(cell).join(',')));const blob=new Blob([rows.join('\r\n')],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='seo-regex-test-results.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+})();</script></body></html>

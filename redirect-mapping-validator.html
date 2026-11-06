@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#0b1220"><meta name="description" content="Free redirect mapping validator. Upload a CSV to detect duplicate sources, invalid URLs, self-redirects, chains, and loops."><link rel="canonical" href="https://nikdjurkovic-beepbeep.github.io/portfolio/redirect-mapping-validator.html"><link rel="icon" type="image/svg+xml" href="favicon.svg"><link rel="stylesheet" href="site.css"><title>Redirect Mapping Validator | Nikola Djurkovic</title></head><body><header><div class="wrap nav"><a href="index.html#top" class="logo" aria-label="Nikola Djurkovic home">ND<span>.</span></a><nav aria-label="Main navigation"><a href="index.html#about">About</a><a href="index.html#experience">Experience</a><details class="nav-dropdown"><summary>SEO Tools</summary><div class="dropdown-panel"><a href="redirect-mapping-validator.html" aria-current="page">Redirect Mapping Validator</a><a href="robots-txt-generator.html" >Robots.txt Generator</a><a href="seo-regex-tester.html" >SEO Regex Tester</a></div></details><a href="index.html#expertise">Expertise</a><a href="index.html#contact">Contact</a></nav></div></header><main><div class="wrap"><section class="page-hero"><div class="breadcrumb"><a href="index.html">Portfolio</a> / SEO Tools</div><div class="eyebrow">Technical SEO utility · CSV analysis</div><h1>Redirect mapping<br><span>validator.</span></h1><p class="lead">Check a redirect map before implementation. Identify duplicate source URLs, missing or malformed values, self-redirects, redirect chains, and loops using the mappings in your CSV.</p></section>  <section id="redirect-validator"><div class="eyebrow">Technical SEO utility</div><h2>Redirect Mapping Validator</h2><p class="intro">Validate redirect mapping CSV files before implementation. This checks the mapping itself; it does not send requests to the live URLs.</p>
+    <div class="tool-shell">
+      <div class="tool-top"><div><h3>Redirect Mapping Validator</h3><p>Upload a CSV redirect map to identify duplicate source URLs, missing or malformed values, self-redirects, redirect chains, and loops before implementation.</p></div><span class="skill">CSV analysis · No account required</span></div>
+      <div class="tool-body">
+        <div class="upload-grid">
+          <label class="dropzone" id="dropzone" for="csvFile">
+            <svg class="drop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M4 16.5v2A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5v-2"/></svg>
+            <strong>Drop your redirect CSV here</strong><span>or click to browse · .csv files</span><span class="file-name" id="fileName">No file selected</span>
+            <input id="csvFile" type="file" accept=".csv,text/csv" hidden>
+          </label>
+          <div class="side-note"><strong>Expected CSV format</strong><p>Use a header row with <code>source</code> and <code>target</code>. Both columns should contain absolute URLs, including http:// or https://.</p><code class="code-sample">source,target
+https://example.com/old,https://example.com/new
+https://example.com/legacy,https://example.com/current</code><div class="tool-actions"><button class="btn secondary" id="sampleBtn" type="button">Download sample CSV</button></div></div>
+        </div>
+        <div class="tool-actions"><button class="btn" id="validateBtn" type="button" disabled>Validate redirect map</button><button class="btn secondary" id="resetBtn" type="button">Clear</button><span class="file-name">Checks are performed in your browser. Your CSV is not transmitted.</span></div>
+        <div class="tool-message" id="toolMessage" role="status" aria-live="polite"></div>
+        <div class="results" id="results" aria-live="polite">
+          <div class="results-head"><h4>Validation results</h4><button class="btn secondary" type="button" id="exportBtn">Download findings CSV</button></div>
+          <div class="summary" id="summary"></div>
+          <div class="table-wrap"><table><thead><tr><th>Row</th><th>Source URL</th><th>Target URL</th><th>Result</th><th>Findings</th></tr></thead><tbody id="resultsBody"></tbody></table></div>
+          <p class="results-foot" id="resultsFoot"></p>
+        </div>
+      </div>
+    </div>
+  </section><p class="disclaimer">This is a mapping-file validator, not a live HTTP crawler. Redirect chains are detected only when the destination also appears as a unique source in the uploaded CSV.</p><div class="actions"><a class="btn secondary" href="index.html#tools">← All SEO tools</a><a class="btn secondary" href="robots-txt-generator.html">Next tool: Robots.txt Generator →</a></div></div></main><footer><div class="wrap foot"><span>© <span id="year">2026</span> Nikola Djurkovic</span><span><a href="index.html">Portfolio</a> · Belgrade, Serbia</span></div></footer><script>
+(() => {
+  'use strict';
+  document.getElementById('year').textContent = new Date().getFullYear();
+  const fileInput = document.getElementById('csvFile');
+  const dropzone = document.getElementById('dropzone');
+  const fileName = document.getElementById('fileName');
+  const validateBtn = document.getElementById('validateBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const sampleBtn = document.getElementById('sampleBtn');
+  const exportBtn = document.getElementById('exportBtn');
+  const message = document.getElementById('toolMessage');
+  const results = document.getElementById('results');
+  const summary = document.getElementById('summary');
+  const resultsBody = document.getElementById('resultsBody');
+  const resultsFoot = document.getElementById('resultsFoot');
+  let selectedFile = null;
+  let latestRows = [];
+
+  function parseCsv(text) {
+    const rows = [];
+    let row = [], cell = '', quoted = false;
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (quoted) {
+        if (ch === '"' && text[i + 1] === '"') { cell += '"'; i++; }
+        else if (ch === '"') quoted = false;
+        else cell += ch;
+      } else if (ch === '"' && cell.length === 0) quoted = true;
+      else if (ch === ',') { row.push(cell); cell = ''; }
+      else if (ch === '\n' || ch === '\r') {
+        if (ch === '\r' && text[i + 1] === '\n') i++;
+        row.push(cell); cell = '';
+        if (row.some(value => value.trim() !== '')) rows.push(row);
+        row = [];
+      } else cell += ch;
+    }
+    row.push(cell);
+    if (row.some(value => value.trim() !== '')) rows.push(row);
+    if (quoted) throw new Error('The CSV appears to contain an unclosed quotation mark. Check the file format and try again.');
+    return rows;
+  }
+
+  function headerIndex(headers, candidates) {
+    return headers.findIndex(h => candidates.includes(h.trim().toLowerCase().replace(/[\s-]+/g, '_')));
+  }
+
+  function parseUrl(value) {
+    try {
+      const parsed = new URL(value.trim());
+      if (!['http:', 'https:'].includes(parsed.protocol)) return null;
+      return parsed.href;
+    } catch (_) { return null; }
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  }
+
+  function setMessage(text, type) {
+    message.textContent = text;
+    message.className = 'tool-message ' + type;
+  }
+
+  function chooseFile(file) {
+    if (!file) return;
+    if (!file.name.toLowerCase().endsWith('.csv') && file.type !== 'text/csv') {
+      selectedFile = null;
+      fileName.textContent = 'Please choose a .csv file';
+      validateBtn.disabled = true;
+      setMessage('This tool accepts CSV files only. Export your redirect map as .csv and try again.', 'error');
+      return;
+    }
+    selectedFile = file;
+    fileName.textContent = file.name;
+    validateBtn.disabled = false;
+    message.className = 'tool-message';
+    results.style.display = 'none';
+  }
+
+  function analyzeRows(csvRows) {
+    if (csvRows.length < 2) throw new Error('The CSV contains no data rows. Include a header row and at least one redirect mapping.');
+    const headers = csvRows[0].map(value => value.replace(/^\uFEFF/, '').trim());
+    const sourceIndex = headerIndex(headers, ['source','source_url','old_url','from','redirect_from']);
+    const targetIndex = headerIndex(headers, ['target','target_url','new_url','to','redirect_to']);
+    if (sourceIndex < 0 || targetIndex < 0) throw new Error('Could not identify the required columns. Add a header row named source,target (or old_url,new_url).');
+
+    const rows = csvRows.slice(1).map((cells, index) => {
+      const source = (cells[sourceIndex] ?? '').trim();
+      const target = (cells[targetIndex] ?? '').trim();
+      const sourceUrl = source ? parseUrl(source) : null;
+      const targetUrl = target ? parseUrl(target) : null;
+      const item = {row: index + 2, source, target, sourceUrl, targetUrl, issues: [], level: 'clean'};
+      if (!source) item.issues.push({level:'error', text:'Missing source URL'});
+      else if (!sourceUrl) item.issues.push({level:'error', text:'Invalid source URL (use absolute http/https URL)'});
+      if (!target) item.issues.push({level:'error', text:'Missing target URL'});
+      else if (!targetUrl) item.issues.push({level:'error', text:'Invalid target URL (use absolute http/https URL)'});
+      if (sourceUrl && targetUrl && sourceUrl === targetUrl) item.issues.push({level:'error', text:'Self-redirect'});
+      return item;
+    });
+
+    const sourceGroups = new Map();
+    rows.forEach((item, index) => {
+      if (!item.sourceUrl) return;
+      if (!sourceGroups.has(item.sourceUrl)) sourceGroups.set(item.sourceUrl, []);
+      sourceGroups.get(item.sourceUrl).push(index);
+    });
+    sourceGroups.forEach(indices => {
+      if (indices.length > 1) indices.forEach((index, n) => rows[index].issues.push({level:'error', text:`Duplicate source URL (${indices.length} occurrences)`}));
+    });
+
+    const mapping = new Map();
+    sourceGroups.forEach((indices, source) => {
+      if (indices.length === 1) {
+        const item = rows[indices[0]];
+        if (item.targetUrl && !item.issues.some(issue => issue.text === 'Self-redirect')) mapping.set(source, item.targetUrl);
+      }
+    });
+
+    rows.forEach(item => {
+      if (!item.sourceUrl || !item.targetUrl || !mapping.has(item.sourceUrl)) return;
+      let current = item.targetUrl;
+      const path = [item.sourceUrl];
+      const seen = new Set(path);
+      let hops = 1;
+      let loop = false;
+      while (mapping.has(current)) {
+        path.push(current);
+        if (seen.has(current)) { loop = true; break; }
+        seen.add(current);
+        current = mapping.get(current);
+        hops++;
+        if (hops > mapping.size + 1) { loop = true; break; }
+      }
+      if (loop) item.issues.push({level:'error', text:'Redirect loop detected in mapping'});
+      else if (hops > 1) item.issues.push({level:'warning', text:`Redirect chain detected (${hops} hops)`});
+    });
+
+    rows.forEach(item => {
+      if (item.issues.some(issue => issue.level === 'error')) item.level = 'error';
+      else if (item.issues.some(issue => issue.level === 'warning')) item.level = 'warning';
+    });
+    return rows;
+  }
+
+  function renderResults(rows) {
+    latestRows = rows;
+    const errors = rows.filter(row => row.level === 'error').length;
+    const warnings = rows.filter(row => row.level === 'warning').length;
+    const clean = rows.length - errors - warnings;
+    summary.innerHTML = `
+      <div class="summary-card"><b>${rows.length}</b><span>Mappings checked</span></div>
+      <div class="summary-card errors"><b>${errors}</b><span>Rows with errors</span></div>
+      <div class="summary-card warnings"><b>${warnings}</b><span>Rows with warnings</span></div>
+      <div class="summary-card clean"><b>${clean}</b><span>Clean rows</span></div>`;
+    const limit = 250;
+    resultsBody.innerHTML = rows.slice(0, limit).map(item => {
+      const label = item.level === 'error' ? 'Error' : item.level === 'warning' ? 'Warning' : 'Valid';
+      const findings = item.issues.length ? item.issues.map(issue => `${issue.level === 'error' ? 'ERROR' : 'WARNING'}: ${issue.text}`).join('; ') : 'No issues detected';
+      return `<tr><td>${item.row}</td><td>${escapeHtml(item.source || '—')}</td><td>${escapeHtml(item.target || '—')}</td><td><span class="status ${item.level}">${label}</span></td><td>${escapeHtml(findings)}</td></tr>`;
+    }).join('');
+    resultsFoot.textContent = rows.length > limit ? `Showing the first ${limit} of ${rows.length} rows. Download the findings CSV to view the complete report.` : `Checked ${rows.length} mapping row${rows.length === 1 ? '' : 's'}. Chains are detected only where the target URL also appears as a unique source in this CSV. This is a mapping-file check, not a live crawl.`;
+    results.style.display = 'block';
+  }
+
+  function downloadText(filename, content, type) {
+    const blob = new Blob([content], {type});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url; link.download = filename; document.body.appendChild(link); link.click(); link.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function csvCell(value) { return `"${String(value ?? '').replace(/"/g, '""')}"`; }
+
+  fileInput.addEventListener('change', event => chooseFile(event.target.files[0]));
+  ['dragenter','dragover'].forEach(type => dropzone.addEventListener(type, event => { event.preventDefault(); dropzone.classList.add('dragover'); }));
+  ['dragleave','drop'].forEach(type => dropzone.addEventListener(type, event => { event.preventDefault(); dropzone.classList.remove('dragover'); }));
+  dropzone.addEventListener('drop', event => chooseFile(event.dataTransfer.files[0]));
+
+  validateBtn.addEventListener('click', async () => {
+    if (!selectedFile) return;
+    try {
+      const text = await selectedFile.text();
+      const csvRows = parseCsv(text);
+      if (csvRows.length - 1 > 100000) throw new Error('This file contains more than 100,000 data rows. Split it into smaller CSV files and validate them separately.');
+      const analyzed = analyzeRows(csvRows);
+      renderResults(analyzed);
+      const errors = analyzed.filter(row => row.level === 'error').length;
+      const warnings = analyzed.filter(row => row.level === 'warning').length;
+      setMessage(`Analysis complete: ${analyzed.length} mappings checked, ${errors} rows with errors, and ${warnings} rows with warnings.`, 'success');
+      results.scrollIntoView({behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'start'});
+    } catch (error) {
+      results.style.display = 'none';
+      setMessage(error.message || 'Could not read this file. Check that it is a valid CSV.', 'error');
+    }
+  });
+
+  resetBtn.addEventListener('click', () => {
+    fileInput.value = ''; selectedFile = null; latestRows = [];
+    fileName.textContent = 'No file selected'; validateBtn.disabled = true;
+    message.className = 'tool-message'; results.style.display = 'none';
+  });
+
+  sampleBtn.addEventListener('click', () => {
+    const sample = 'source,target\nhttps://example.com/old-page,https://example.com/new-page\nhttps://example.com/legacy,https://example.com/current\nhttps://example.com/chain-a,https://example.com/chain-b\nhttps://example.com/chain-b,https://example.com/final\n';
+    downloadText('redirect-map-sample.csv', sample, 'text/csv;charset=utf-8');
+  });
+
+  exportBtn.addEventListener('click', () => {
+    if (!latestRows.length) return;
+    const lines = [['row','source','target','status','findings'].map(csvCell).join(',')];
+    latestRows.forEach(item => {
+      const findings = item.issues.map(issue => `${issue.level.toUpperCase()}: ${issue.text}`).join(' | ') || 'No issues detected';
+      lines.push([item.row,item.source,item.target,item.level,findings].map(csvCell).join(','));
+    });
+    downloadText('redirect-map-validation-report.csv', lines.join('\r\n'), 'text/csv;charset=utf-8');
+  });
+})();
+</script></body></html>
