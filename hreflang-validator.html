@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1220">
+  <meta name="description" content="Validate hreflang mapping CSV files for language tags, self-references, duplicate annotations and reciprocal links.">
+  <link rel="canonical" href="https://nikdjurkovic-beepbeep.github.io/portfolio/hreflang-validator.html">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="site.css">
+  <title>Hreflang Validator | Nikola Djurkovic</title>
+</head>
+<body>
+<header><div class="wrap nav"><a href="index.html#top" class="logo" aria-label="Nikola Djurkovic home">ND<span>.</span></a><nav aria-label="Main navigation"><a href="index.html#about">About</a><a href="index.html#experience">Experience</a><details class="nav-dropdown"><summary>SEO Tools</summary><div class="dropdown-panel"><a href="redirect-mapping-validator.html">Redirect Mapping Validator</a><a href="robots-txt-generator.html">Robots.txt Generator</a><a href="seo-regex-tester.html">SEO Regex Tester</a><a href="hreflang-validator.html" aria-current="page">Hreflang Validator</a><a href="xml-sitemap-analyzer.html">XML Sitemap Analyzer</a><a href="schema-markup-generator.html">Schema Markup Generator</a><a href="serp-preview.html">SERP Snippet Preview</a></div></details><a href="index.html#expertise">Expertise</a><a href="index.html#contact">Contact</a></nav></div></header>
+<main><div class="wrap">
+  <section class="page-hero">
+    <div class="breadcrumb"><a href="index.html">Portfolio</a> / SEO Tools</div>
+    <div class="eyebrow">International SEO utility · CSV validation</div>
+    <h1>Hreflang<br><span>validator.</span></h1>
+    <p class="lead">Validate hreflang implementation data before deployment. Check BCP 47 language tags, duplicate annotations, self-references, missing target pages and reciprocal mappings.</p>
+  </section>
+  <section class="tool-shell" aria-labelledby="hreflangHeading">
+  <div class="tool-top"><div><h3 id="hreflangHeading">Validate hreflang mapping data</h3><p>Upload or paste a CSV containing each page's language and every hreflang annotation emitted by that page.</p></div><span class="skill">CSV analysis · Local processing</span></div>
+  <div class="tool-body">
+    <div class="tool-field"><label for="hreflangFile">Upload CSV file</label><input id="hreflangFile" type="file" accept=".csv,text/csv"><span class="field-help">The CSV is read in your browser and is not transmitted.</span></div>
+    <div class="tool-field"><label for="hreflangInput">Or paste CSV data</label><textarea id="hreflangInput" spellcheck="false">page_url,page_language,hreflang,target_url
+https://example.com/en/,en,en,https://example.com/en/
+https://example.com/en/,en,fr,https://example.com/fr/
+https://example.com/fr/,fr,fr,https://example.com/fr/
+https://example.com/fr/,fr,en,https://example.com/en/</textarea><span class="field-help">Required columns: <code>page_url,page_language,hreflang,target_url</code>. One row per hreflang annotation.</span></div>
+    <div class="tool-actions"><button class="btn" id="hreflangRun" type="button">Validate hreflang</button><button class="btn secondary" id="hreflangSample" type="button">Load sample</button><button class="btn secondary" id="hreflangExport" type="button" disabled>Download findings CSV</button></div>
+    <div class="tool-message" id="hreflangMessage" role="status" aria-live="polite"></div>
+    <div id="hreflangResults" class="results" aria-live="polite"><div class="summary" id="hreflangSummary"></div><div class="table-wrap"><table><thead><tr><th>Row</th><th>Page</th><th>Language</th><th>Target</th><th>Findings</th></tr></thead><tbody id="hreflangRows"></tbody></table></div><p class="results-foot" id="hreflangFoot"></p></div>
+  </div>
+</section>
+<p class="disclaimer">This validator checks the supplied mapping dataset. It does not fetch live HTML, inspect HTTP response headers, or confirm that the annotations are actually present on the pages.</p>
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const sample = $('hreflangInput').value;
+  let latest=[];
+  function parseCSV(text){const rows=[];let row=[],cell='',quoted=false;for(let i=0;i<text.length;i++){const c=text[i];if(quoted){if(c==='"'&&text[i+1]==='"'){cell+='"';i++;}else if(c==='"')quoted=false;else cell+=c;}else if(c==='"'&&cell==='')quoted=true;else if(c===','){row.push(cell);cell='';}else if(c==='\n'||c==='\r'){if(c==='\r'&&text[i+1]==='\n')i++;row.push(cell);if(row.some(v=>v.trim()))rows.push(row);row=[];cell='';}else cell+=c;}if(quoted)throw Error('CSV contains an unclosed quote.');row.push(cell);if(row.some(v=>v.trim()))rows.push(row);return rows;}
+  const normURL=value=>{try{const u=new URL(value.trim());if(!['http:','https:'].includes(u.protocol))return null;u.hash='';return u.href;}catch(_){return null;}};
+  const validLang=value=>{if(value.toLowerCase()==='x-default')return true;try{return Intl.getCanonicalLocales(value).length===1;}catch(_){return false;}};
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function run(){const text=$('hreflangInput').value.trim();if(!text)throw Error('Paste CSV data or upload a CSV file first.');const data=parseCSV(text);if(data.length<2)throw Error('Add a header row and at least one data row.');const h=data[0].map(v=>v.replace(/^\uFEFF/,'').trim().toLowerCase().replace(/[\s-]+/g,'_'));const idx=(...names)=>h.findIndex(x=>names.includes(x));const pi=idx('page_url','source_url'),pli=idx('page_language','page_lang','language'),hi=idx('hreflang','language_code'),ti=idx('target_url','href','alternate_url');if([pi,pli,hi,ti].some(x=>x<0))throw Error('Required CSV headers: page_url,page_language,hreflang,target_url.');
+    const rows=data.slice(1).map((r,i)=>({row:i+2,page:(r[pi]||'').trim(),pageLang:(r[pli]||'').trim(),lang:(r[hi]||'').trim(),target:(r[ti]||'').trim(),pageURL:normURL(r[pi]||''),targetURL:normURL(r[ti]||''),issues:[]}));
+    const groups=new Map();const pageLangs=new Map();
+    rows.forEach(x=>{if(!x.pageURL){x.issues.push('Invalid or missing page_url');return;}if(!x.pageLang||!validLang(x.pageLang))x.issues.push('Invalid page_language BCP 47 tag');if(!x.lang||!validLang(x.lang))x.issues.push('Invalid hreflang BCP 47 tag');if(!x.targetURL)x.issues.push('Invalid or missing target_url (absolute HTTP(S) URL required)');if(x.pageURL&&x.pageLang){if(pageLangs.has(x.pageURL)&&pageLangs.get(x.pageURL)!==x.pageLang)x.issues.push('Inconsistent page_language values for this page');else pageLangs.set(x.pageURL,x.pageLang);}if(x.pageURL){if(!groups.has(x.pageURL))groups.set(x.pageURL,[]);groups.get(x.pageURL).push(x);}});
+    const keys=new Map();rows.forEach(x=>{if(!x.pageURL||!x.lang)return;const k=x.pageURL+'\n'+x.lang.toLowerCase();if(!keys.has(k))keys.set(k,[]);keys.get(k).push(x);});keys.forEach(a=>{if(a.length>1)a.forEach(x=>x.issues.push('Duplicate hreflang annotation for this page and language'));});
+    const known=new Set(groups.keys());
+    rows.forEach(x=>{if(!x.pageURL||!x.targetURL||!x.lang) return;if(!known.has(x.targetURL))x.issues.push('Target page has no page_url group in this dataset');if(x.pageURL===x.targetURL&&x.pageLang.toLowerCase()!==x.lang.toLowerCase())x.issues.push('Self-reference language does not match page_language');if(x.pageURL!==x.targetURL){const targetRows=groups.get(x.targetURL)||[];const sourceLang=pageLangs.get(x.pageURL)||'';const reciprocal=targetRows.some(y=>y.targetURL===x.pageURL&&y.lang.toLowerCase()===sourceLang.toLowerCase());if(!reciprocal)x.issues.push('Missing reciprocal annotation from target page using the source page language');}});
+    groups.forEach((a,url)=>{const lang=pageLangs.get(url)||'';const self=a.some(x=>x.targetURL===url&&x.lang.toLowerCase()===lang.toLowerCase());if(!self)a.forEach(x=>x.issues.push('Page group is missing a self-referencing hreflang annotation'));});
+    return rows;
+  }
+  function show(rows){latest=rows;const errs=rows.filter(x=>x.issues.length).length;const ok=rows.length-errs;$('hreflangSummary').innerHTML=`<div class="summary-card"><b>${rows.length}</b><span>Annotations checked</span></div><div class="summary-card errors"><b>${errs}</b><span>Rows with findings</span></div><div class="summary-card clean"><b>${ok}</b><span>Rows without findings</span></div><div class="summary-card"><b>${new Set(rows.map(x=>x.pageURL).filter(Boolean)).size}</b><span>Pages in dataset</span></div>`;$('hreflangRows').innerHTML=rows.slice(0,500).map(x=>`<tr><td>${x.row}</td><td>${esc(x.page)}</td><td>${esc(x.lang)}</td><td>${esc(x.target)}</td><td>${esc(x.issues.join('; ')||'No issues detected')}</td></tr>`).join('');$('hreflangFoot').textContent=rows.length>500?`Showing 500 of ${rows.length} rows; export includes all findings.`:`Checked ${rows.length} annotation rows. Reciprocal checks rely on the page_language field supplied for each source page.`;$('hreflangResults').style.display='block';$('hreflangExport').disabled=false;}
+  function csv(v){return '"'+String(v??'').replace(/"/g,'""')+'"';}
+  function download(){const lines=[['row','page_url','page_language','hreflang','target_url','findings'],...latest.map(x=>[x.row,x.page,x.pageLang,x.lang,x.target,x.issues.join('; ')])];const blob=new Blob([lines.map(r=>r.map(csv).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');const u=URL.createObjectURL(blob);a.href=u;a.download='hreflang-validation-findings.csv';a.click();URL.revokeObjectURL(u);}
+  $('hreflangRun').addEventListener('click',()=>{try{const rows=run();show(rows);$('hreflangMessage').className='tool-message success';$('hreflangMessage').textContent=`Validation complete: ${rows.length} annotations checked.`;}catch(e){$('hreflangMessage').className='tool-message error';$('hreflangMessage').textContent=e.message;}});
+  $('hreflangSample').addEventListener('click',()=>{$('hreflangInput').value=sample;$('hreflangMessage').className='tool-message';});
+  $('hreflangExport').addEventListener('click',download);
+  $('hreflangFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;if(f.size>10*1024*1024){$('hreflangMessage').className='tool-message error';$('hreflangMessage').textContent='File exceeds 10 MB. Split the CSV and try again.';return;}$('hreflangInput').value=await f.text();$('hreflangMessage').className='tool-message success';$('hreflangMessage').textContent=`Loaded ${f.name}. Click Validate hreflang to analyze it.`;});
+})();
+</script>
+  
+  <div class="actions"><a class="btn secondary" href="index.html#tools">← All SEO tools</a><a class="btn secondary" href="index.html#contact">Contact</a></div>
+</div></main>
+<footer><div class="wrap foot"><span>© <span id="year">2026</span> Nikola Djurkovic</span><span><a href="index.html">Portfolio</a> · Belgrade, Serbia</span></div></footer>
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body></html>

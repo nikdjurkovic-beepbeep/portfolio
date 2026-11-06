@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1220">
+  <meta name="description" content="Analyze XML sitemaps and sitemap indexes for malformed loc values, duplicate URLs, missing entries and invalid lastmod dates.">
+  <link rel="canonical" href="https://nikdjurkovic-beepbeep.github.io/portfolio/xml-sitemap-analyzer.html">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="site.css">
+  <title>XML Sitemap Analyzer | Nikola Djurkovic</title>
+</head>
+<body>
+<header><div class="wrap nav"><a href="index.html#top" class="logo" aria-label="Nikola Djurkovic home">ND<span>.</span></a><nav aria-label="Main navigation"><a href="index.html#about">About</a><a href="index.html#experience">Experience</a><details class="nav-dropdown"><summary>SEO Tools</summary><div class="dropdown-panel"><a href="redirect-mapping-validator.html">Redirect Mapping Validator</a><a href="robots-txt-generator.html">Robots.txt Generator</a><a href="seo-regex-tester.html">SEO Regex Tester</a><a href="hreflang-validator.html">Hreflang Validator</a><a href="xml-sitemap-analyzer.html" aria-current="page">XML Sitemap Analyzer</a><a href="schema-markup-generator.html">Schema Markup Generator</a><a href="serp-preview.html">SERP Snippet Preview</a></div></details><a href="index.html#expertise">Expertise</a><a href="index.html#contact">Contact</a></nav></div></header>
+<main><div class="wrap">
+  <section class="page-hero">
+    <div class="breadcrumb"><a href="index.html">Portfolio</a> / SEO Tools</div>
+    <div class="eyebrow">Technical SEO utility · XML analysis</div>
+    <h1>XML sitemap<br><span>analyzer.</span></h1>
+    <p class="lead">Inspect XML sitemap files before submission. Count URL entries, detect duplicate or malformed locations, review lastmod values and distinguish urlset documents from sitemap indexes.</p>
+  </section>
+  <section class="tool-shell" aria-labelledby="sitemapHeading">
+  <div class="tool-top"><div><h3 id="sitemapHeading">Analyze an XML sitemap</h3><p>Upload an XML sitemap or paste its content to inspect URL entries, sitemap-index entries, duplicates and date values.</p></div><span class="skill">XML parsing · Local processing</span></div>
+  <div class="tool-body">
+    <div class="tool-field"><label for="sitemapFile">Upload XML file</label><input id="sitemapFile" type="file" accept=".xml,application/xml,text/xml"><span class="field-help">Supports sitemap urlset and sitemapindex documents. File content stays in your browser.</span></div>
+    <div class="tool-field"><label for="sitemapInput">Or paste XML</label><textarea id="sitemapInput" spellcheck="false" style="min-height:220px">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://example.com/&lt;/loc&gt;
+    &lt;lastmod&gt;2026-01-15&lt;/lastmod&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://example.com/about/&lt;/loc&gt;
+  &lt;/url&gt;
+&lt;/urlset&gt;</textarea></div>
+    <div class="tool-actions"><button class="btn" id="sitemapRun" type="button">Analyze sitemap</button><button class="btn secondary" id="sitemapSample" type="button">Load sample</button><button class="btn secondary" id="sitemapExport" type="button" disabled>Download findings CSV</button></div>
+    <div class="tool-message" id="sitemapMessage" role="status" aria-live="polite"></div>
+    <div id="sitemapResults" class="results" aria-live="polite"><div class="summary" id="sitemapSummary"></div><div class="table-wrap"><table><thead><tr><th>Entry</th><th>Location</th><th>Last modified</th><th>Findings</th></tr></thead><tbody id="sitemapRows"></tbody></table></div><p class="results-foot" id="sitemapFoot"></p></div>
+  </div>
+</section>
+<p class="disclaimer">This is a file analyzer. It does not fetch child sitemaps or test whether listed URLs return HTTP 200. The sitemap protocol allows up to 50,000 URLs per sitemap and a 50 MB uncompressed file size.</p>
+<script>
+(() => {
+  'use strict';
+  const $=id=>document.getElementById(id);const sample=$('sitemapInput').value;let latest=[];
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function analyze(xml){if(!xml.trim())throw Error('Paste XML content or upload an XML file first.');const doc=new DOMParser().parseFromString(xml,'application/xml');if(doc.querySelector('parsererror'))throw Error('The XML is not well formed. Check the parser error and correct the document.');const root=doc.documentElement;if(!root)throw Error('No XML document element was found.');const kind=root.localName; if(!['urlset','sitemapindex'].includes(kind))throw Error('Expected a <urlset> sitemap or <sitemapindex> document.');const expectedNS='http://www.sitemaps.org/schemas/sitemap/0.9';const rootNS=root.namespaceURI;const globalNotes=[];if(rootNS!==expectedNS)globalNotes.push('Root element does not use the standard Sitemap XML namespace.');const entryTag=kind==='urlset'?'url':'sitemap';const entries=Array.from(root.children).filter(n=>n.localName===entryTag);const seen=new Map();const rows=entries.map((entry,i)=>{const locNode=Array.from(entry.children).find(n=>n.localName==='loc');const modNode=Array.from(entry.children).find(n=>n.localName==='lastmod');const loc=(locNode?.textContent||'').trim();const lastmod=(modNode?.textContent||'').trim();const issues=[];let normalized='';if(!loc)issues.push('Missing loc value');else{try{const u=new URL(loc);if(!['http:','https:'].includes(u.protocol))throw 0;normalized=u.href;if(u.hash)issues.push('URL contains a fragment');}catch(_){issues.push('Malformed loc URL (absolute HTTP(S) URL required)');}}if(lastmod&&!isValidDate(lastmod))issues.push('Invalid lastmod date or datetime');if(normalized){if(seen.has(normalized))issues.push(`Duplicate loc (first seen in entry ${seen.get(normalized)})`);else seen.set(normalized,i+1);}return {entry:i+1,loc,lastmod,issues};});if(!entries.length)globalNotes.push(`No <${entryTag}> entries were found.`);return {kind,rows,globalNotes,namespace:rootNS||'(none)'};}
+  function isValidDate(v){if(/^\d{4}-\d{2}-\d{2}$/.test(v)){const d=new Date(v+'T00:00:00Z');return !Number.isNaN(d.valueOf())&&d.toISOString().slice(0,10)===v;}const t=Date.parse(v);return !Number.isNaN(t)&&/^\d{4}-\d{2}-\d{2}T/.test(v);}
+  function show(result){latest=result.rows;const flagged=latest.filter(x=>x.issues.length).length;const dup=latest.filter(x=>x.issues.some(i=>i.startsWith('Duplicate loc'))).length;const bad=latest.filter(x=>x.issues.some(i=>i.includes('Malformed')||i.includes('Missing'))).length;$('sitemapSummary').innerHTML=`<div class="summary-card"><b>${latest.length}</b><span>${result.kind==='urlset'?'URL entries':'Child sitemaps'}</span></div><div class="summary-card errors"><b>${flagged}</b><span>Entries with findings</span></div><div class="summary-card warnings"><b>${dup}</b><span>Duplicate locations</span></div><div class="summary-card"><b>${bad}</b><span>Missing or malformed loc</span></div>`;$('sitemapRows').innerHTML=latest.slice(0,500).map(x=>`<tr><td>${x.entry}</td><td>${esc(x.loc)}</td><td>${esc(x.lastmod||'—')}</td><td>${esc(x.issues.join('; ')||'No issues detected')}</td></tr>`).join('');const notes=[`Document type: ${result.kind}. Namespace: ${result.namespace}.`,...result.globalNotes];$('sitemapFoot').textContent=(latest.length>500?`Showing first 500 of ${latest.length} entries. CSV export contains all rows. `:'')+notes.join(' ');$('sitemapResults').style.display='block';$('sitemapExport').disabled=false;}
+  function csv(v){return '"'+String(v??'').replace(/"/g,'""')+'"';}
+  function download(){const lines=[['entry','loc','lastmod','findings'],...latest.map(x=>[x.entry,x.loc,x.lastmod,x.issues.join('; ')])];const blob=new Blob([lines.map(r=>r.map(csv).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');const u=URL.createObjectURL(blob);a.href=u;a.download='sitemap-analysis.csv';a.click();URL.revokeObjectURL(u);}
+  $('sitemapRun').addEventListener('click',()=>{try{const result=analyze($('sitemapInput').value);show(result);$('sitemapMessage').className='tool-message success';$('sitemapMessage').textContent=`Analysis complete: ${result.rows.length} ${result.kind==='urlset'?'URL entries':'sitemap entries'} inspected.`;}catch(e){$('sitemapMessage').className='tool-message error';$('sitemapMessage').textContent=e.message;}});
+  $('sitemapSample').addEventListener('click',()=>{$('sitemapInput').value=sample;$('sitemapMessage').className='tool-message';});$('sitemapExport').addEventListener('click',download);
+  $('sitemapFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;if(f.size>50*1024*1024){$('sitemapMessage').className='tool-message error';$('sitemapMessage').textContent='File exceeds 50 MB. Split the sitemap or use a sitemap index.';return;}$('sitemapInput').value=await f.text();$('sitemapMessage').className='tool-message success';$('sitemapMessage').textContent=`Loaded ${f.name}. Click Analyze sitemap to inspect it.`;});
+})();
+</script>
+  
+  <div class="actions"><a class="btn secondary" href="index.html#tools">← All SEO tools</a><a class="btn secondary" href="index.html#contact">Contact</a></div>
+</div></main>
+<footer><div class="wrap foot"><span>© <span id="year">2026</span> Nikola Djurkovic</span><span><a href="index.html">Portfolio</a> · Belgrade, Serbia</span></div></footer>
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body></html>

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1220">
+  <meta name="description" content="Generate JSON-LD structured data for Person, Organization, Article, BreadcrumbList and Product, with JSON syntax validation.">
+  <link rel="canonical" href="https://nikdjurkovic-beepbeep.github.io/portfolio/schema-markup-generator.html">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="site.css">
+  <title>Schema Markup Generator | Nikola Djurkovic</title>
+</head>
+<body>
+<header><div class="wrap nav"><a href="index.html#top" class="logo" aria-label="Nikola Djurkovic home">ND<span>.</span></a><nav aria-label="Main navigation"><a href="index.html#about">About</a><a href="index.html#experience">Experience</a><details class="nav-dropdown"><summary>SEO Tools</summary><div class="dropdown-panel"><a href="redirect-mapping-validator.html">Redirect Mapping Validator</a><a href="robots-txt-generator.html">Robots.txt Generator</a><a href="seo-regex-tester.html">SEO Regex Tester</a><a href="hreflang-validator.html">Hreflang Validator</a><a href="xml-sitemap-analyzer.html">XML Sitemap Analyzer</a><a href="schema-markup-generator.html" aria-current="page">Schema Markup Generator</a><a href="serp-preview.html">SERP Snippet Preview</a></div></details><a href="index.html#expertise">Expertise</a><a href="index.html#contact">Contact</a></nav></div></header>
+<main><div class="wrap">
+  <section class="page-hero">
+    <div class="breadcrumb"><a href="index.html">Portfolio</a> / SEO Tools</div>
+    <div class="eyebrow">Structured data utility · JSON-LD generation</div>
+    <h1>Schema markup<br><span>generator.</span></h1>
+    <p class="lead">Generate JSON-LD for common Schema.org types. Add only accurate information that is supported by the visible page, then review and validate the output before implementation.</p>
+  </section>
+  <section class="tool-shell" aria-labelledby="schemaHeading">
+  <div class="tool-top"><div><h3 id="schemaHeading">Generate JSON-LD structured data</h3><p>Choose a schema type, fill in the fields, and generate JSON-LD you can review, copy or download.</p></div><span class="skill">JSON-LD · Browser-based</span></div>
+  <div class="tool-body">
+    <div class="tool-field"><label for="schemaType">Schema type</label><select id="schemaType"><option value="Person">Person</option><option value="Organization">Organization</option><option value="Article">Article</option><option value="BreadcrumbList">BreadcrumbList</option><option value="Product">Product</option></select><span class="field-help">Only add properties that accurately describe the visible page and its subject.</span></div>
+    <div id="schemaFields" class="form-grid"></div>
+    <div class="tool-actions"><button class="btn" id="schemaGenerate" type="button">Generate JSON-LD</button><button class="btn secondary" id="schemaCopy" type="button" disabled>Copy JSON-LD</button><button class="btn secondary" id="schemaDownload" type="button" disabled>Download .json</button></div>
+    <div class="tool-message" id="schemaMessage" role="status" aria-live="polite"></div>
+    <div class="tool-field" style="margin-top:20px"><label for="schemaOutput">Generated JSON-LD</label><textarea id="schemaOutput" class="output-box" spellcheck="false" placeholder="Your JSON-LD will appear here…" style="min-height:280px"></textarea></div>
+    <div class="tool-actions"><button class="btn secondary" id="schemaValidate" type="button">Validate JSON syntax</button></div>
+  </div>
+</section>
+<p class="disclaimer">This tool generates JSON-LD and checks JSON syntax. It does not guarantee Google rich-result eligibility, policy compliance or search appearance. Validate the finished markup with Google's Rich Results Test and Schema.org Validator before publishing.</p>
+<script>
+(() => {
+  'use strict';
+  const $=id=>document.getElementById(id);let lastJSON='';
+  const defs={
+    Person:[['name','Name','text',true],['url','Profile URL','url'],['image','Image URL','url'],['jobTitle','Job title','text'],['worksFor','Organization name','text'],['description','Description','textarea'],['sameAs','SameAs profile URLs (one per line)','textarea']],
+    Organization:[['name','Organization name','text',true],['url','Website URL','url'],['logo','Logo URL','url'],['description','Description','textarea'],['sameAs','SameAs profile URLs (one per line)','textarea']],
+    Article:[['headline','Headline','text',true],['description','Description','textarea'],['author','Author name','text',true],['authorUrl','Author URL','url'],['datePublished','Date published','date',true],['dateModified','Date modified','date'],['image','Image URL','url'],['publisher','Publisher name','text'],['publisherLogo','Publisher logo URL','url'],['mainEntityOfPage','Canonical article URL','url']],
+    BreadcrumbList:[['breadcrumbs','Breadcrumbs (one per line: label | URL)','textarea',true]],
+    Product:[['name','Product name','text',true],['description','Description','textarea'],['image','Image URL','url'],['brand','Brand','text'],['sku','SKU','text'],['price','Price','text'],['currency','Currency (ISO 4217, e.g. EUR)','text'],['availability','Availability URL (Schema.org ItemAvailability)','text']]
+  };
+  function fieldHTML([name,label,type,required]){const id='schema_'+name;const requiredMark=required?' <span aria-hidden="true">*</span>':'';if(type==='textarea')return `<div class="tool-field" style="grid-column:1/-1"><label for="${id}">${label}${requiredMark}</label><textarea id="${id}" rows="3"></textarea></div>`;return `<div class="tool-field"><label for="${id}">${label}${requiredMark}</label><input id="${id}" type="${type==='date'?'date':'text'}" autocomplete="off"></div>`;}
+  function renderFields(){const type=$('schemaType').value;$('schemaFields').innerHTML=defs[type].map(fieldHTML).join('');}
+  function val(name){return ($('schema_'+name)?.value||'').trim();}
+  function url(value,label){if(!value)return undefined;try{const u=new URL(value);if(!['http:','https:'].includes(u.protocol))throw 0;return u.href;}catch(_){throw Error(`${label} must be an absolute HTTP(S) URL.`);}}
+  function listUrls(text,label){return text.split(/\r?\n/).map(v=>v.trim()).filter(Boolean).map(v=>url(v,label));}
+  function generate(){const type=$('schemaType').value;let obj={'@context':'https://schema.org','@type':type};
+    if(type==='Person'){if(!val('name'))throw Error('Name is required.');obj.name=val('name');if(val('url'))obj.url=url(val('url'),'Profile URL');if(val('image'))obj.image=url(val('image'),'Image URL');if(val('jobTitle'))obj.jobTitle=val('jobTitle');if(val('worksFor'))obj.worksFor={'@type':'Organization','name':val('worksFor')};if(val('description'))obj.description=val('description');if(val('sameAs'))obj.sameAs=listUrls(val('sameAs'),'SameAs URL');}
+    if(type==='Organization'){if(!val('name'))throw Error('Organization name is required.');obj.name=val('name');if(val('url'))obj.url=url(val('url'),'Website URL');if(val('logo'))obj.logo=url(val('logo'),'Logo URL');if(val('description'))obj.description=val('description');if(val('sameAs'))obj.sameAs=listUrls(val('sameAs'),'SameAs URL');}
+    if(type==='Article'){if(!val('headline')||!val('author')||!val('datePublished'))throw Error('Headline, author and publication date are required.');obj.headline=val('headline');if(val('description'))obj.description=val('description');obj.author={'@type':'Person','name':val('author')};if(val('authorUrl'))obj.author.url=url(val('authorUrl'),'Author URL');obj.datePublished=val('datePublished');if(val('dateModified'))obj.dateModified=val('dateModified');if(val('image'))obj.image=url(val('image'),'Image URL');if(val('publisher')){obj.publisher={'@type':'Organization','name':val('publisher')};if(val('publisherLogo'))obj.publisher.logo=url(val('publisherLogo'),'Publisher logo URL');}if(val('mainEntityOfPage'))obj.mainEntityOfPage=url(val('mainEntityOfPage'),'Canonical article URL');}
+    if(type==='BreadcrumbList'){if(!val('breadcrumbs'))throw Error('Add at least one breadcrumb line.');const items=val('breadcrumbs').split(/\r?\n/).map(s=>s.trim()).filter(Boolean).map((line,i)=>{const parts=line.split('|');if(parts.length<2||!parts[0].trim()||!parts.slice(1).join('|').trim())throw Error(`Breadcrumb line ${i+1} must use label | URL.`);return {'@type':'ListItem',position:i+1,name:parts[0].trim(),item:url(parts.slice(1).join('|').trim(),`Breadcrumb URL on line ${i+1}`)};});obj.itemListElement=items;}
+    if(type==='Product'){if(!val('name'))throw Error('Product name is required.');obj.name=val('name');if(val('description'))obj.description=val('description');if(val('image'))obj.image=url(val('image'),'Image URL');if(val('brand'))obj.brand={'@type':'Brand','name':val('brand')};if(val('sku'))obj.sku=val('sku');if(val('price')){const p=Number(val('price'));if(!Number.isFinite(p)||p<0)throw Error('Price must be a non-negative number.');if(!/^[A-Z]{3}$/.test(val('currency')))throw Error('Enter a three-letter uppercase ISO currency code, such as EUR.');obj.offers={'@type':'Offer','price':String(p),'priceCurrency':val('currency')};if(val('availability')){if(!/^https:\/\/schema\.org\/(InStock|OutOfStock|PreOrder|BackOrder|Discontinued|LimitedAvailability|SoldOut)$/.test(val('availability')))throw Error('Availability must be a supported Schema.org URL, e.g. https://schema.org/InStock.');obj.offers.availability=val('availability');}}}
+    const output=JSON.stringify(obj,null,2);JSON.parse(output);$('schemaOutput').value=output;lastJSON=output;$('schemaCopy').disabled=false;$('schemaDownload').disabled=false;$('schemaMessage').className='tool-message success';$('schemaMessage').textContent='JSON-LD generated. Review every value and confirm it matches the visible page content before publishing.';
+  }
+  $('schemaType').addEventListener('change',renderFields);renderFields();
+  $('schemaGenerate').addEventListener('click',()=>{try{generate();}catch(e){$('schemaMessage').className='tool-message error';$('schemaMessage').textContent=e.message;}});
+  $('schemaValidate').addEventListener('click',()=>{try{const o=JSON.parse($('schemaOutput').value);if(!o||typeof o!=='object')throw Error('JSON-LD must be a JSON object.');$('schemaMessage').className='tool-message success';$('schemaMessage').textContent='Valid JSON syntax. This does not confirm Schema.org or Google rich-result eligibility.';}catch(e){$('schemaMessage').className='tool-message error';$('schemaMessage').textContent=`Invalid JSON: ${e.message}`;}});
+  $('schemaCopy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('schemaOutput').value);$('schemaMessage').className='tool-message success';$('schemaMessage').textContent='JSON-LD copied to clipboard.';}catch(_){$('schemaOutput').focus();$('schemaOutput').select();$('schemaMessage').className='tool-message error';$('schemaMessage').textContent='Clipboard access was blocked. Select the output and copy it manually.';}});
+  $('schemaDownload').addEventListener('click',()=>{const b=new Blob([$('schemaOutput').value],{type:'application/ld+json'});const a=document.createElement('a');const u=URL.createObjectURL(b);a.href=u;a.download='schema-markup.json';a.click();URL.revokeObjectURL(u);});
+})();
+</script>
+  
+  <div class="actions"><a class="btn secondary" href="index.html#tools">← All SEO tools</a><a class="btn secondary" href="index.html#contact">Contact</a></div>
+</div></main>
+<footer><div class="wrap foot"><span>© <span id="year">2026</span> Nikola Djurkovic</span><span><a href="index.html">Portfolio</a> · Belgrade, Serbia</span></div></footer>
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body></html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1220">
+  <meta name="description" content="Preview title links and meta descriptions and estimate text pixel widths for search snippets.">
+  <link rel="canonical" href="https://nikdjurkovic-beepbeep.github.io/portfolio/serp-preview.html">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="site.css">
+  <title>SERP Snippet Preview | Nikola Djurkovic</title>
+</head>
+<body>
+<header><div class="wrap nav"><a href="index.html#top" class="logo" aria-label="Nikola Djurkovic home">ND<span>.</span></a><nav aria-label="Main navigation"><a href="index.html#about">About</a><a href="index.html#experience">Experience</a><details class="nav-dropdown"><summary>SEO Tools</summary><div class="dropdown-panel"><a href="redirect-mapping-validator.html">Redirect Mapping Validator</a><a href="robots-txt-generator.html">Robots.txt Generator</a><a href="seo-regex-tester.html">SEO Regex Tester</a><a href="hreflang-validator.html">Hreflang Validator</a><a href="xml-sitemap-analyzer.html">XML Sitemap Analyzer</a><a href="schema-markup-generator.html">Schema Markup Generator</a><a href="serp-preview.html" aria-current="page">SERP Snippet Preview</a></div></details><a href="index.html#expertise">Expertise</a><a href="index.html#contact">Contact</a></nav></div></header>
+<main><div class="wrap">
+  <section class="page-hero">
+    <div class="breadcrumb"><a href="index.html">Portfolio</a> / SEO Tools</div>
+    <div class="eyebrow">On-page SEO utility · SERP preview</div>
+    <h1>SERP snippet<br><span>preview.</span></h1>
+    <p class="lead">Preview a title tag and meta description with approximate pixel-width measurements. Use the preview as a drafting aid, not as a prediction of exactly what a search engine will display.</p>
+  </section>
+  <section class="tool-shell" aria-labelledby="serpHeading">
+  <div class="tool-top"><div><h3 id="serpHeading">Preview a search snippet</h3><p>Enter a page URL, title tag and meta description to see an approximate search-result preview and width measurements.</p></div><span class="skill">Snippet preview · No account required</span></div>
+  <div class="tool-body">
+    <div class="tool-field"><label for="serpUrl">Page URL</label><input id="serpUrl" type="text" value="https://example.com/technical-seo/" placeholder="https://example.com/page/"></div>
+    <div class="tool-field"><label for="serpTitle">Title tag</label><input id="serpTitle" type="text" maxlength="200" value="Technical SEO Services | Example Company"><span class="field-help"><span id="titleChars">0</span> characters · approximate width: <span id="titleWidth">0</span> px</span></div>
+    <div class="tool-field"><label for="serpDescription">Meta description</label><textarea id="serpDescription" rows="3" maxlength="500">Explore technical SEO services, including enterprise audits, site migrations, crawl analysis and scalable technical improvements for growing websites.</textarea><span class="field-help"><span id="descChars">0</span> characters · approximate width: <span id="descWidth">0</span> px</span></div>
+    <div class="tool-actions" role="group" aria-label="Preview device"><button class="btn secondary" id="serpDesktop" type="button" aria-pressed="true">Desktop preview</button><button class="btn secondary" id="serpMobile" type="button" aria-pressed="false">Mobile preview</button></div>
+    <div class="serp-card" id="serpCard" aria-label="Search result preview"><div class="serp-site" id="serpSite">https://example.com › technical-seo</div><div class="serp-title" id="serpTitlePreview">Technical SEO Services | Example Company</div><div class="serp-description" id="serpDescriptionPreview">Explore technical SEO services, including enterprise audits, site migrations, crawl analysis and scalable technical improvements for growing websites.</div></div>
+    <div class="serp-metrics"><div class="metric"><strong id="titleStatus">—</strong><small>Title width estimate</small></div><div class="metric"><strong id="descStatus">—</strong><small>Description width estimate</small></div><div class="metric"><strong id="urlStatus">Valid URL</strong><small>URL check</small></div></div>
+    <div class="tool-actions"><button class="btn secondary" id="serpReset" type="button">Reset example</button><button class="btn secondary" id="serpCopy" type="button">Copy title and description</button></div>
+    <div class="tool-message" id="serpMessage" role="status" aria-live="polite"></div>
+  </div>
+</section>
+<p class="disclaimer">Pixel widths are measured approximately with browser font metrics. Google may rewrite titles and snippets, and displayed widths vary by device, query, language and layout. This is a preview, not a guarantee of how a result will appear.</p>
+<script>
+(() => {
+  'use strict';const $=id=>document.getElementById(id);const defaults={url:'https://example.com/technical-seo/',title:'Technical SEO Services | Example Company',description:'Explore technical SEO services, including enterprise audits, site migrations, crawl analysis and scalable technical improvements for growing websites.'};
+  function width(text,font){const c=document.createElement('canvas');const ctx=c.getContext('2d');ctx.font=font;return Math.round(ctx.measureText(text).width);}
+  function render(){const url=$('serpUrl').value.trim(),title=$('serpTitle').value,desc=$('serpDescription').value;let parsed=null;try{parsed=new URL(url);if(!['http:','https:'].includes(parsed.protocol))parsed=null;}catch(_){}$('serpSite').textContent=parsed?parsed.hostname.replace(/^www\./,'')+' › '+(parsed.pathname.split('/').filter(Boolean).join(' › ')||'')+(parsed.search?' › …':''):'Enter a valid HTTP(S) URL';$('serpTitlePreview').textContent=title||'(No title provided)';$('serpDescriptionPreview').textContent=desc||'(No meta description provided)';const tw=width(title,'20px Arial'),dw=width(desc,'14px Arial');$('titleChars').textContent=title.length;$('descChars').textContent=desc.length;$('titleWidth').textContent=tw;$('descWidth').textContent=dw;$('titleStatus').textContent=tw<=600?'Within ~600 px':`${tw-600} px over`;$('descStatus').textContent=dw<=920?'Within ~920 px':`${dw-920} px over`;$('urlStatus').textContent=parsed?'Valid URL':'Check URL';$('urlStatus').style.color=parsed?'var(--good)':'var(--warning)';$('titleStatus').style.color=tw<=600?'var(--good)':'var(--warning)';$('descStatus').style.color=dw<=920?'var(--good)':'var(--warning)';}
+  ['serpUrl','serpTitle','serpDescription'].forEach(id=>$(id).addEventListener('input',render));function device(mode){const mobile=mode==='mobile';$('serpCard').classList.toggle('mobile-mode',mobile);$('serpDesktop').setAttribute('aria-pressed',String(!mobile));$('serpMobile').setAttribute('aria-pressed',String(mobile));$('serpDesktop').classList.toggle('active',!mobile);$('serpMobile').classList.toggle('active',mobile);}$('serpDesktop').addEventListener('click',()=>device('desktop'));$('serpMobile').addEventListener('click',()=>device('mobile'));device('desktop');$('serpReset').addEventListener('click',()=>{$('serpUrl').value=defaults.url;$('serpTitle').value=defaults.title;$('serpDescription').value=defaults.description;render();$('serpMessage').className='tool-message';});$('serpCopy').addEventListener('click',async()=>{const text=`Title: ${$('serpTitle').value}\nDescription: ${$('serpDescription').value}`;try{await navigator.clipboard.writeText(text);$('serpMessage').className='tool-message success';$('serpMessage').textContent='Title and description copied.';}catch(_){$('serpMessage').className='tool-message error';$('serpMessage').textContent='Clipboard access was blocked. Copy the fields manually.';}});render();
+})();
+</script>
+  
+  <div class="actions"><a class="btn secondary" href="index.html#tools">← All SEO tools</a><a class="btn secondary" href="index.html#contact">Contact</a></div>
+</div></main>
+<footer><div class="wrap foot"><span>© <span id="year">2026</span> Nikola Djurkovic</span><span><a href="index.html">Portfolio</a> · Belgrade, Serbia</span></div></footer>
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body></html>
