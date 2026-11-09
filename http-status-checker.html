@@ -15,8 +15,6 @@
     .url-input{width:100%;min-height:210px;background:#081321;color:var(--text);border:1px solid #38516b;border-radius:12px;padding:15px;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;resize:vertical}
     .url-input:focus{outline:2px solid var(--accent);outline-offset:2px}
     .counter{font-size:12px;color:var(--muted);margin-top:7px;display:flex;justify-content:space-between;gap:12px}
-    .endpoint-warning{border:1px solid #8a632f;background:#352918;color:#f9d99f;border-radius:10px;padding:14px;margin-top:16px;font-size:13px}
-    .endpoint-warning code{color:#fff1d4;overflow-wrap:anywhere}
     .progress-wrap{height:7px;background:#1c2d42;border-radius:99px;overflow:hidden;margin:15px 0 4px;display:none}
     .progress-bar{height:100%;width:0;background:var(--accent);transition:width .15s}
     .checker-results{display:none;margin-top:25px}
@@ -48,7 +46,6 @@
         <div class="progress-wrap" id="progressWrap"><div class="progress-bar" id="progressBar"></div></div>
         <div class="file-name" id="progressText" role="status" aria-live="polite"></div>
         <div class="tool-message" id="toolMessage" role="status" aria-live="polite"></div>
-        <div class="endpoint-warning" id="endpointWarning"><strong>Backend connection not configured yet.</strong> This tool requires the Cloudflare Worker included with this package. After you deploy it, its URL will be connected here. Do not enter an API URL supplied by anyone else.</div>
         <div class="checker-results" id="results" aria-live="polite">
           <div class="results-head"><h4>HTTP check results</h4><button class="btn secondary small-action" id="exportBtn" type="button">Download CSV report</button></div>
           <div class="summary" id="summary"></div>
@@ -66,7 +63,7 @@
 <script>
 (() => {
   'use strict';
-  // Replaced with your deployed Cloudflare Worker URL after deployment.
+  // Connected to the deployed NikolaSEO Cloudflare Worker.
   const API_ENDPOINT = 'https://nikolaseo-http-status-checker.nik-djurkovic.workers.dev/check';
   const MAX_URLS = 50;
   const CONCURRENCY = 4;
