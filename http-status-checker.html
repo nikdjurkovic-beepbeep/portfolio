@@ -1,193 +1,60 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b1220">
-  <meta name="description" content="Check HTTP status codes for up to 50 URLs, trace up to five redirects, and export final URLs and redirect chains.">
-  <link rel="canonical" href="https://nikolaseo.com/http-status-checker.html">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="site.css">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#0b1220">
+  <meta name="description" content="Check HTTP status codes for up to 50 URLs, inspect redirect chains, response headers, latency and text response previews.">
+  <link rel="canonical" href="https://nikolaseo.com/http-status-checker.html"><link rel="icon" type="image/svg+xml" href="favicon.svg"><link rel="stylesheet" href="site.css">
   <title>HTTP Status Code Checker | Nikola Djurkovic</title>
   <style>
-    .checker-note{border:1px solid #38536a;background:#102239;border-radius:12px;padding:14px 16px;color:var(--muted);font-size:13px;margin:16px 0}
-    .checker-note strong{color:var(--text)}
-    .url-input{width:100%;min-height:210px;background:#081321;color:var(--text);border:1px solid #38516b;border-radius:12px;padding:15px;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;resize:vertical}
-    .url-input:focus{outline:2px solid var(--accent);outline-offset:2px}
-    .counter{font-size:12px;color:var(--muted);margin-top:7px;display:flex;justify-content:space-between;gap:12px}
-    .progress-wrap{height:7px;background:#1c2d42;border-radius:99px;overflow:hidden;margin:15px 0 4px;display:none}
-    .progress-bar{height:100%;width:0;background:var(--accent);transition:width .15s}
-    .checker-results{display:none;margin-top:25px}
-    .checker-results .summary{grid-template-columns:repeat(5,minmax(0,1fr))}
-    .checker-results table{min-width:920px}
-    .checker-results td:first-child{min-width:210px}
-    .checker-results details{min-width:260px}
-    .trace{margin:8px 0 0;padding:10px 12px;border-radius:8px;background:#081321;border:1px solid #26384f;white-space:normal}
-    .trace ol{padding-left:21px;margin:0}.trace li{margin:5px 0;color:var(--muted);overflow-wrap:anywhere}
-    .trace code{color:#d5eee7;overflow-wrap:anywhere}
-    .status.code2xx{background:#183b2e;color:#b9f0cf}.status.code3xx{background:#49371e;color:#ffe0a8}.status.code4xx{background:#492630;color:#ffb9b9}.status.code5xx{background:#492630;color:#ffb9b9}.status.codeerr{background:#303c4e;color:#d9e3ef}
-    .url-cell{overflow-wrap:anywhere;max-width:310px}
-    .small-action{font-size:12px;padding:8px 12px}
-    @media(max-width:700px){.checker-results .summary{grid-template-columns:repeat(2,minmax(0,1fr))}.counter{flex-direction:column}}
+    .http-input{width:100%;min-height:175px;background:#081321;color:var(--text);border:1px solid #38516b;border-radius:12px;padding:15px;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;resize:vertical}
+    .http-counter{font-size:12px;color:var(--muted);margin-top:7px;display:flex;justify-content:space-between;gap:12px}.http-progress{height:7px;background:#1c2d42;border-radius:99px;overflow:hidden;margin:15px 0 4px;display:none}.http-progress>div{height:100%;width:0;background:var(--accent);transition:width .15s}
+    .http-results{display:none;margin-top:24px}.http-results-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}.http-summary{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:16px}.http-summary-card{border:1px solid var(--line);border-radius:10px;padding:13px;background:#0c1727}.http-summary-card b{font-size:23px;display:block;line-height:1.2}.http-summary-card span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+    .http-chain{border:1px solid var(--line);border-radius:12px;background:#0c1727;margin:12px 0;overflow:hidden}.http-chain>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(150px,1fr) 90px;gap:14px;align-items:center;padding:15px}.http-chain>summary::-webkit-details-marker{display:none}.http-chain>summary:before{content:'›';color:var(--accent);font-size:22px;grid-column:1;grid-row:1;display:none}.http-chain[open]>summary{border-bottom:1px solid var(--line)}.http-request{min-width:0;overflow-wrap:anywhere;color:#dce8f2;font-size:13px}.http-statuses{display:flex;gap:6px;flex-wrap:wrap}.http-count{text-align:right;color:var(--muted);font-size:12px}.http-pill{display:inline-flex;align-items:center;justify-content:center;border-radius:5px;padding:4px 8px;font-size:11px;font-weight:750;white-space:nowrap}.http-2xx{background:#183b2e;color:#b9f0cf}.http-3xx{background:#1c3b59;color:#c3e4ff}.http-4xx,.http-5xx{background:#492630;color:#ffb9b9}.http-error{background:#303c4e;color:#d9e3ef}
+    .http-expanded{padding:18px}.http-expanded h4{margin:0 0 12px;font-size:17px}.http-summary-table,.http-headers{width:100%;border-collapse:collapse;font-size:12px}.http-summary-table th,.http-summary-table td,.http-headers th,.http-headers td{padding:10px 11px;text-align:left;border-bottom:1px solid #23344a;vertical-align:top;overflow-wrap:anywhere}.http-summary-table th,.http-headers th{color:#dce8f2;background:#142238}.http-summary-table td,.http-headers td{color:var(--muted)}.http-summary-table{min-width:550px}.http-table-scroll{overflow:auto;border:1px solid var(--line);border-radius:9px}
+    .http-hop{border:1px solid var(--line);border-radius:10px;margin-top:13px;overflow:hidden;background:#101d30}.http-hop-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:13px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}.http-hop-head strong{font-size:14px}.http-hop-meta{font-size:12px;color:var(--muted);margin-top:4px;overflow-wrap:anywhere}.http-hop-body{padding:13px 14px}.http-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:10px 0 14px}.http-metric{padding:11px;border:1px solid var(--line);border-radius:8px;background:#0b1727;min-width:0}.http-metric small{display:block;color:var(--muted);font-size:11px}.http-metric strong{display:block;font-size:15px;overflow-wrap:anywhere}.http-section-label{font-size:12px;font-weight:750;color:#dce8f2;margin:14px 0 7px}.http-actions{display:flex;gap:8px;flex-wrap:wrap}.http-actions .btn{padding:8px 11px;font-size:12px}.http-body-preview{display:none;margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:8px;background:#081321}.http-body-preview pre{margin:0;max-height:320px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;color:#cce6df;font:12px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace}.http-copy{border:1px solid var(--line);background:transparent;color:var(--text);border-radius:7px;padding:7px 10px;font-size:12px;cursor:pointer}.http-error-text{color:#ffb9b9;font-size:12px;margin-top:8px}.http-note{border:1px solid #38536a;background:#102239;border-radius:10px;padding:13px 15px;color:var(--muted);font-size:12px;margin:15px 0}.http-note strong{color:var(--text)}
+    @media(max-width:700px){.http-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.http-counter{flex-direction:column}.http-chain>summary{grid-template-columns:minmax(0,1fr) auto;gap:8px}.http-statuses{grid-column:1/-1;grid-row:2}.http-count{grid-column:2;grid-row:1}.http-expanded{padding:12px}.http-metrics{grid-template-columns:1fr 1fr}.http-input{min-height:165px}}
   </style>
 </head>
 <body>
 <header><div class="wrap nav"><a href="index.html#top" class="logo" aria-label="Nikola Djurkovic home">ND<span>.</span></a><nav aria-label="Main navigation"><a href="index.html#about">About</a><a href="index.html#experience">Experience</a><details class="nav-dropdown"><summary>SEO Tools</summary><div class="dropdown-panel"><a href="redirect-mapping-validator.html">Redirect Mapping Validator</a><a href="http-status-checker.html" aria-current="page">HTTP Status Code Checker</a><a href="robots-txt-generator.html">Robots.txt Generator</a><a href="seo-regex-tester.html">SEO Regex Tester</a><a href="hreflang-validator.html">Hreflang Validator</a><a href="xml-sitemap-analyzer.html">XML Sitemap Analyzer</a><a href="schema-markup-generator.html">Schema Markup Generator</a><a href="serp-preview.html">SERP Snippet Preview</a></div></details><a href="index.html#expertise">Expertise</a><a href="index.html#contact">Contact</a></nav></div></header>
 <main><div class="wrap">
-  <section class="page-hero"><div class="breadcrumb"><a href="index.html">Portfolio</a> / SEO Tools</div><div class="eyebrow">Technical SEO utility · Live HTTP checks</div><h1>HTTP status code<br><span>checker.</span></h1><p class="lead">Paste up to 50 URLs. Check their HTTP response, follow up to five redirects per URL, and inspect the final destination, status code, and complete redirect path.</p></section>
-  <section id="http-checker">
-    <div class="eyebrow">Live URL inspection</div><h2>Check URL status and redirects</h2>
-    <p class="intro">One URL per line. The checker sends HEAD requests first and retries with a lightweight GET request when a server does not support HEAD.</p>
-    <div class="tool-shell">
-      <div class="tool-top"><div><h3>HTTP Status Code Checker</h3><p>Checks public HTTP/HTTPS URLs from the server side, so browser cross-origin restrictions do not hide response codes or redirect locations.</p></div><span class="skill">Up to 50 URLs · Up to 5 redirects</span></div>
-      <div class="tool-body">
-        <div class="tool-field"><label for="urlList">URLs to check</label><textarea class="url-input" id="urlList" placeholder="https://example.com/old-page&#10;https://example.com/another-page&#10;https://www.example.org/" spellcheck="false"></textarea><div class="counter"><span>One absolute HTTP or HTTPS URL per line. Blank lines are ignored.</span><span id="urlCount">0 / 50 URLs</span></div></div>
-        <div class="tool-actions"><button class="btn" id="checkBtn" type="button">Check URLs</button><button class="btn secondary" id="stopBtn" type="button" disabled>Stop</button><button class="btn secondary" id="sampleBtn" type="button">Load sample URLs</button><button class="btn secondary" id="clearBtn" type="button">Clear</button></div>
-        <div class="progress-wrap" id="progressWrap"><div class="progress-bar" id="progressBar"></div></div>
-        <div class="file-name" id="progressText" role="status" aria-live="polite"></div>
-        <div class="tool-message" id="toolMessage" role="status" aria-live="polite"></div>
-        <div class="checker-results" id="results" aria-live="polite">
-          <div class="results-head"><h4>HTTP check results</h4><button class="btn secondary small-action" id="exportBtn" type="button">Download CSV report</button></div>
-          <div class="summary" id="summary"></div>
-          <div class="table-wrap"><table><thead><tr><th>Input URL</th><th>Final status</th><th>Redirects</th><th>Final URL</th><th>Trace</th></tr></thead><tbody id="resultsBody"></tbody></table></div>
-          <p class="results-foot" id="resultsFoot"></p>
-        </div>
-      </div>
-    </div>
-  </section>
-  <div class="checker-note"><strong>How it works:</strong> Each URL is checked independently using a Cloudflare Worker. The Worker follows 301, 302, 303, 307, and 308 responses manually, records each Location target, detects loops, and stops after five redirects. It uses HEAD first and falls back to GET when HEAD is rejected or unsupported. The response body is not downloaded or stored.</div>
-  <div class="checker-note"><strong>Limitations and safety:</strong> This checks publicly reachable HTTP/HTTPS websites on standard ports 80 and 443. Some firewalls, bot protections, geoblocking, or origin rules may return different results to Cloudflare than to a normal browser or Googlebot. Private/local network targets are blocked. This is an HTTP diagnostic, not a full browser rendering test.</div>
-  <div class="actions"><a class="btn secondary" href="index.html#tools">← All SEO tools</a><a class="btn secondary" href="redirect-mapping-validator.html">Previous tool: Redirect Mapping Validator →</a></div>
-</div></main>
-<footer><div class="wrap foot"><span>© <span id="year">2026</span> Nikola Djurkovic</span><span><a href="index.html">Portfolio</a> · Belgrade, Serbia</span></div></footer>
+<section class="page-hero"><div class="breadcrumb"><a href="index.html">Portfolio</a> / SEO Tools</div><div class="eyebrow">Technical SEO utility · Live HTTP checks</div><h1>HTTP status code<br><span>checker.</span></h1><p class="lead">Check up to 50 URLs, trace up to five redirects per URL, and inspect each response's status, headers, latency and text body preview.</p></section>
+<section id="http-checker"><div class="eyebrow">Live URL inspection</div><h2>Check URL status and redirects</h2><p class="intro">One URL per line. The checker sends HEAD requests first and retries with GET when a server rejects or does not implement HEAD.</p>
+<div class="tool-shell"><div class="tool-top"><div><h3>HTTP Status Code Checker</h3><p>Server-side HTTP checks. Inspect redirect chains and individual response details without browser cross-origin restrictions.</p></div><span class="skill">Up to 50 URLs · Up to 5 redirects</span></div>
+<div class="tool-body"><div class="tool-field"><label for="urlList">URLs to check</label><textarea class="http-input" id="urlList" placeholder="https://example.com/old-page&#10;https://example.com/another-page&#10;https://www.example.org/" spellcheck="false"></textarea><div class="http-counter"><span>One absolute HTTP or HTTPS URL per line. Blank lines are ignored.</span><span id="urlCount">0 / 50 URLs</span></div></div>
+<div class="tool-actions"><button class="btn" id="checkBtn" type="button">Check URLs</button><button class="btn secondary" id="stopBtn" type="button" disabled>Stop</button><button class="btn secondary" id="sampleBtn" type="button">Load sample URLs</button><button class="btn secondary" id="clearBtn" type="button">Clear</button></div>
+<div class="http-progress" id="progressWrap"><div id="progressBar"></div></div><div class="file-name" id="progressText" role="status" aria-live="polite"></div><div class="tool-message" id="toolMessage" role="status" aria-live="polite"></div>
+<div class="http-results" id="results" aria-live="polite"><div class="http-results-head"><h4>HTTP check results</h4><button class="btn secondary" id="exportBtn" type="button">Download CSV report</button></div><div class="http-summary" id="summary"></div><div id="resultsList"></div><p class="results-foot" id="resultsFoot"></p></div>
+</div></div>
+<div class="http-note"><strong>Response details:</strong> Status, response headers and request latency are captured for each redirect hop and the final response. The optional body preview makes a separate, bounded GET request for the selected hop and reads at most 8 KB of text content.</div>
+<div class="http-note"><strong>Limitations and safety:</strong> Checks publicly reachable HTTP/HTTPS URLs on standard ports 80 and 443. Private, local and reserved targets are blocked. Cloudflare's network location, bot protection, firewalls, geoblocking and server rules can produce results different from a browser or Googlebot. Body previews are text-only and limited to 8 KB; binary bodies are not displayed.</div>
+</section><div class="actions"><a class="btn secondary" href="index.html#tools">← All SEO tools</a><a class="btn secondary" href="redirect-mapping-validator.html">Previous tool: Redirect Mapping Validator →</a></div>
+</div></main><footer><div class="wrap foot"><span>© <span id="year">2026</span> Nikola Djurkovic</span><span><a href="index.html">Portfolio</a> · Belgrade, Serbia</span></div></footer>
 <script>
-(() => {
-  'use strict';
-  // Connected to the deployed NikolaSEO Cloudflare Worker.
-  const API_ENDPOINT = 'https://nikolaseo-http-status-checker.nik-djurkovic.workers.dev/check';
-  const MAX_URLS = 50;
-  const CONCURRENCY = 4;
-  const $ = id => document.getElementById(id);
-  const input = $('urlList'), checkBtn = $('checkBtn'), stopBtn = $('stopBtn');
-  const message = $('toolMessage'), results = $('results'), summary = $('summary'), body = $('resultsBody');
-  const exportBtn = $('exportBtn'), progressWrap = $('progressWrap'), progressBar = $('progressBar'), progressText = $('progressText');
-  let controller = null, latestResults = [];
-  $('year').textContent = new Date().getFullYear();
-
-  function escapeHtml(value) {
-    return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-  }
-  function lines() { return input.value.split(/\r?\n/).map(v => v.trim()).filter(Boolean); }
-  function setMessage(text, type) { message.textContent = text; message.className = 'tool-message ' + type; }
-  function validUrl(raw) {
-    try { const u = new URL(raw); return ['http:','https:'].includes(u.protocol) && !u.username && !u.password; }
-    catch (_) { return false; }
-  }
-  function codeClass(status) {
-    if (status == null) return 'codeerr';
-    if (status >= 200 && status < 300) return 'code2xx';
-    if (status >= 300 && status < 400) return 'code3xx';
-    if (status >= 400 && status < 500) return 'code4xx';
-    if (status >= 500 && status < 600) return 'code5xx';
-    return 'codeerr';
-  }
-  function codeLabel(status) {
-    if (status == null) return 'ERROR';
-    const labels = {200:'OK',201:'Created',202:'Accepted',204:'No Content',206:'Partial Content',301:'Moved Permanently',302:'Found',303:'See Other',304:'Not Modified',307:'Temporary Redirect',308:'Permanent Redirect',400:'Bad Request',401:'Unauthorized',403:'Forbidden',404:'Not Found',405:'Method Not Allowed',408:'Request Timeout',410:'Gone',418:"I'm a teapot",429:'Too Many Requests',500:'Internal Server Error',501:'Not Implemented',502:'Bad Gateway',503:'Service Unavailable',504:'Gateway Timeout'};
-    return labels[status] || 'HTTP response';
-  }
-  function updateCounter() {
-    const count = lines().length;
-    $('urlCount').textContent = count + ' / ' + MAX_URLS + ' URLs';
-    $('urlCount').style.color = count > MAX_URLS ? 'var(--danger)' : 'var(--muted)';
-  }
-  input.addEventListener('input', updateCounter);
-  $('sampleBtn').addEventListener('click', () => {
-    input.value = 'https://example.com/\nhttps://www.example.com/\nhttps://example.org/';
-    updateCounter();
-  });
-  $('clearBtn').addEventListener('click', () => {
-    if (controller) controller.abort();
-    input.value = ''; updateCounter(); results.style.display = 'none'; message.className = 'tool-message'; progressWrap.style.display = 'none'; progressText.textContent = '';
-    latestResults = [];
-  });
-  $('stopBtn').addEventListener('click', () => { if (controller) controller.abort(); });
-
-  async function checkOne(url, signal) {
-    const response = await fetch(API_ENDPOINT, {
-      method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({url}), signal
-    });
-    let data;
-    try { data = await response.json(); }
-    catch (_) { throw new Error('Worker returned a non-JSON response (HTTP ' + response.status + ').'); }
-    if (!response.ok) throw new Error(data.error || ('Worker request failed with HTTP ' + response.status + '.'));
-    return data;
-  }
-  function render(rows) {
-    latestResults = rows;
-    const groups = {ok:0,redirect:0,client:0,server:0,error:0};
-    rows.forEach(r => {
-      if (r.error || r.invalid) groups.error++;
-      else if (r.finalStatus >= 200 && r.finalStatus < 300) groups.ok++;
-      else if (r.finalStatus >= 300 && r.finalStatus < 400) groups.redirect++;
-      else if (r.finalStatus >= 400 && r.finalStatus < 500) groups.client++;
-      else if (r.finalStatus >= 500 && r.finalStatus < 600) groups.server++;
-      else groups.error++;
-    });
-    summary.innerHTML = [
-      ['Checked',rows.length,''],['2xx',groups.ok,'clean'],['3xx',groups.redirect,'warnings'],['4xx',groups.client,'errors'],['5xx / errors',groups.server + groups.error,'errors']
-    ].map(([label,n,cls]) => `<div class="summary-card ${cls}"><b>${n}</b><span>${label}</span></div>`).join('');
-    body.innerHTML = rows.map((r,i) => {
-      const status = r.finalStatus == null ? 'Error' : r.finalStatus + ' ' + codeLabel(r.finalStatus);
-      const badge = `<span class="status ${codeClass(r.finalStatus)}">${escapeHtml(status)}</span>`;
-      const traceItems = (r.chain || []).map((hop,j) => `<li><strong>${escapeHtml(hop.status)} ${escapeHtml(codeLabel(hop.status))}</strong> · ${escapeHtml(hop.method || 'HEAD')}<br><code>${escapeHtml(hop.from)}</code><br>↓ <code>${escapeHtml(hop.to || '(no Location header)')}</code></li>`).join('');
-      const terminal = `<li><strong>Final response:</strong> ${escapeHtml(status)}<br><code>${escapeHtml(r.finalUrl || r.input)}</code>${r.method ? ' · ' + escapeHtml(r.method) : ''}</li>`;
-      const details = `<details><summary>View ${r.chain?.length || 0} redirect(s)</summary><div class="trace"><ol>${traceItems}${terminal}</ol>${r.limitReached ? '<p class="results-foot">Redirect limit reached. The next destination was not requested.</p>' : ''}${r.loop ? '<p class="results-foot">Redirect loop detected.</p>' : ''}${r.error ? '<p class="results-foot">' + escapeHtml(r.error) + '</p>' : ''}</div></details>`;
-      return `<tr><td class="url-cell"><code>${escapeHtml(r.input)}</code>${r.invalid ? '<div class="results-foot">Invalid URL format</div>' : ''}</td><td>${badge}</td><td>${escapeHtml(r.chain?.length || 0)}${r.limitReached ? ' (limit)' : ''}</td><td class="url-cell"><code>${escapeHtml(r.finalUrl || '—')}</code></td><td>${details}</td></tr>`;
-    }).join('');
-    $('resultsFoot').textContent = 'HEAD is attempted first; a GET request is used only when HEAD returns 403, 405, or 501. Results reflect the Cloudflare Worker network location and may differ from a browser or Googlebot.';
-    results.style.display = 'block';
-  }
-  function csvCell(v) { return '"' + String(v ?? '').replace(/"/g,'""') + '"'; }
-  exportBtn.addEventListener('click', () => {
-    if (!latestResults.length) return;
-    const rows = [['Input URL','Final URL','Final status','Status text','Redirect count','Redirect chain','Result','Error']];
-    latestResults.forEach(r => {
-      const chain = (r.chain || []).map(h => `${h.status}: ${h.from} -> ${h.to || ''}`).join(' | ');
-      rows.push([r.input,r.finalUrl || '',r.finalStatus ?? '',r.finalStatus == null ? '' : codeLabel(r.finalStatus),r.chain?.length || 0,chain,r.loop ? 'Redirect loop' : r.limitReached ? 'Redirect limit reached' : r.error ? 'Error' : 'Checked',r.error || '']);
-    });
-    const blob = new Blob(['\uFEFF' + rows.map(row => row.map(csvCell).join(',')).join('\r\n')], {type:'text/csv;charset=utf-8'});
-    const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'http-status-check-results.csv'; link.click(); URL.revokeObjectURL(link.href);
-  });
-
-  checkBtn.addEventListener('click', async () => {
-    const urls = lines();
-    if (API_ENDPOINT.startsWith('PASTE_')) { setMessage('The Cloudflare Worker has not been connected yet. Deploy the Worker from the package, then replace the API_ENDPOINT placeholder in this page with its /check URL.', 'error'); return; }
-    if (!urls.length) { setMessage('Paste at least one URL to check.', 'error'); return; }
-    if (urls.length > MAX_URLS) { setMessage('You entered ' + urls.length + ' URLs. The maximum is 50 per run.', 'error'); return; }
-    controller = new AbortController();
-    checkBtn.disabled = true; stopBtn.disabled = false; message.className = 'tool-message'; results.style.display = 'none'; progressWrap.style.display = 'block'; progressBar.style.width = '0%';
-    const output = new Array(urls.length); let next = 0, done = 0;
-    urls.forEach((url,i) => { if (!validUrl(url)) output[i] = {input:url, invalid:true, error:'Use an absolute HTTP or HTTPS URL.'}; });
-    const queue = async () => {
-      while (next < urls.length && !controller.signal.aborted) {
-        const i = next++;
-        if (output[i]) { done++; progressBar.style.width = (done / urls.length * 100) + '%'; progressText.textContent = `Checked ${done} of ${urls.length}`; continue; }
-        try { output[i] = await checkOne(urls[i], controller.signal); }
-        catch (err) { output[i] = {input:urls[i], error:err.name === 'AbortError' ? 'Request stopped.' : err.message}; }
-        done++; progressBar.style.width = (done / urls.length * 100) + '%'; progressText.textContent = `Checked ${done} of ${urls.length}`;
-      }
-    };
-    await Promise.all(Array.from({length:Math.min(CONCURRENCY,urls.length)}, queue));
-    render(output.filter(Boolean));
-    if (controller.signal.aborted) setMessage('Run stopped. Completed results are shown below; URLs not reached were not checked.', 'error');
-    else setMessage('Finished checking ' + urls.length + ' URL(s).', 'success');
-    progressText.textContent = `${done} of ${urls.length} completed`;
-    checkBtn.disabled = false; stopBtn.disabled = true; controller = null;
-  });
-
-  updateCounter();
+(()=>{'use strict';
+const API='https://nikolaseo-http-status-checker.nik-djurkovic.workers.dev';const MAX=50,CONCURRENCY=4;const $=id=>document.getElementById(id);const input=$('urlList'),message=$('toolMessage'),results=$('results'),list=$('resultsList');let controller=null,latest=[];
+$('year').textContent=new Date().getFullYear();
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const urls=()=>input.value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+function setMessage(t,type){message.textContent=t;message.className='tool-message '+type;}
+function valid(raw){try{const u=new URL(raw);return ['http:','https:'].includes(u.protocol)&&!u.username&&!u.password;}catch{return false;}}
+function statusClass(s){if(s>=200&&s<300)return'http-2xx';if(s>=300&&s<400)return'http-3xx';if(s>=400&&s<500)return'http-4xx';if(s>=500&&s<600)return'http-5xx';return'http-error';}
+const labels={200:'OK',201:'Created',202:'Accepted',204:'No Content',206:'Partial Content',301:'Moved Permanently',302:'Found',303:'See Other',304:'Not Modified',307:'Temporary Redirect',308:'Permanent Redirect',400:'Bad Request',401:'Unauthorized',403:'Forbidden',404:'Not Found',405:'Method Not Allowed',408:'Request Timeout',410:'Gone',418:"I'm a teapot",429:'Too Many Requests',500:'Internal Server Error',501:'Not Implemented',502:'Bad Gateway',503:'Service Unavailable',504:'Gateway Timeout'};
+const label=s=>labels[s]||'HTTP response';const badge=s=>`<span class="http-pill ${statusClass(s)}">${esc(s??'ERR')}</span>`;
+function updateCounter(){const n=urls().length;$('urlCount').textContent=`${n} / ${MAX} URLs`;$('urlCount').style.color=n>MAX?'var(--danger)':'var(--muted)';}
+input.addEventListener('input',updateCounter);$('sampleBtn').addEventListener('click',()=>{input.value='https://www.9gag.com\nhttp://example.com/\nhttps://example.org/';updateCounter();});
+$('clearBtn').addEventListener('click',()=>{controller?.abort();input.value='';updateCounter();results.style.display='none';message.className='tool-message';$('progressWrap').style.display='none';$('progressText').textContent='';latest=[];});$('stopBtn').addEventListener('click',()=>controller?.abort());
+async function post(path,url,signal){const r=await fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url}),signal});let d;try{d=await r.json();}catch{throw new Error(`Worker returned a non-JSON response (HTTP ${r.status}).`);}if(!r.ok)throw new Error(d.error||`Worker request failed (HTTP ${r.status}).`);return d;}
+function hostParts(url){try{const u=new URL(url);return{scheme:u.protocol.replace(':','').toUpperCase(),host:u.host,path:u.pathname+(u.search||'')||'/'};}catch{return{scheme:'—',host:'—',path:'—'};}}
+function headerTable(headers){if(!headers?.length)return'<p class="results-foot">No response headers were exposed for this response.</p>';return `<div class="http-table-scroll"><table class="http-headers"><thead><tr><th>Header</th><th>Value</th></tr></thead><tbody>${headers.map(h=>`<tr><td>${esc(h.name)}</td><td>${esc(h.value)}</td></tr>`).join('')}</tbody></table></div>`;}
+function hopCard(d,idx,isFinal){const url=isFinal?(d.url||''):(d.from||'');const dest=isFinal?'Final response':`Redirect hop ${idx+1}`;const parts=hostParts(url);const status=d.status;const headers=headerTable(d.headers);return `<article class="http-hop"><div class="http-hop-head"><div><strong>${badge(status)} ${esc(status)} · ${esc(label(status))}</strong><div class="http-hop-meta">${esc(dest)} · ${esc(d.method||'HEAD')} · <code>${esc(url)}</code></div>${!isFinal&&d.to?`<div class="http-hop-meta">Redirects to: <code>${esc(d.to)}</code></div>`:''}</div><div class="http-actions"><button class="http-copy" type="button" data-copy-url="${esc(url)}">Copy URL</button><button class="http-copy" type="button" data-body-url="${esc(url)}">View body</button></div></div><div class="http-hop-body"><div class="http-metrics"><div class="http-metric"><small>Response status</small><strong>${esc(status)} ${esc(label(status))}</strong></div><div class="http-metric"><small>Latency</small><strong>${d.latencyMs==null?'—':esc(d.latencyMs+' ms')}</strong></div><div class="http-metric"><small>Scheme · Host</small><strong>${esc(parts.scheme)} · ${esc(parts.host)}</strong></div></div><div class="http-section-label">Response headers</div>${headers}<div class="http-body-preview" data-body-panel="${esc(url)}"><div class="http-section-label">Response body preview <span class="body-meta"></span></div><pre></pre></div></div></article>`;}
+function copyText(text){if(navigator.clipboard?.writeText)return navigator.clipboard.writeText(text);const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();return Promise.resolve();}
+function summaryText(r){const hops=(r.chain||[]).map(h=>`${h.status} ${h.from} -> ${h.to}`).join('\n');const f=r.finalDetails?`${r.finalDetails.status} ${r.finalDetails.url}`:'';return [`Request: ${r.input}`,hops,f,`Redirects: ${(r.chain||[]).length}`,r.error||''].filter(Boolean).join('\n');}
+function render(rows){latest=rows;const counts={ok:0,redirect:0,client:0,server:0,error:0};rows.forEach(r=>{const s=r.finalStatus;if(r.error||r.invalid||s==null)counts.error++;else if(s<300)counts.ok++;else if(s<400)counts.redirect++;else if(s<500)counts.client++;else counts.server++;});$('summary').innerHTML=[['Checked',rows.length,''],['2xx',counts.ok,''],['3xx',counts.redirect,''],['4xx',counts.client,''],['5xx / errors',counts.server+counts.error,'']].map(([t,n])=>`<div class="http-summary-card"><b>${n}</b><span>${t}</span></div>`).join('');
+list.innerHTML=rows.map((r,i)=>{const hops=r.chain||[];const statusSeq=[...hops.map(h=>h.status),...(r.finalDetails?[r.finalDetails.status]:[])];const badges=statusSeq.length?statusSeq.map(badge).join(''):badge(r.finalStatus);const count=hops.length;const chainRows=[...hops.map(h=>({status:h.status,url:h.from})),...(r.finalDetails?[{status:r.finalDetails.status,url:r.finalDetails.url}]:[])];const table=chainRows.map(x=>{const p=hostParts(x.url);return `<tr><td>${badge(x.status)}</td><td>${p.scheme}</td><td>${esc(p.host)}</td><td>${esc(p.path)}</td></tr>`;}).join('');const cards=hops.map((h,j)=>hopCard(h,j,false)).join('')+(r.finalDetails?hopCard(r.finalDetails,hops.length,true):'');return `<details class="http-chain" ${i===0?'open':''}><summary><span class="http-request">${esc(r.input)}</span><span class="http-statuses">${badges}</span><span class="http-count">${count} redirect${count===1?'':'s'}</span></summary><div class="http-expanded"><div class="http-results-head"><h4>Summary</h4><button class="http-copy" type="button" data-copy-summary="${i}">Copy summary</button></div><div class="http-table-scroll"><table class="http-summary-table"><thead><tr><th>Status code</th><th>Scheme</th><th>Host</th><th>Path</th></tr></thead><tbody>${table||`<tr><td colspan="4">${esc(r.error||'No response details available.')}</td></tr>`}</tbody></table></div><h4 style="margin-top:22px">Details</h4>${cards||''}${r.limitReached?'<p class="http-error-text">Redirect limit reached. The next destination was not requested.</p>':''}${r.loop?'<p class="http-error-text">Redirect loop detected.</p>':''}${r.error?`<p class="http-error-text">${esc(r.error)}</p>`:''}</div></details>`;}).join('');$('resultsFoot').textContent='Response headers and latency are captured per hop. Body previews make a separate GET request and are limited to 8 KB of text. Results reflect Cloudflare’s network location.';results.style.display='block';}
+$('resultsList').addEventListener('click',async ev=>{const copy=ev.target.closest('[data-copy-summary]');if(copy){const r=latest[Number(copy.dataset.copySummary)];if(r){await copyText(summaryText(r));copy.textContent='Copied';setTimeout(()=>copy.textContent='Copy summary',1300);}return;}const copyUrl=ev.target.closest('[data-copy-url]');if(copyUrl){await copyText(copyUrl.dataset.copyUrl);copyUrl.textContent='Copied';setTimeout(()=>copyUrl.textContent='Copy URL',1300);return;}const bodyBtn=ev.target.closest('[data-body-url]');if(bodyBtn){const url=bodyBtn.dataset.bodyUrl;const card=bodyBtn.closest('.http-hop');const panel=card.querySelector('.http-body-preview');const pre=panel.querySelector('pre');const meta=panel.querySelector('.body-meta');bodyBtn.disabled=true;bodyBtn.textContent='Loading…';panel.style.display='block';pre.textContent='Fetching a bounded text preview…';try{const d=await post('/body',url);pre.textContent=d.body||'(empty response body)';meta.textContent=`· ${d.contentType||'unknown'} · ${d.bytes||0} bytes${d.truncated?' · truncated at 8 KB':''}${d.notText?' · not text':''}`;}catch(err){pre.textContent=err.message;}finally{bodyBtn.disabled=false;bodyBtn.textContent='View body';} }});
+$('exportBtn').addEventListener('click',()=>{if(!latest.length)return;const rows=[['Request URL','Status sequence','Redirect count','Final URL','Final status','Latency total ms','Redirect chain','Error']];latest.forEach(r=>{const hs=r.chain||[];const all=[...hs,...(r.finalDetails?[r.finalDetails]:[])];rows.push([r.input,all.map(x=>x.status).join(' > '),hs.length,r.finalUrl||'',r.finalStatus??'',all.reduce((s,x)=>s+(Number(x.latencyMs)||0),0).toFixed(2),hs.map(h=>`${h.status}: ${h.from} -> ${h.to}`).join(' | '),r.error||'']);});const cell=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const blob=new Blob(['\uFEFF'+rows.map(r=>r.map(cell).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='http-status-check-results.csv';a.click();URL.revokeObjectURL(a.href);});
+$('checkBtn').addEventListener('click',async()=>{const listIn=urls();if(!listIn.length){setMessage('Paste at least one URL to check.','error');return;}if(listIn.length>MAX){setMessage(`You entered ${listIn.length} URLs. The maximum is ${MAX} per run.`,'error');return;}controller=new AbortController();$('checkBtn').disabled=true;$('stopBtn').disabled=false;message.className='tool-message';results.style.display='none';$('progressWrap').style.display='block';$('progressBar').style.width='0%';const out=new Array(listIn.length);let next=0,done=0;listIn.forEach((u,i)=>{if(!valid(u))out[i]={input:u,invalid:true,error:'Use an absolute HTTP or HTTPS URL.'};});const queue=async()=>{while(next<listIn.length&&!controller.signal.aborted){const i=next++;if(out[i]){done++;$('progressBar').style.width=(done/listIn.length*100)+'%';$('progressText').textContent=`Checked ${done} of ${listIn.length}`;continue;}try{out[i]=await post('/check',listIn[i],controller.signal);}catch(e){out[i]={input:listIn[i],error:e.name==='AbortError'?'Request stopped.':e.message};}done++;$('progressBar').style.width=(done/listIn.length*100)+'%';$('progressText').textContent=`Checked ${done} of ${listIn.length}`;}};await Promise.all(Array.from({length:Math.min(CONCURRENCY,listIn.length)},queue));render(out.filter(Boolean));if(controller.signal.aborted)setMessage('Run stopped. Completed results are shown below; URLs not reached were not checked.','error');else setMessage(`Finished checking ${listIn.length} URL(s).`,'success');$('progressText').textContent=`${done} of ${listIn.length} completed`;$('checkBtn').disabled=false;$('stopBtn').disabled=true;controller=null;});updateCounter();
 })();
 </script>
 </body></html>
