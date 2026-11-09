@@ -207,3 +207,79 @@
   .tool-actions{gap:9px}
   .tool-actions .btn{min-height:42px}
 }
+
+
+/* Redirect Mapping Validator: mobile overflow fixes */
+@media (max-width: 700px) {
+  .tool-shell,
+  .tool-top,
+  .tool-body,
+  .upload-grid,
+  .dropzone,
+  .side-note {
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .upload-grid {
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+  }
+
+  .dropzone {
+    width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .side-note {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .code-sample {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    white-space: pre;
+    overflow-wrap: normal;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tool-actions {
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .tool-actions .btn {
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  #redirect-validator,
+  #redirect-validator * {
+    min-width: 0;
+  }
+}
+
+/* Prevent wide tables and long URLs from expanding mobile layouts */
+@media (max-width: 700px) {
+  .table-wrap {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #redirect-validator p,
+  #redirect-validator a,
+  #redirect-validator code {
+    overflow-wrap: anywhere;
+  }
+
+  #redirect-validator .code-sample {
+    overflow-wrap: normal;
+  }
+}
