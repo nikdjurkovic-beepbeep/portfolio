@@ -95,6 +95,7 @@
 .nav-dropdown summary::-webkit-details-marker{display:none}
 .nav-dropdown summary:after{content:'⌄';padding-left:7px;color:var(--accent)}
 .nav-dropdown[open] summary,.nav-dropdown summary:hover{color:var(--accent)}
+.nav-dropdown summary.active{color:var(--accent)}
 .dropdown-panel{position:absolute;top:calc(100% + 12px);left:-14px;min-width:245px;padding:8px;background:#101d30;border:1px solid var(--line);border-radius:12px;box-shadow:0 16px 40px #0008;display:grid;gap:3px;z-index:20}
 .dropdown-panel a{display:block;padding:10px 12px;border-radius:7px;color:var(--muted);font-size:13px}
 .dropdown-panel a:hover,.dropdown-panel a[aria-current="page"]{background:#1a2c43;color:var(--accent)}
