@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 390" role="img" aria-labelledby="title desc">
+  <title id="title">Google rank and AI citation observations</title>
+  <desc id="desc">The SEO Floor study reports 7.82 times higher citation odds for Google top-three pages than pages ranking 11 to 30, while 75.4 percent of citations came from beyond rank 30 in aggregate.</desc>
+  <rect width="960" height="390" rx="22" fill="#0d1829"/>
+  <text x="44" y="52" fill="#77e3c4" font-family="Inter,system-ui,sans-serif" font-size="15" font-weight="700" letter-spacing="2">THE SEO FLOOR · 2026 OBSERVATIONAL STUDY</text>
+  <text x="44" y="84" fill="#ecf2fa" font-family="Inter,system-ui,sans-serif" font-size="23" font-weight="700">Per-page odds and total citation counts tell different stories</text>
+  <g font-family="Inter,system-ui,sans-serif">
+    <text x="48" y="138" fill="#a9b8c9" font-size="13" font-weight="700">CITATION ODDS BY GOOGLE RANK TIER</text>
+    <text x="48" y="181" fill="#ecf2fa" font-size="15" font-weight="700">Top 3</text><rect x="155" y="160" width="435" height="28" rx="6" fill="#77e3c4"/><text x="602" y="181" fill="#77e3c4" font-size="15" font-weight="700">7.82×</text>
+    <text x="48" y="231" fill="#ecf2fa" font-size="15" font-weight="700">11–30</text><rect x="155" y="210" width="56" height="28" rx="6" fill="#527286"/><text x="222" y="231" fill="#a9b8c9" font-size="15" font-weight="700">1.00× reference</text>
+    <text x="48" y="281" fill="#ecf2fa" font-size="15" font-weight="700">31–100</text><rect x="155" y="260" width="15" height="28" rx="6" fill="#ffd18a"/><text x="181" y="281" fill="#ffd18a" font-size="15" font-weight="700">0.23×</text>
+    <text x="48" y="322" fill="#91a5ba" font-size="12">Odds ratios from the paper's mixed-effects model; 11–30 is the comparison tier.</text>
+    <line x1="650" y1="128" x2="650" y2="336" stroke="#26374b"/>
+    <text x="690" y="163" fill="#77e3c4" font-size="45" font-weight="800">75.4%</text>
+    <text x="690" y="194" fill="#ecf2fa" font-size="16" font-weight="700">of citation events</text>
+    <text x="690" y="220" fill="#a9b8c9" font-size="14">came from pages ranked</text><text x="690" y="242" fill="#a9b8c9" font-size="14">outside Google's top 30.</text>
+    <rect x="690" y="265" width="218" height="1" fill="#26374b"/>
+    <text x="690" y="294" fill="#ffd18a" font-size="13" font-weight="700">NOT A CONTRADICTION</text>
+    <text x="690" y="316" fill="#a9b8c9" font-size="12">The long tail contains far more pages;</text><text x="690" y="334" fill="#a9b8c9" font-size="12">its total count can be large while</text><text x="690" y="352" fill="#a9b8c9" font-size="12">each page has lower odds.</text>
+  </g>
+</svg>

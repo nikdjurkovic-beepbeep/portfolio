@@ -2,38 +2,41 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://nikolaseo.com/</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
   <url>
     <loc>https://nikolaseo.com/redirect-mapping-validator.html</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
   <url>
     <loc>https://nikolaseo.com/robots-txt-generator.html</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
   <url>
     <loc>https://nikolaseo.com/seo-regex-tester.html</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
   <url>
     <loc>https://nikolaseo.com/hreflang-validator.html</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
   <url>
     <loc>https://nikolaseo.com/xml-sitemap-analyzer.html</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
   <url>
     <loc>https://nikolaseo.com/schema-markup-generator.html</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
   <url>
     <loc>https://nikolaseo.com/serp-preview.html</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
   <url>
     <loc>https://nikolaseo.com/http-status-checker.html</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
-<url><loc>https://nikolaseo.com/ai-crawler-access-checker.html</loc><lastmod>2026-11-09</lastmod></url></urlset>
+<url><loc>https://nikolaseo.com/ai-crawler-access-checker.html</loc><lastmod>2026-11-17</lastmod></url>  <url>
+    <loc>https://nikolaseo.com/geo-study.html</loc>
+    <lastmod>2026-11-17</lastmod>
+  </url></urlset>
