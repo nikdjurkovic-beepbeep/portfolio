@@ -54,4 +54,4 @@
   });
   $('clearRegex').addEventListener('click',()=>{$('regexPattern').value='';$('regexFlags').value='i';$('regexTestData').value='';$('presetRegex').value='';$('regexResults').style.display='none';$('exportRegex').disabled=true;latest=[];$('regexMessage').className='tool-message';});
   $('exportRegex').addEventListener('click',()=>{if(!latest.length)return;const cell=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const rows=[['line','status','test_string','matched_text','capture_groups'].map(cell).join(',')];latest.forEach(x=>rows.push([x.line,x.matched?'match':'no match',x.text,x.match,JSON.stringify(x.groups)].map(cell).join(',')));const blob=new Blob([rows.join('\r\n')],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='seo-regex-test-results.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);});
-})();</script></body></html>
+})();</script><script src="nav.js"></script></body></html>

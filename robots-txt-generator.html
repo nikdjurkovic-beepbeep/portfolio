@@ -64,4 +64,4 @@
   $('copyRobots').addEventListener('click', async () => { if (!generated) return; try { await navigator.clipboard.writeText(generated); show('Copied robots.txt to clipboard.', 'success'); } catch (_) { show('Clipboard access was blocked by the browser. Use Download robots.txt instead.', 'error'); } });
   $('downloadRobots').addEventListener('click', () => { if (!generated) return; const blob=new Blob([generated],{type:'text/plain;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='robots.txt'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000); });
   $('resetRobots').addEventListener('click', () => { fields.forEach(id => $(id).value = id==='userAgent' ? '*' : ''); generated=''; $('robotsOutput').textContent=''; $('robotsOutputWrap').style.display='none'; $('copyRobots').disabled=true; $('downloadRobots').disabled=true; $('robotsMessage').className='tool-message'; });
-})();</script></body></html>
+})();</script><script src="nav.js"></script></body></html>
