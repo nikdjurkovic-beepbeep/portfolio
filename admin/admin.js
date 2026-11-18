@@ -398,6 +398,63 @@
       .filter(item => item.id);
   }
 
+  function comparePoints(doc, firstNode, firstOffset, secondNode, secondOffset) {
+    const first = doc.createRange();
+    first.setStart(firstNode, firstOffset);
+    first.collapse(true);
+    const second = doc.createRange();
+    second.setStart(secondNode, secondOffset);
+    second.collapse(true);
+    return first.compareBoundaryPoints(doc.defaultView.Range.START_TO_START, second);
+  }
+
+  function applyLinkToRange(doc, root, range, href, isInternal) {
+    if (range.collapsed || !root.contains(range.startContainer) || !root.contains(range.endContainer)) return [];
+    const walker = doc.createTreeWalker(root, doc.defaultView.NodeFilter.SHOW_TEXT);
+    const segments = [];
+    let node;
+    while ((node = walker.nextNode())) {
+      const length = node.nodeValue.length;
+      if (!length || /^(SCRIPT|STYLE|NOSCRIPT)$/.test(node.parentElement?.tagName || '')) continue;
+      const beginsBeforeTextEnd = comparePoints(doc, range.startContainer, range.startOffset, node, length) < 0;
+      const endsAfterTextStart = comparePoints(doc, range.endContainer, range.endOffset, node, 0) > 0;
+      if (!beginsBeforeTextEnd || !endsAfterTextStart) continue;
+      const from = node === range.startContainer ? range.startOffset : 0;
+      const to = node === range.endContainer ? range.endOffset : length;
+      if (to > from) segments.push({ node, from, to });
+    }
+
+    const links = [];
+    for (const segment of segments.reverse()) {
+      const existing = segment.node.parentElement?.closest('a');
+      if (existing && root.contains(existing)) {
+        existing.setAttribute('href', href);
+        if (isInternal) styleInternalLink(existing);
+        links.push(existing);
+        continue;
+      }
+      let selected = segment.node;
+      if (segment.from > 0) selected = selected.splitText(segment.from);
+      const selectedLength = segment.to - segment.from;
+      if (selectedLength < selected.length) selected.splitText(selectedLength);
+      const anchor = doc.createElement('a');
+      anchor.setAttribute('href', href);
+      if (isInternal) styleInternalLink(anchor);
+      selected.parentNode.insertBefore(anchor, selected);
+      anchor.appendChild(selected);
+      links.push(anchor);
+    }
+    return links.reverse();
+  }
+
+  function styleInternalLink(link) {
+    link.classList.add('cms-internal-link');
+    link.style.color = '#77e3c4';
+    link.style.textDecoration = 'underline';
+    link.style.textDecorationColor = '#77e3c4';
+    link.style.textUnderlineOffset = '3px';
+  }
+
   function openInternalLinkPicker() {
     const frame = $('#pageFrame');
     const selection = frame?.contentDocument?.getSelection();
@@ -444,44 +501,13 @@
         hrefField.value = parsed.href;
       }
       const frameDocument = frame.contentDocument;
-      const linkRange = savedSelection.cloneRange();
-      const fallbackRange = savedSelection.cloneRange();
       frame.contentWindow.focus();
-      const currentSelection = frameDocument.getSelection();
-      currentSelection.removeAllRanges();
-      currentSelection.addRange(linkRange);
-      frameDocument.execCommand('createLink', false, hrefField.value);
       const editRoot = frameDocument.querySelector(editorRootSelector) || frameDocument.querySelector('main') || frameDocument.body;
-      let newLinks = [...editRoot.querySelectorAll('a')].filter(link => {
-        try { return linkRange.intersectsNode(link); } catch { return false; }
-      });
-      if (!newLinks.length) {
-        try {
-          if (!fallbackRange.toString()) throw new Error('The selected text is no longer available.');
-          const anchor = frameDocument.createElement('a');
-          anchor.setAttribute('href', hrefField.value);
-          const insertionRange = fallbackRange.cloneRange();
-          anchor.appendChild(insertionRange.extractContents());
-          insertionRange.insertNode(anchor);
-          newLinks = [anchor];
-        } catch {
-          showToast('The link could not be added. Re-select the text and try again.', 'error');
-          return;
-        }
-      }
-      newLinks.forEach(link => {
-        link.setAttribute('href', hrefField.value);
-        if (!manualHref.value.trim()) {
-          link.classList.add('cms-internal-link');
-          link.style.color = '#77e3c4';
-          link.style.textDecoration = 'underline';
-          link.style.textDecorationColor = '#77e3c4';
-          link.style.textUnderlineOffset = '3px';
-        }
-      });
+      const newLinks = applyLinkToRange(frameDocument, editRoot, savedSelection, hrefField.value, !manualHref.value.trim());
+      if (!newLinks.length) { showToast('The link could not be added. Re-select the text and try again.', 'error'); return; }
       savedSelection = null;
       overlay.remove();
-      currentSelection.removeAllRanges();
+      frameDocument.getSelection()?.removeAllRanges();
       markDirty();
       showToast('Link inserted.');
     });
