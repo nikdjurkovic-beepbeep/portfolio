@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1085" width="600" height="1085" role="img" aria-labelledby="t d">
+<title id="t">How a ranking mechanism becomes an SEO myth</title>
+<desc id="d">Three columns. What Google uses, what tools measure, and what gets optimised. Links between pages, measured as Link-based authority model, becomes DA, DR, Authority Score. Query terms on a page, measured as Term frequency, becomes Keyword density 0.5–3%. Topical coverage, measured as Page length, becomes Word-count targets. Page experience, measured as Lab performance test, becomes A perfect lab score. Link spam detection, measured as Risk markers, becomes Toxicity score. Proxies are useful for diagnosis; the myth begins when they are treated as ranking inputs.</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.panel-d{fill:#111d30;stroke:#6f8196;stroke-width:2;stroke-dasharray:8 7}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 17px Arial,Helvetica,sans-serif;letter-spacing:2px}
+.t{fill:#ecf2fa;font:600 21px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 19px Arial,Helvetica,sans-serif}
+.a{fill:#77e3c4;font:700 21px Arial,Helvetica,sans-serif}
+.code{fill:#ecf2fa;font:500 17px 'Courier New',Courier,monospace}
+.note{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.arrow{stroke:#77e3c4;stroke-width:3;fill:none}
+.arrow-d{stroke:#6f8196;stroke-width:3;fill:none;stroke-dasharray:6 6}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="300.0" y="50" class="title" text-anchor="middle" style="font-size:32px">How a ranking mechanism</text>
+<text x="300.0" y="90" class="title" text-anchor="middle" style="font-size:32px">becomes an SEO myth</text>
+<rect x="30" y="125" width="540" height="150" rx="12" class="panel"/>
+<text x="55" y="165" class="t" text-anchor="start" style="font-size:25px">Links between pages</text>
+<text x="55" y="207" class="m" text-anchor="start" style="font-size:23px">→  Link-based authority model</text>
+<text x="55" y="249" class="a" text-anchor="start" style="font-size:25px">→  DA, DR, Authority Score</text>
+<rect x="30" y="293" width="540" height="150" rx="12" class="panel"/>
+<text x="55" y="333" class="t" text-anchor="start" style="font-size:25px">Query terms on a page</text>
+<text x="55" y="375" class="m" text-anchor="start" style="font-size:23px">→  Term frequency</text>
+<text x="55" y="417" class="a" text-anchor="start" style="font-size:25px">→  Keyword density 0.5–3%</text>
+<rect x="30" y="461" width="540" height="150" rx="12" class="panel"/>
+<text x="55" y="501" class="t" text-anchor="start" style="font-size:25px">Topical coverage</text>
+<text x="55" y="543" class="m" text-anchor="start" style="font-size:23px">→  Page length</text>
+<text x="55" y="585" class="a" text-anchor="start" style="font-size:25px">→  Word-count targets</text>
+<rect x="30" y="629" width="540" height="150" rx="12" class="panel"/>
+<text x="55" y="669" class="t" text-anchor="start" style="font-size:25px">Page experience</text>
+<text x="55" y="711" class="m" text-anchor="start" style="font-size:23px">→  Lab performance test</text>
+<text x="55" y="753" class="a" text-anchor="start" style="font-size:25px">→  A perfect lab score</text>
+<rect x="30" y="797" width="540" height="150" rx="12" class="panel"/>
+<text x="55" y="837" class="t" text-anchor="start" style="font-size:25px">Link spam detection</text>
+<text x="55" y="879" class="m" text-anchor="start" style="font-size:23px">→  Risk markers</text>
+<text x="55" y="921" class="a" text-anchor="start" style="font-size:25px">→  Toxicity score</text>
+<text x="300.0" y="995" class="note" text-anchor="middle" style="font-size:22px">Proxies are useful for diagnosis.</text>
+<text x="300.0" y="1027" class="note" text-anchor="middle" style="font-size:22px">The myth begins when they are treated</text>
+<text x="300.0" y="1057" class="note" text-anchor="middle" style="font-size:22px">as inputs Google reads.</text>
+</svg>

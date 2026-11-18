@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1159" width="600" height="1159" role="img" aria-labelledby="t d">
+<title id="t">Two sources of click data</title>
+<desc id="d">Left panel, Google's results pages: searchers click results; clicks are aggregated by query and document; Navboost uses 13 months of click-and-query data; this feeds ranking. Documented in the 2024 US v. Google ruling. Right panel, your website: visitors land on a page; an analytics tag records the session; bounce rate and engagement rate appear in your reports. Google says it does not use Google Analytics data for ranking.</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.panel-d{fill:#111d30;stroke:#6f8196;stroke-width:2;stroke-dasharray:8 7}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 17px Arial,Helvetica,sans-serif;letter-spacing:2px}
+.t{fill:#ecf2fa;font:600 21px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 19px Arial,Helvetica,sans-serif}
+.a{fill:#77e3c4;font:700 21px Arial,Helvetica,sans-serif}
+.code{fill:#ecf2fa;font:500 17px 'Courier New',Courier,monospace}
+.note{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.arrow{stroke:#77e3c4;stroke-width:3;fill:none}
+.arrow-d{stroke:#6f8196;stroke-width:3;fill:none;stroke-dasharray:6 6}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="300.0" y="52" class="title" text-anchor="middle" style="font-size:33px">Two sources of click data</text>
+<rect x="30" y="85" width="540" height="507" rx="14" class="panel-a"/>
+<text x="300.0" y="127" class="h" text-anchor="middle" style="font-size:20px">ON GOOGLE'S RESULTS PAGES</text>
+<rect x="80" y="149" width="440" height="70" rx="10" class="panel"/>
+<text x="300.0" y="191.0" class="t" text-anchor="middle" style="font-size:23px">Searchers click results</text>
+<path d="M300.0 222 V250" class="arrow"/><path d="M292.0 241 L300.0 250 L308.0 241" class="arrow" style="stroke-dasharray:none"/>
+<rect x="80" y="253" width="440" height="70" rx="10" class="panel"/>
+<text x="300.0" y="282.0" class="t" text-anchor="middle" style="font-size:23px">Clicks aggregated by</text>
+<text x="300.0" y="308.0" class="t" text-anchor="middle" style="font-size:23px">query and document</text>
+<path d="M300.0 326 V354" class="arrow"/><path d="M292.0 345 L300.0 354 L308.0 345" class="arrow" style="stroke-dasharray:none"/>
+<rect x="80" y="357" width="440" height="70" rx="10" class="panel"/>
+<text x="300.0" y="386.0" class="t" text-anchor="middle" style="font-size:23px">Navboost: 13 months of</text>
+<text x="300.0" y="412.0" class="t" text-anchor="middle" style="font-size:23px">click-and-query data</text>
+<path d="M300.0 430 V458" class="arrow"/><path d="M292.0 449 L300.0 458 L308.0 449" class="arrow" style="stroke-dasharray:none"/>
+<rect x="80" y="461" width="440" height="70" rx="10" class="panel"/>
+<text x="300.0" y="503.0" class="t" text-anchor="middle" style="font-size:23px">Ranking</text>
+<text x="300.0" y="571" class="a" text-anchor="middle" style="font-size:22px">Documented in US v. Google (2024)</text>
+<rect x="30" y="622" width="540" height="507" rx="14" class="panel-d"/>
+<text x="300.0" y="664" class="h" text-anchor="middle" style="font-size:20px">ON YOUR WEBSITE</text>
+<rect x="80" y="686" width="440" height="70" rx="10" class="panel"/>
+<text x="300.0" y="728.0" class="m" text-anchor="middle" style="font-size:23px">Visitors land on a page</text>
+<path d="M300.0 759 V787" class="arrow-d"/><path d="M292.0 778 L300.0 787 L308.0 778" class="arrow-d" style="stroke-dasharray:none"/>
+<rect x="80" y="790" width="440" height="70" rx="10" class="panel"/>
+<text x="300.0" y="819.0" class="m" text-anchor="middle" style="font-size:23px">Analytics tag records</text>
+<text x="300.0" y="845.0" class="m" text-anchor="middle" style="font-size:23px">the session</text>
+<path d="M300.0 863 V891" class="arrow-d"/><path d="M292.0 882 L300.0 891 L308.0 882" class="arrow-d" style="stroke-dasharray:none"/>
+<rect x="80" y="894" width="440" height="70" rx="10" class="panel"/>
+<text x="300.0" y="923.0" class="m" text-anchor="middle" style="font-size:23px">Bounce rate,</text>
+<text x="300.0" y="949.0" class="m" text-anchor="middle" style="font-size:23px">engagement rate</text>
+<path d="M300.0 967 V995" class="arrow-d"/><path d="M292.0 986 L300.0 995 L308.0 986" class="arrow-d" style="stroke-dasharray:none"/>
+<rect x="80" y="998" width="440" height="70" rx="10" class="panel"/>
+<text x="300.0" y="1040.0" class="m" text-anchor="middle" style="font-size:23px">Your reports</text>
+<text x="300.0" y="1108" class="m" text-anchor="middle" style="font-size:22px">Google says this is not used for ranking</text>
+</svg>

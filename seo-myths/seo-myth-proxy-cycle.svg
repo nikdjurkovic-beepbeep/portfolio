@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-labelledby="t d">
+<title id="t">How a ranking mechanism becomes an SEO myth</title>
+<desc id="d">Three columns. What Google uses, what tools measure, and what gets optimised. Links between pages, measured as Link-based authority model, becomes DA, DR, Authority Score. Query terms on a page, measured as Term frequency, becomes Keyword density 0.5–3%. Topical coverage, measured as Page length, becomes Word-count targets. Page experience, measured as Lab performance test, becomes A perfect lab score. Link spam detection, measured as Risk markers, becomes Toxicity score. Proxies are useful for diagnosis; the myth begins when they are treated as ranking inputs.</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.panel-d{fill:#111d30;stroke:#6f8196;stroke-width:2;stroke-dasharray:8 7}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 17px Arial,Helvetica,sans-serif;letter-spacing:2px}
+.t{fill:#ecf2fa;font:600 21px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 19px Arial,Helvetica,sans-serif}
+.a{fill:#77e3c4;font:700 21px Arial,Helvetica,sans-serif}
+.code{fill:#ecf2fa;font:500 17px 'Courier New',Courier,monospace}
+.note{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.arrow{stroke:#77e3c4;stroke-width:3;fill:none}
+.arrow-d{stroke:#6f8196;stroke-width:3;fill:none;stroke-dasharray:6 6}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="500.0" y="52" class="title" text-anchor="middle">How a ranking mechanism becomes an SEO myth</text>
+<text x="170.0" y="105" class="h" text-anchor="middle">WHAT GOOGLE USES</text>
+<text x="500.0" y="105" class="h" text-anchor="middle">WHAT TOOLS MEASURE</text>
+<text x="830.0" y="105" class="h" text-anchor="middle">WHAT GETS OPTIMISED</text>
+<rect x="40" y="125" width="260" height="52" rx="12" class="panel"/>
+<text x="170.0" y="158" class="t" text-anchor="middle" style="font-size:20px">Links between pages</text>
+<path d="M306 151 H364" class="arrow"/><path d="M355 143 L364 151 L355 159" class="arrow" style="stroke-dasharray:none"/>
+<rect x="370" y="125" width="260" height="52" rx="12" class="panel"/>
+<text x="500.0" y="158" class="m" text-anchor="middle" style="font-size:19px">Link-based authority model</text>
+<path d="M636 151 H694" class="arrow"/><path d="M685 143 L694 151 L685 159" class="arrow" style="stroke-dasharray:none"/>
+<rect x="700" y="125" width="260" height="52" rx="12" class="panel-a"/>
+<text x="830.0" y="158" class="a" text-anchor="middle" style="font-size:19px">DA, DR, Authority Score</text>
+<rect x="40" y="193" width="260" height="52" rx="12" class="panel"/>
+<text x="170.0" y="226" class="t" text-anchor="middle" style="font-size:20px">Query terms on a page</text>
+<path d="M306 219 H364" class="arrow"/><path d="M355 211 L364 219 L355 227" class="arrow" style="stroke-dasharray:none"/>
+<rect x="370" y="193" width="260" height="52" rx="12" class="panel"/>
+<text x="500.0" y="226" class="m" text-anchor="middle" style="font-size:19px">Term frequency</text>
+<path d="M636 219 H694" class="arrow"/><path d="M685 211 L694 219 L685 227" class="arrow" style="stroke-dasharray:none"/>
+<rect x="700" y="193" width="260" height="52" rx="12" class="panel-a"/>
+<text x="830.0" y="226" class="a" text-anchor="middle" style="font-size:19px">Keyword density 0.5–3%</text>
+<rect x="40" y="261" width="260" height="52" rx="12" class="panel"/>
+<text x="170.0" y="294" class="t" text-anchor="middle" style="font-size:20px">Topical coverage</text>
+<path d="M306 287 H364" class="arrow"/><path d="M355 279 L364 287 L355 295" class="arrow" style="stroke-dasharray:none"/>
+<rect x="370" y="261" width="260" height="52" rx="12" class="panel"/>
+<text x="500.0" y="294" class="m" text-anchor="middle" style="font-size:19px">Page length</text>
+<path d="M636 287 H694" class="arrow"/><path d="M685 279 L694 287 L685 295" class="arrow" style="stroke-dasharray:none"/>
+<rect x="700" y="261" width="260" height="52" rx="12" class="panel-a"/>
+<text x="830.0" y="294" class="a" text-anchor="middle" style="font-size:19px">Word-count targets</text>
+<rect x="40" y="329" width="260" height="52" rx="12" class="panel"/>
+<text x="170.0" y="362" class="t" text-anchor="middle" style="font-size:20px">Page experience</text>
+<path d="M306 355 H364" class="arrow"/><path d="M355 347 L364 355 L355 363" class="arrow" style="stroke-dasharray:none"/>
+<rect x="370" y="329" width="260" height="52" rx="12" class="panel"/>
+<text x="500.0" y="362" class="m" text-anchor="middle" style="font-size:19px">Lab performance test</text>
+<path d="M636 355 H694" class="arrow"/><path d="M685 347 L694 355 L685 363" class="arrow" style="stroke-dasharray:none"/>
+<rect x="700" y="329" width="260" height="52" rx="12" class="panel-a"/>
+<text x="830.0" y="362" class="a" text-anchor="middle" style="font-size:19px">A perfect lab score</text>
+<rect x="40" y="397" width="260" height="52" rx="12" class="panel"/>
+<text x="170.0" y="430" class="t" text-anchor="middle" style="font-size:20px">Link spam detection</text>
+<path d="M306 423 H364" class="arrow"/><path d="M355 415 L364 423 L355 431" class="arrow" style="stroke-dasharray:none"/>
+<rect x="370" y="397" width="260" height="52" rx="12" class="panel"/>
+<text x="500.0" y="430" class="m" text-anchor="middle" style="font-size:19px">Risk markers</text>
+<path d="M636 423 H694" class="arrow"/><path d="M685 415 L694 423 L685 431" class="arrow" style="stroke-dasharray:none"/>
+<rect x="700" y="397" width="260" height="52" rx="12" class="panel-a"/>
+<text x="830.0" y="430" class="a" text-anchor="middle" style="font-size:19px">Toxicity score</text>
+<text x="500.0" y="495" class="note" text-anchor="middle" style="font-size:19px">Proxies are useful for diagnosis.</text>
+<text x="500.0" y="525" class="note" text-anchor="middle" style="font-size:19px">The myth begins when they are treated as inputs Google reads.</text>
+</svg>
