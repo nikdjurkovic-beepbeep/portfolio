@@ -300,7 +300,7 @@
             <button type="button" class="tool-button" data-command="undo" title="Undo">↶</button><button type="button" class="tool-button" data-command="redo" title="Redo">↷</button><span class="tool-divider"></span>
             <button type="button" class="tool-button" data-command="bold" title="Bold"><b>B</b></button><button type="button" class="tool-button" data-command="italic" title="Italic"><i>I</i></button><button type="button" class="tool-button" data-command="underline" title="Underline"><u>U</u></button><span class="tool-divider"></span>
             <button type="button" class="tool-button" data-block="P" title="Paragraph">¶</button><button type="button" class="tool-button" data-block="H2" title="Heading 2">H2</button><button type="button" class="tool-button" data-block="H3" title="Heading 3">H3</button><button type="button" class="tool-button" data-command="formatBlock" data-value="BLOCKQUOTE" title="Quote">❞</button><span class="tool-divider"></span>
-            <button type="button" class="tool-button" data-command="insertUnorderedList" title="Bulleted list">☷</button><button type="button" class="tool-button" data-command="insertOrderedList" title="Numbered list">1.</button><button type="button" class="tool-button" data-action="insert-link" title="Insert internal link">↗</button><button type="button" class="tool-button" data-action="open-media" title="Insert image">▧</button>
+            <button type="button" class="tool-button" data-command="insertUnorderedList" title="Bulleted list">☷</button><button type="button" class="tool-button" data-command="insertOrderedList" title="Numbered list">1.</button><button type="button" class="tool-button" data-action="insert-link" title="Insert internal link" aria-label="Insert link">↗</button><button type="button" class="tool-button" data-action="remove-link" title="Remove link" aria-label="Remove link" disabled><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 13 4-4"/><path d="M15 7h2a5 5 0 0 1 0 10h-2"/><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="m3 3 18 18"/></svg></button><button type="button" class="tool-button" data-action="open-media" title="Insert image">▧</button>
           </div>
           <div class="editor-stage"><iframe class="editor-frame" id="pageFrame" title="Editable page preview" sandbox="allow-same-origin" referrerpolicy="no-referrer"></iframe><p class="editor-hint"><span class="hint-bulb">✦</span><span>Click into the page to edit its text. Use the toolbar to format selected text. Interactive controls are shown as part of the design; their behavior stays in the published page.</span></p></div>
         </section>
@@ -329,7 +329,12 @@
         editRoot.addEventListener('focusin', () => { editRoot.style.outlineColor = '#77e3c466'; });
         editRoot.addEventListener('focusout', () => { editRoot.style.outlineColor = 'transparent'; });
         editRoot.addEventListener('input', markDirty);
+        frameDoc.addEventListener('selectionchange', updateUnlinkButton);
+        editRoot.addEventListener('keyup', updateUnlinkButton);
+        editRoot.addEventListener('mouseup', updateUnlinkButton);
+        editRoot.addEventListener('focusin', updateUnlinkButton);
         frameReady = true;
+        updateUnlinkButton();
         $('#editorStatus').textContent = isNewPage ? 'New page draft' : 'Ready to edit';
       } catch (error) {
         $('#editorStatus').textContent = 'Preview unavailable';
@@ -371,6 +376,7 @@
     }
     const action = event.target.closest('[data-action]')?.dataset.action;
     if (action === 'insert-link' && frameReady) openInternalLinkPicker();
+    if (action === 'remove-link' && frameReady) removeSelectedLinks();
     if (action === 'open-media') openMediaChooser();
     if (action === 'open-pages') leaveEditorAndGo('pages');
     if (action === 'refresh-pages') refreshPagesAndRender();
@@ -453,6 +459,120 @@
     link.style.textDecoration = 'underline';
     link.style.textDecorationColor = '#77e3c4';
     link.style.textUnderlineOffset = '3px';
+  }
+
+  function closestLink(node, root) {
+    let element = node?.nodeType === 1 ? node : node?.parentElement;
+    while (element && element !== root) {
+      if (element.tagName === 'A') return element;
+      element = element.parentElement;
+    }
+    return null;
+  }
+
+  function unwrapLink(link) {
+    const parent = link.parentNode;
+    if (!parent) return;
+    while (link.firstChild) parent.insertBefore(link.firstChild, link);
+    parent.removeChild(link);
+  }
+
+  function unlinkLinksFromRange(doc, root, range) {
+    if (range.collapsed) {
+      const link = closestLink(range.startContainer, root);
+      if (!link) return [];
+      unwrapLink(link);
+      return [link];
+    }
+
+    const targets = [...root.querySelectorAll('a')].map(link => {
+      const contents = doc.createRange();
+      contents.selectNodeContents(link);
+      const startsBeforeEnd = comparePoints(doc, range.startContainer, range.startOffset, contents.endContainer, contents.endOffset) < 0;
+      const endsAfterStart = comparePoints(doc, range.endContainer, range.endOffset, contents.startContainer, contents.startOffset) > 0;
+      if (!startsBeforeEnd || !endsAfterStart) return null;
+
+      const startsBeforeLink = comparePoints(doc, range.startContainer, range.startOffset, contents.startContainer, contents.startOffset) <= 0;
+      const endsAfterLink = comparePoints(doc, range.endContainer, range.endOffset, contents.endContainer, contents.endOffset) >= 0;
+      const selected = range.cloneRange();
+      if (startsBeforeLink) selected.setStart(contents.startContainer, contents.startOffset);
+      if (endsAfterLink) selected.setEnd(contents.endContainer, contents.endOffset);
+      return { link, selected, wholeLink: startsBeforeLink && endsAfterLink };
+    }).filter(Boolean);
+
+    for (const target of targets.reverse()) {
+      if (target.wholeLink) {
+        unwrapLink(target.link);
+        continue;
+      }
+
+      const beforeRange = doc.createRange();
+      beforeRange.selectNodeContents(target.link);
+      beforeRange.setEnd(target.selected.startContainer, target.selected.startOffset);
+      const selectedContents = target.selected.cloneContents();
+      const afterRange = doc.createRange();
+      afterRange.selectNodeContents(target.link);
+      afterRange.setStart(target.selected.endContainer, target.selected.endOffset);
+
+      const replacement = doc.createDocumentFragment();
+      const beforeContents = beforeRange.cloneContents();
+      if (beforeContents.childNodes.length) {
+        const beforeLink = target.link.cloneNode(false);
+        beforeLink.appendChild(beforeContents);
+        replacement.appendChild(beforeLink);
+      }
+      replacement.appendChild(selectedContents);
+      const afterContents = afterRange.cloneContents();
+      if (afterContents.childNodes.length) {
+        const afterLink = target.link.cloneNode(false);
+        afterLink.appendChild(afterContents);
+        replacement.appendChild(afterLink);
+      }
+      target.link.parentNode.insertBefore(replacement, target.link);
+      target.link.parentNode.removeChild(target.link);
+    }
+    return targets.map(target => target.link);
+  }
+
+  function updateUnlinkButton() {
+    const button = $('[data-action="remove-link"]');
+    const frame = $('#pageFrame');
+    const doc = frame?.contentDocument;
+    const selection = doc?.getSelection();
+    if (!button || !doc || !selection || !selection.rangeCount) {
+      if (button) button.disabled = true;
+      return;
+    }
+    const root = doc.querySelector(editorRootSelector) || doc.querySelector('main') || doc.body;
+    const range = selection.getRangeAt(0);
+    const hasLink = range.collapsed
+      ? Boolean(closestLink(range.startContainer, root))
+      : [...root.querySelectorAll('a')].some(link => {
+        const contents = doc.createRange();
+        contents.selectNodeContents(link);
+        return comparePoints(doc, range.startContainer, range.startOffset, contents.endContainer, contents.endOffset) < 0 &&
+          comparePoints(doc, range.endContainer, range.endOffset, contents.startContainer, contents.startOffset) > 0;
+      });
+    button.disabled = !hasLink;
+  }
+
+  function removeSelectedLinks() {
+    const frame = $('#pageFrame');
+    const doc = frame?.contentDocument;
+    const selection = doc?.getSelection();
+    if (!doc || !selection || !selection.rangeCount) return;
+    const range = selection.getRangeAt(0).cloneRange();
+    const root = doc.querySelector(editorRootSelector) || doc.querySelector('main') || doc.body;
+    const removed = unlinkLinksFromRange(doc, root, range);
+    if (!removed.length) {
+      showToast('Place the cursor in a link or select linked text to remove it.', 'error');
+      updateUnlinkButton();
+      return;
+    }
+    selection.removeAllRanges();
+    markDirty();
+    updateUnlinkButton();
+    showToast(removed.length === 1 ? 'Link removed.' : `${removed.length} links removed.`);
   }
 
   function openInternalLinkPicker() {
