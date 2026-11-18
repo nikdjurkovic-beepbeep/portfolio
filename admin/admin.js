@@ -444,13 +444,44 @@
         hrefField.value = parsed.href;
       }
       const frameDocument = frame.contentDocument;
+      const linkRange = savedSelection.cloneRange();
+      const fallbackRange = savedSelection.cloneRange();
+      frame.contentWindow.focus();
       const currentSelection = frameDocument.getSelection();
       currentSelection.removeAllRanges();
-      currentSelection.addRange(savedSelection);
+      currentSelection.addRange(linkRange);
       frameDocument.execCommand('createLink', false, hrefField.value);
+      const editRoot = frameDocument.querySelector(editorRootSelector) || frameDocument.querySelector('main') || frameDocument.body;
+      let newLinks = [...editRoot.querySelectorAll('a')].filter(link => {
+        try { return linkRange.intersectsNode(link); } catch { return false; }
+      });
+      if (!newLinks.length) {
+        try {
+          if (!fallbackRange.toString()) throw new Error('The selected text is no longer available.');
+          const anchor = frameDocument.createElement('a');
+          anchor.setAttribute('href', hrefField.value);
+          const insertionRange = fallbackRange.cloneRange();
+          anchor.appendChild(insertionRange.extractContents());
+          insertionRange.insertNode(anchor);
+          newLinks = [anchor];
+        } catch {
+          showToast('The link could not be added. Re-select the text and try again.', 'error');
+          return;
+        }
+      }
+      newLinks.forEach(link => {
+        link.setAttribute('href', hrefField.value);
+        if (!manualHref.value.trim()) {
+          link.classList.add('cms-internal-link');
+          link.style.color = '#77e3c4';
+          link.style.textDecoration = 'underline';
+          link.style.textDecorationColor = '#77e3c4';
+          link.style.textUnderlineOffset = '3px';
+        }
+      });
       savedSelection = null;
       overlay.remove();
-      frame.contentWindow.focus();
+      currentSelection.removeAllRanges();
       markDirty();
       showToast('Link inserted.');
     });

@@ -266,6 +266,19 @@
   }
 }
 
+/* Internal links inserted through the content editor use the site accent. */
+a.cms-internal-link {
+  color: #77e3c4;
+  text-decoration: underline;
+  text-decoration-color: #77e3c4;
+  text-underline-offset: 3px;
+}
+
+a.cms-internal-link:hover {
+  color: #a4f0da;
+  text-decoration-color: #a4f0da;
+}
+
 /* Prevent wide tables and long URLs from expanding mobile layouts */
 @media (max-width: 700px) {
   .table-wrap {
