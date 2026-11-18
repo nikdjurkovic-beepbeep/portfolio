@@ -17,8 +17,9 @@ Use a short expiry and never put the token in a public file, commit, or chat. It
 
 1. Choose **All pages** to find the homepage, SEO Studies article, or any of the SEO tool pages.
 2. Click **Edit**. Click text in the preview to change it, or select text and use the formatting toolbar.
-3. Update the browser title or search description in **Page details** if needed. The existing canonical URL is shown as read-only.
-4. Choose **Publish changes**. The editor makes a GitHub commit on `main`; GitHub Pages then updates the public site.
+3. To add an internal link, select the text, click the link icon, choose a destination page, and optionally select a section heading. The editor inserts a root-relative site link.
+4. Update the browser title or search description in **Page details** if needed. The existing canonical URL is shown as read-only.
+5. Choose **Publish changes**. The editor makes a GitHub commit on `main`; GitHub Pages then updates the public site.
 
 The page list is read from the repository each time you connect or refresh it. Newly added HTML pages appear automatically and use the same editor.
 

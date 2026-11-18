@@ -300,7 +300,7 @@
             <button type="button" class="tool-button" data-command="undo" title="Undo">↶</button><button type="button" class="tool-button" data-command="redo" title="Redo">↷</button><span class="tool-divider"></span>
             <button type="button" class="tool-button" data-command="bold" title="Bold"><b>B</b></button><button type="button" class="tool-button" data-command="italic" title="Italic"><i>I</i></button><button type="button" class="tool-button" data-command="underline" title="Underline"><u>U</u></button><span class="tool-divider"></span>
             <button type="button" class="tool-button" data-block="P" title="Paragraph">¶</button><button type="button" class="tool-button" data-block="H2" title="Heading 2">H2</button><button type="button" class="tool-button" data-block="H3" title="Heading 3">H3</button><button type="button" class="tool-button" data-command="formatBlock" data-value="BLOCKQUOTE" title="Quote">❞</button><span class="tool-divider"></span>
-            <button type="button" class="tool-button" data-command="insertUnorderedList" title="Bulleted list">☷</button><button type="button" class="tool-button" data-command="insertOrderedList" title="Numbered list">1.</button><button type="button" class="tool-button" data-action="insert-link" title="Insert link">↗</button><button type="button" class="tool-button" data-action="open-media" title="Insert image">▧</button>
+            <button type="button" class="tool-button" data-command="insertUnorderedList" title="Bulleted list">☷</button><button type="button" class="tool-button" data-command="insertOrderedList" title="Numbered list">1.</button><button type="button" class="tool-button" data-action="insert-link" title="Insert internal link">↗</button><button type="button" class="tool-button" data-action="open-media" title="Insert image">▧</button>
           </div>
           <div class="editor-stage"><iframe class="editor-frame" id="pageFrame" title="Editable page preview" sandbox="allow-same-origin" referrerpolicy="no-referrer"></iframe><p class="editor-hint"><span class="hint-bulb">✦</span><span>Click into the page to edit its text. Use the toolbar to format selected text. Interactive controls are shown as part of the design; their behavior stays in the published page.</span></p></div>
         </section>
@@ -337,7 +337,7 @@
       }
     }, { once: true });
     frame.srcdoc = buildEditorFrame(originalHtml, path);
-    $$('.toolbar [data-command], .toolbar [data-block]').forEach(button => button.addEventListener('mousedown', event => event.preventDefault()));
+    $$('.toolbar button').forEach(button => button.addEventListener('mousedown', event => event.preventDefault()));
     $('#publishButton').addEventListener('click', saveCurrentPage);
     $('#pageTitle').addEventListener('input', () => {
       $('#seoPreviewTitle').textContent = $('#pageTitle').value;
@@ -370,10 +370,7 @@
       return;
     }
     const action = event.target.closest('[data-action]')?.dataset.action;
-    if (action === 'insert-link' && frameReady) {
-      const href = window.prompt('Paste the link URL:');
-      if (href) { $('#pageFrame').contentDocument.execCommand('createLink', false, href); markDirty(); }
-    }
+    if (action === 'insert-link' && frameReady) openInternalLinkPicker();
     if (action === 'open-media') openMediaChooser();
     if (action === 'open-pages') leaveEditorAndGo('pages');
     if (action === 'refresh-pages') refreshPagesAndRender();
@@ -383,6 +380,95 @@
     if (currentView === 'editor' && dirty && !window.confirm('You have unpublished changes. Leave this page and discard them?')) return;
     dirty = false;
     renderView(view);
+  }
+
+  function publicPageUrl(path) {
+    if (path === 'index.html') return '/';
+    if (/\/index\.html$/i.test(path)) return `/${path.slice(0, -11)}/`;
+    return `/${path}`;
+  }
+
+  function pageSections(page) {
+    if (!page.html) return [];
+    const doc = new DOMParser().parseFromString(page.html, 'text/html');
+    const root = getPageEditorRoot(doc, page.path);
+    return [...root.querySelectorAll('[id]')]
+      .filter(element => /^H[1-3]$/.test(element.tagName) || /^(SECTION|ARTICLE)$/.test(element.tagName))
+      .map(element => ({ id: element.id, label: element.textContent.trim().replace(/\s+/g, ' ').slice(0, 90) || element.id }))
+      .filter(item => item.id);
+  }
+
+  function openInternalLinkPicker() {
+    const frame = $('#pageFrame');
+    const selection = frame?.contentDocument?.getSelection();
+    if (!selection || selection.isCollapsed || !selection.toString().trim()) {
+      showToast('Select the text you want to link, then choose the link button.', 'error');
+      return;
+    }
+    savedSelection = selection.getRangeAt(0).cloneRange();
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-backdrop internal-link-modal';
+    overlay.innerHTML = `<form class="modal" id="internalLinkForm" role="dialog" aria-modal="true" aria-labelledby="internalLinkTitle"><div class="eyebrow">LINKS</div><h2 id="internalLinkTitle">Insert link</h2><p>Choose one of your pages and optionally a section, or enter an external URL.</p><div class="field"><label for="internalPage">Destination page</label><select id="internalPage"><option value="">Choose a page</option>${pages.map(page => `<option value="${escapeHtml(page.path)}">${escapeHtml(page.title)} — ${escapeHtml(publicPageUrl(page.path))}</option>`).join('')}</select></div><div class="field"><label for="internalSection">Section (optional)</label><select id="internalSection" disabled><option value="">Top of page</option></select><small class="field-note">Sections are based on headings and named sections on the selected page.</small></div><div class="field"><label for="manualHref">External URL (optional)</label><input id="manualHref" type="url" placeholder="https://example.com/page"><small class="field-note">Enter an external web address here, or leave it blank to use the selected site page.</small></div><div class="field"><label for="internalHref">Link address</label><input id="internalHref" readonly placeholder="Select a page or enter a URL"></div><div class="field"><label for="internalLinkText">Selected text</label><input id="internalLinkText" readonly value="${escapeHtml(selection.toString().trim().slice(0, 180))}"></div><div class="modal-actions"><button type="button" class="button quiet" data-cancel-link>Cancel</button><button type="submit" class="button primary" id="applyInternalLink" disabled>Insert link</button></div></form>`;
+    document.body.append(overlay);
+    const pageSelect = $('#internalPage', overlay);
+    const sectionSelect = $('#internalSection', overlay);
+    const hrefField = $('#internalHref', overlay);
+    const applyButton = $('#applyInternalLink', overlay);
+    const manualHref = $('#manualHref', overlay);
+    const updateHref = () => {
+      if (manualHref.value.trim()) {
+        hrefField.value = manualHref.value.trim();
+        applyButton.disabled = false;
+        return;
+      }
+      if (!pageSelect.value) { hrefField.value = ''; applyButton.disabled = true; return; }
+      hrefField.value = `${publicPageUrl(pageSelect.value)}${sectionSelect.value ? `#${encodeURIComponent(sectionSelect.value)}` : ''}`;
+      applyButton.disabled = false;
+    };
+    pageSelect.addEventListener('change', () => {
+      const page = pages.find(item => item.path === pageSelect.value);
+      const sections = page ? pageSections(page) : [];
+      sectionSelect.innerHTML = `<option value="">Top of page</option>${sections.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.label)}</option>`).join('')}`;
+      sectionSelect.disabled = !page || !sections.length;
+      updateHref();
+    });
+    sectionSelect.addEventListener('change', updateHref);
+    manualHref.addEventListener('input', updateHref);
+    $('#internalLinkForm', overlay).addEventListener('submit', event => {
+      event.preventDefault();
+      if (!hrefField.value || !savedSelection) return;
+      if (manualHref.value.trim()) {
+        let parsed;
+        try { parsed = new URL(manualHref.value.trim()); } catch { showToast('Enter a complete external URL.', 'error'); return; }
+        if (!['http:', 'https:', 'mailto:'].includes(parsed.protocol)) { showToast('Use an http, https, or mailto link.', 'error'); return; }
+        hrefField.value = parsed.href;
+      }
+      const frameDocument = frame.contentDocument;
+      const currentSelection = frameDocument.getSelection();
+      currentSelection.removeAllRanges();
+      currentSelection.addRange(savedSelection);
+      frameDocument.execCommand('createLink', false, hrefField.value);
+      savedSelection = null;
+      overlay.remove();
+      frame.contentWindow.focus();
+      markDirty();
+      showToast('Link inserted.');
+    });
+    overlay.addEventListener('click', event => {
+      if (event.target === overlay || event.target.closest('[data-cancel-link]')) {
+        overlay.remove();
+        savedSelection = null;
+        frame.contentWindow.focus();
+      }
+    });
+    overlay.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        overlay.remove();
+        savedSelection = null;
+        frame.contentWindow.focus();
+      }
+    });
+    pageSelect.focus();
   }
 
   function updateToc(doc, article) {
