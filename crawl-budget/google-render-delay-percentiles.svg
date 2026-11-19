@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-labelledby="t d">
+<title id="t">How long Google took to render pages after crawling them</title>
+<desc id="d">Horizontal bar chart on a logarithmic time scale. Delay between Googlebot’s crawl and the completed render on nextjs.org in April 2024, from more than 37,000 matched crawl and render events measured by Vercel and MERJ: 25th percentile within 4 seconds; median 10 seconds; 75th percentile 26 seconds; 90th percentile about 3 hours; 95th percentile about 6 hours; 99th percentile about 18 hours.</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.panel-d{fill:#111d30;stroke:#6f8196;stroke-width:2;stroke-dasharray:8 7}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.sub{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 16px Arial,Helvetica,sans-serif;letter-spacing:2px}
+.t{fill:#ecf2fa;font:600 20px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.a{fill:#77e3c4;font:700 21px Arial,Helvetica,sans-serif}
+.v{fill:#ecf2fa;font:700 18px Arial,Helvetica,sans-serif}
+.tick{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.note{fill:#a9b8c9;font:500 15px Arial,Helvetica,sans-serif}
+.grid{stroke:#26374b;stroke-width:1}
+.base{stroke:#6f8196;stroke-width:1.5}
+.bar{fill:#77e3c4}
+.arrow{stroke:#77e3c4;stroke-width:3;fill:none}
+.arrow-d{stroke:#6f8196;stroke-width:3;fill:none;stroke-dasharray:6 6}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="40" y="50" class="title" text-anchor="start" style="font-size:28px">How long Google took to render pages after crawling them</text>
+<text x="40" y="80" class="sub" text-anchor="start">nextjs.org, April 2024 · 37,000+ matched crawl and render events · Vercel and MERJ</text>
+<line x1="220.0" y1="106" x2="220.0" y2="454" class="base"/>
+<text x="220.0" y="474" class="tick" text-anchor="middle">1 s</text>
+<line x1="357.7" y1="106" x2="357.7" y2="454" class="grid"/>
+<text x="357.7" y="474" class="tick" text-anchor="middle">10 s</text>
+<line x1="464.9" y1="106" x2="464.9" y2="454" class="grid"/>
+<text x="464.9" y="474" class="tick" text-anchor="middle">1 min</text>
+<line x1="602.7" y1="106" x2="602.7" y2="454" class="grid"/>
+<text x="602.7" y="474" class="tick" text-anchor="middle">10 min</text>
+<line x1="709.9" y1="106" x2="709.9" y2="454" class="grid"/>
+<text x="709.9" y="474" class="tick" text-anchor="middle">1 h</text>
+<line x1="847.6" y1="106" x2="847.6" y2="454" class="grid"/>
+<text x="847.6" y="474" class="tick" text-anchor="middle">10 h</text>
+<line x1="900.0" y1="106" x2="900.0" y2="454" class="grid"/>
+<text x="900.0" y="474" class="tick" text-anchor="middle">1 day</text>
+<text x="40" y="142" class="t" text-anchor="start" style="font-size:18px">25th percentile</text>
+<path d="M220 122 H298.9 Q302.9 122 302.9 126 V148 Q302.9 152 298.9 152 H220 Z" class="bar"/>
+<text x="314.9" y="144" class="v" text-anchor="start">within 4 s</text>
+<text x="40" y="200" class="t" text-anchor="start" style="font-size:18px">Median</text>
+<path d="M220 180 H353.7 Q357.7 180 357.7 184 V206 Q357.7 210 353.7 210 H220 Z" class="bar"/>
+<text x="369.7" y="202" class="v" text-anchor="start">10 s</text>
+<text x="40" y="258" class="t" text-anchor="start" style="font-size:18px">75th percentile</text>
+<path d="M220 238 H410.9 Q414.9 238 414.9 242 V264 Q414.9 268 410.9 268 H220 Z" class="bar"/>
+<text x="426.9" y="260" class="v" text-anchor="start">26 s</text>
+<text x="40" y="316" class="t" text-anchor="start" style="font-size:18px">90th percentile</text>
+<path d="M220 296 H771.6 Q775.6 296 775.6 300 V322 Q775.6 326 771.6 326 H220 Z" class="bar"/>
+<text x="787.6" y="318" class="v" text-anchor="start">~3 h</text>
+<text x="40" y="374" class="t" text-anchor="start" style="font-size:18px">95th percentile</text>
+<path d="M220 354 H813.1 Q817.1 354 817.1 358 V380 Q817.1 384 813.1 384 H220 Z" class="bar"/>
+<text x="829.1" y="376" class="v" text-anchor="start">~6 h</text>
+<text x="40" y="432" class="t" text-anchor="start" style="font-size:18px">99th percentile</text>
+<path d="M220 412 H878.8 Q882.8 412 882.8 416 V438 Q882.8 442 878.8 442 H220 Z" class="bar"/>
+<text x="894.8" y="434" class="v" text-anchor="start">~18 h</text>
+<text x="40" y="536" class="note" text-anchor="start">Logarithmic scale. Half of the renders finished within 10 seconds of the crawl; the slowest 10% took hours.</text>
+</svg>

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-labelledby="t d">
+<title id="t">What caused Google’s crawling issues in 2025</title>
+<desc id="d">Horizontal bar chart. Approximate share of crawling issues in Google’s internal year-end report for 2025: faceted navigation about 50%; action parameters such as add to cart and wishlist about 25%; irrelevant parameters such as tracking and session IDs about 10%; plugins and widgets about 5%; other rare issues such as double-encoded URLs about 2%. The remaining share, about 8%, was not broken down. Source: Search Off the Record, February 2026, as reported by Search Engine Roundtable and Search Engine Journal.</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.panel-d{fill:#111d30;stroke:#6f8196;stroke-width:2;stroke-dasharray:8 7}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.sub{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 16px Arial,Helvetica,sans-serif;letter-spacing:2px}
+.t{fill:#ecf2fa;font:600 20px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.a{fill:#77e3c4;font:700 21px Arial,Helvetica,sans-serif}
+.v{fill:#ecf2fa;font:700 18px Arial,Helvetica,sans-serif}
+.tick{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.note{fill:#a9b8c9;font:500 15px Arial,Helvetica,sans-serif}
+.grid{stroke:#26374b;stroke-width:1}
+.base{stroke:#6f8196;stroke-width:1.5}
+.bar{fill:#77e3c4}
+.arrow{stroke:#77e3c4;stroke-width:3;fill:none}
+.arrow-d{stroke:#6f8196;stroke-width:3;fill:none;stroke-dasharray:6 6}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="40" y="50" class="title" text-anchor="start">What caused Google’s crawling issues in 2025</text>
+<text x="40" y="80" class="sub" text-anchor="start">Approximate share of issues in Google’s internal year-end crawl report</text>
+<line x1="330.0" y1="110" x2="330.0" y2="456" class="base"/>
+<text x="330.0" y="476" class="tick" text-anchor="middle">0%</text>
+<line x1="436.0" y1="110" x2="436.0" y2="456" class="grid"/>
+<text x="436.0" y="476" class="tick" text-anchor="middle">10%</text>
+<line x1="542.0" y1="110" x2="542.0" y2="456" class="grid"/>
+<text x="542.0" y="476" class="tick" text-anchor="middle">20%</text>
+<line x1="648.0" y1="110" x2="648.0" y2="456" class="grid"/>
+<text x="648.0" y="476" class="tick" text-anchor="middle">30%</text>
+<line x1="754.0" y1="110" x2="754.0" y2="456" class="grid"/>
+<text x="754.0" y="476" class="tick" text-anchor="middle">40%</text>
+<line x1="860.0" y1="110" x2="860.0" y2="456" class="grid"/>
+<text x="860.0" y="476" class="tick" text-anchor="middle">50%</text>
+<text x="40" y="140" class="t" text-anchor="start" style="font-size:19px">Faceted navigation</text>
+<text x="40" y="163" class="m" text-anchor="start" style="font-size:15px">filters and sort orders</text>
+<path d="M330 126 H856.0 Q860.0 126 860.0 130 V152 Q860.0 156 856.0 156 H330 Z" class="bar"/>
+<text x="872.0" y="148" class="v" text-anchor="start">~50%</text>
+<text x="40" y="210" class="t" text-anchor="start" style="font-size:19px">Action parameters</text>
+<text x="40" y="233" class="m" text-anchor="start" style="font-size:15px">add to cart, add to wishlist</text>
+<path d="M330 196 H591.0 Q595.0 196 595.0 200 V222 Q595.0 226 591.0 226 H330 Z" class="bar"/>
+<text x="607.0" y="218" class="v" text-anchor="start">~25%</text>
+<text x="40" y="280" class="t" text-anchor="start" style="font-size:19px">Irrelevant parameters</text>
+<text x="40" y="303" class="m" text-anchor="start" style="font-size:15px">tracking, session IDs</text>
+<path d="M330 266 H432.0 Q436.0 266 436.0 270 V292 Q436.0 296 432.0 296 H330 Z" class="bar"/>
+<text x="448.0" y="288" class="v" text-anchor="start">~10%</text>
+<text x="40" y="350" class="t" text-anchor="start" style="font-size:19px">Plugins and widgets</text>
+<text x="40" y="373" class="m" text-anchor="start" style="font-size:15px">e.g. WordPress plugins</text>
+<path d="M330 336 H379.0 Q383.0 336 383.0 340 V362 Q383.0 366 379.0 366 H330 Z" class="bar"/>
+<text x="395.0" y="358" class="v" text-anchor="start">~5%</text>
+<text x="40" y="420" class="t" text-anchor="start" style="font-size:19px">Other rare issues</text>
+<text x="40" y="443" class="m" text-anchor="start" style="font-size:15px">e.g. double-encoded URLs</text>
+<path d="M330 406 H347.2 Q351.2 406 351.2 410 V432 Q351.2 436 347.2 436 H330 Z" class="bar"/>
+<text x="363.2" y="428" class="v" text-anchor="start">~2%</text>
+<text x="40" y="536" class="note" text-anchor="start">About 8% not broken down. Search Off the Record, February 2026, via Search Engine Roundtable and Search Engine Journal.</text>
+</svg>

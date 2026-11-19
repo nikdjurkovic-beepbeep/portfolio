@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-labelledby="t d">
+<title id="t">What Google fetches for one page</title>
+<desc id="d">Two rows. Server-rendered HTML: one HTML response containing content and links goes straight to indexing and link discovery, one fetch per page. Client-side rendered: an HTML shell, then JavaScript and CSS bundles that are shared across pages and cached by Google for up to 30 days, then API or XHR calls with a new URL for every page, so the cache does not help, then a render queue lasting seconds to hours, then indexing and links found after rendering. Each fetch counts toward the crawl budget of the hostname that serves it and has its own 2MB limit. The rendering service does not fetch images or video.</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.panel-d{fill:#111d30;stroke:#6f8196;stroke-width:2;stroke-dasharray:8 7}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.sub{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 16px Arial,Helvetica,sans-serif;letter-spacing:2px}
+.t{fill:#ecf2fa;font:600 20px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.a{fill:#77e3c4;font:700 21px Arial,Helvetica,sans-serif}
+.v{fill:#ecf2fa;font:700 18px Arial,Helvetica,sans-serif}
+.tick{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.note{fill:#a9b8c9;font:500 15px Arial,Helvetica,sans-serif}
+.grid{stroke:#26374b;stroke-width:1}
+.base{stroke:#6f8196;stroke-width:1.5}
+.bar{fill:#77e3c4}
+.arrow{stroke:#77e3c4;stroke-width:3;fill:none}
+.arrow-d{stroke:#6f8196;stroke-width:3;fill:none;stroke-dasharray:6 6}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="500" y="50" class="title" text-anchor="middle">What Google fetches for one page</text>
+<text x="40" y="100" class="h" text-anchor="start">SERVER-RENDERED HTML</text>
+<rect x="40" y="116" width="300" height="84" rx="12" class="panel"/>
+<text x="190" y="152" class="t" text-anchor="middle">HTML response</text>
+<text x="190" y="178" class="m" text-anchor="middle">content and links</text>
+<path d="M346 158 H652" class="arrow"/><path d="M644 150 L654 158 L644 166" class="arrow" style="stroke-dasharray:none"/>
+<text x="500" y="146" class="m" text-anchor="middle">one fetch per page</text>
+<rect x="660" y="116" width="300" height="84" rx="12" class="panel"/>
+<text x="810" y="152" class="t" text-anchor="middle">Indexing</text>
+<text x="810" y="178" class="m" text-anchor="middle">links found at once</text>
+<text x="40" y="256" class="h" text-anchor="start">CLIENT-SIDE RENDERED</text>
+<rect x="40" y="272" width="160" height="112" rx="12" class="panel"/>
+<text x="120.0" y="312" class="t" text-anchor="middle" style="font-size:19px">HTML shell</text>
+<text x="120.0" y="340" class="m" text-anchor="middle" style="font-size:16px">little content</text>
+<path d="M202 328.0 H218" class="arrow"/><path d="M210 320.0 L220 328.0 L210 336.0" class="arrow" style="stroke-dasharray:none"/>
+<rect x="222" y="272" width="176" height="112" rx="12" class="panel-d"/>
+<text x="310.0" y="312" class="t" text-anchor="middle" style="font-size:19px">JS and CSS</text>
+<text x="310.0" y="340" class="m" text-anchor="middle" style="font-size:16px">shared, cached</text>
+<text x="310.0" y="362" class="m" text-anchor="middle" style="font-size:16px">up to 30 days</text>
+<path d="M400 328.0 H416" class="arrow"/><path d="M408 320.0 L418 328.0 L408 336.0" class="arrow" style="stroke-dasharray:none"/>
+<rect x="420" y="272" width="176" height="112" rx="12" class="panel-a"/>
+<text x="508.0" y="312" class="t" text-anchor="middle" style="font-size:19px">API / XHR calls</text>
+<text x="508.0" y="340" class="m" text-anchor="middle" style="font-size:16px">a new URL</text>
+<text x="508.0" y="362" class="m" text-anchor="middle" style="font-size:16px">for every page</text>
+<path d="M598 328.0 H614" class="arrow"/><path d="M606 320.0 L616 328.0 L606 336.0" class="arrow" style="stroke-dasharray:none"/>
+<rect x="618" y="272" width="160" height="112" rx="12" class="panel"/>
+<text x="698.0" y="312" class="t" text-anchor="middle" style="font-size:19px">Render queue</text>
+<text x="698.0" y="340" class="m" text-anchor="middle" style="font-size:16px">seconds</text>
+<text x="698.0" y="362" class="m" text-anchor="middle" style="font-size:16px">to hours</text>
+<path d="M780 328.0 H796" class="arrow"/><path d="M788 320.0 L798 328.0 L788 336.0" class="arrow" style="stroke-dasharray:none"/>
+<rect x="800" y="272" width="160" height="112" rx="12" class="panel"/>
+<text x="880.0" y="312" class="t" text-anchor="middle" style="font-size:19px">Indexing</text>
+<text x="880.0" y="340" class="m" text-anchor="middle" style="font-size:16px">links found</text>
+<text x="880.0" y="362" class="m" text-anchor="middle" style="font-size:16px">after render</text>
+<rect x="40" y="408" width="26" height="18" rx="4" class="panel-d"/>
+<text x="76" y="423" class="note" text-anchor="start">Fetched once, reused across pages</text>
+<rect x="380" y="408" width="26" height="18" rx="4" class="panel-a"/>
+<text x="416" y="423" class="note" text-anchor="start">Cost grows with the number of pages</text>
+<rect x="40" y="452" width="920" height="82" rx="10" class="panel"/>
+<text x="500" y="486" class="note" text-anchor="middle" style="font-size:16px;fill:#ecf2fa">Each fetch counts toward the crawl budget of the hostname that serves it</text>
+<text x="500" y="512" class="note" text-anchor="middle" style="font-size:16px">and has its own 2MB limit. Google’s renderer does not fetch images or video.</text>
+</svg>
