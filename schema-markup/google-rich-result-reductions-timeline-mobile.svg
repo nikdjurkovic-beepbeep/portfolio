@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 938" width="600" height="938" role="img" aria-labelledby="t d">
+<title id="t">Google’s rich results have been shrinking since 2023</title>
+<desc id="d">Timeline of reductions to Google rich results. August 2023: FAQ rich results limited to well-known, authoritative government and health websites; HowTo rich results removed on mobile. September 2023: HowTo removed on desktop, making the type deprecated. January 2025: breadcrumbs shown only in desktop results, not mobile. June 2025: Google announces it will phase out seven types: book actions, course info, claim review, estimated salary, learning video, special announcement and vehicle listing. November 2025: practice problems removed; Dataset markup used only by Dataset Search, not Google Search. May 2026: FAQ rich results stop appearing for all sites. As of October 2026, Google's search gallery lists 25 structured data features.</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.panel-d{fill:#111d30;stroke:#6f8196;stroke-width:2;stroke-dasharray:8 7}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.sub{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 15px Arial,Helvetica,sans-serif;letter-spacing:2px}
+.hd{fill:#a9b8c9;font:700 13px Arial,Helvetica,sans-serif;letter-spacing:1.5px}
+.t{fill:#ecf2fa;font:600 19px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 16px Arial,Helvetica,sans-serif}
+.s{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.a{fill:#77e3c4;font:700 20px Arial,Helvetica,sans-serif}
+.v{fill:#ecf2fa;font:700 17px Arial,Helvetica,sans-serif}
+.va{fill:#77e3c4;font:700 17px Arial,Helvetica,sans-serif}
+.tick{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.note{fill:#a9b8c9;font:500 15px Arial,Helvetica,sans-serif}
+.grid{stroke:#26374b;stroke-width:1}
+.base{stroke:#6f8196;stroke-width:1.5}
+.bar{fill:#77e3c4}
+.bar-m{fill:#6f8196}
+.dot{fill:#77e3c4}
+.ci{stroke:#77e3c4;stroke-width:3}
+.ci-m{stroke:#6f8196;stroke-width:3}
+.arrow{stroke:#77e3c4;stroke-width:3;fill:none}
+.arrow-d{stroke:#6f8196;stroke-width:2.5;fill:none;stroke-dasharray:5 5}
+.line{stroke:#26374b;stroke-width:4}
+.node{fill:#0e192a;stroke:#77e3c4;stroke-width:3}
+.pill{fill:#111d30;stroke:#6f8196;stroke-width:1.5;stroke-dasharray:4 4}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="30" y="48" class="title" text-anchor="start" style="font-size:27px">Google’s rich results have</text>
+<text x="30" y="80" class="title" text-anchor="start" style="font-size:27px">been shrinking since 2023</text>
+<line x1="60" y1="120" x2="60" y2="808" class="line"/>
+<circle cx="60" cy="160" r="10" class="node"/>
+<rect x="92" y="120" width="478" height="98" rx="12" class="panel"/>
+<text x="112" y="150" class="h" text-anchor="start" style="font-size:14px">AUG 2023</text>
+<text x="112" y="178" class="s" text-anchor="start" style="font-size:15px">FAQ limited to government and health sites; HowTo</text>
+<text x="112" y="199" class="s" text-anchor="start" style="font-size:15px">off mobile</text>
+<circle cx="60" cy="278" r="10" class="node"/>
+<rect x="92" y="238" width="478" height="98" rx="12" class="panel"/>
+<text x="112" y="268" class="h" text-anchor="start" style="font-size:14px">SEP 2023</text>
+<text x="112" y="296" class="s" text-anchor="start" style="font-size:15px">HowTo removed on desktop; type deprecated</text>
+<circle cx="60" cy="396" r="10" class="node"/>
+<rect x="92" y="356" width="478" height="98" rx="12" class="panel"/>
+<text x="112" y="386" class="h" text-anchor="start" style="font-size:14px">JAN 2025</text>
+<text x="112" y="414" class="s" text-anchor="start" style="font-size:15px">Breadcrumbs shown on desktop only, not mobile</text>
+<circle cx="60" cy="514" r="10" class="node"/>
+<rect x="92" y="474" width="478" height="98" rx="12" class="panel"/>
+<text x="112" y="504" class="h" text-anchor="start" style="font-size:14px">JUN 2025</text>
+<text x="112" y="532" class="s" text-anchor="start" style="font-size:15px">Seven types to be phased out, including course</text>
+<text x="112" y="553" class="s" text-anchor="start" style="font-size:15px">info and estimated salary</text>
+<circle cx="60" cy="632" r="10" class="node"/>
+<rect x="92" y="592" width="478" height="98" rx="12" class="panel"/>
+<text x="112" y="622" class="h" text-anchor="start" style="font-size:14px">NOV 2025</text>
+<text x="112" y="650" class="s" text-anchor="start" style="font-size:15px">Practice problems removed; Dataset out of Google</text>
+<text x="112" y="671" class="s" text-anchor="start" style="font-size:15px">Search</text>
+<circle cx="60" cy="750" r="10" class="node"/>
+<rect x="92" y="710" width="478" height="98" rx="12" class="panel-a"/>
+<text x="112" y="740" class="h" text-anchor="start" style="font-size:14px">MAY 2026</text>
+<text x="112" y="768" class="s" text-anchor="start" style="font-size:15px">FAQ rich results end for all sites</text>
+<rect x="30" y="828" width="540" height="76" rx="10" class="panel-d"/>
+<text x="300" y="860" class="note" text-anchor="middle">October 2026: the search gallery lists 25</text>
+<text x="300" y="884" class="note" text-anchor="middle">features. FAQ and HowTo are not among them.</text>
+</svg>

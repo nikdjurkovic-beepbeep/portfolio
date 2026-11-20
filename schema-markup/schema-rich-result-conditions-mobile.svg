@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1080" width="600" height="1080" role="img" aria-labelledby="t d">
+<title id="t">From schema markup to a rich result</title>
+<desc id="d">Diagram of the five conditions between structured data on a page and a click. 1. Markup on the page in JSON-LD, Microdata or RDFa; it drops out if the syntax is invalid or required properties are missing. 2. Policy check: the markup must describe visible content and follow Google's guidelines; misleading markup can lead to a manual action that removes rich result eligibility. 3. Supported feature: the type must still be listed in Google's search gallery; retired types such as FAQ and HowTo no longer produce rich results. 4. Google's choice: for each query Google may show the rich result, another feature or a plain result. 5. Rich result shown: searchers click only if the extra detail makes the result look worth it. Rankings are not affected at any stage; a structured data manual action removes the rich result, not the position.</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.panel-d{fill:#111d30;stroke:#6f8196;stroke-width:2;stroke-dasharray:8 7}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.sub{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 15px Arial,Helvetica,sans-serif;letter-spacing:2px}
+.hd{fill:#a9b8c9;font:700 13px Arial,Helvetica,sans-serif;letter-spacing:1.5px}
+.t{fill:#ecf2fa;font:600 19px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 16px Arial,Helvetica,sans-serif}
+.s{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.a{fill:#77e3c4;font:700 20px Arial,Helvetica,sans-serif}
+.v{fill:#ecf2fa;font:700 17px Arial,Helvetica,sans-serif}
+.va{fill:#77e3c4;font:700 17px Arial,Helvetica,sans-serif}
+.tick{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.note{fill:#a9b8c9;font:500 15px Arial,Helvetica,sans-serif}
+.grid{stroke:#26374b;stroke-width:1}
+.base{stroke:#6f8196;stroke-width:1.5}
+.bar{fill:#77e3c4}
+.bar-m{fill:#6f8196}
+.dot{fill:#77e3c4}
+.ci{stroke:#77e3c4;stroke-width:3}
+.ci-m{stroke:#6f8196;stroke-width:3}
+.arrow{stroke:#77e3c4;stroke-width:3;fill:none}
+.arrow-d{stroke:#6f8196;stroke-width:2.5;fill:none;stroke-dasharray:5 5}
+.line{stroke:#26374b;stroke-width:4}
+.node{fill:#0e192a;stroke:#77e3c4;stroke-width:3}
+.pill{fill:#111d30;stroke:#6f8196;stroke-width:1.5;stroke-dasharray:4 4}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="30" y="48" class="title" text-anchor="start" style="font-size:28px">From schema markup</text>
+<text x="30" y="80" class="title" text-anchor="start" style="font-size:28px">to a rich result</text>
+<rect x="30" y="120" width="280" height="144" rx="12" class="panel"/>
+<text x="48" y="150" class="h" text-anchor="start">STEP 1</text>
+<text x="48" y="180" class="t" text-anchor="start" style="font-size:18px">Markup on page</text>
+<text x="48" y="206" class="s" text-anchor="start" style="font-size:15px">JSON-LD, Microdata</text>
+<text x="48" y="227" class="s" text-anchor="start" style="font-size:15px">or RDFa</text>
+<path d="M312 192 H324" class="arrow-d"/>
+<rect x="328" y="120" width="242" height="144" rx="12" class="panel-d"/>
+<text x="344" y="150" class="hd" text-anchor="start">DROPS OUT IF</text>
+<text x="344" y="178" class="s" text-anchor="start" style="font-size:15px">Invalid syntax or</text>
+<text x="344" y="199" class="s" text-anchor="start" style="font-size:15px">missing required</text>
+<text x="344" y="220" class="s" text-anchor="start" style="font-size:15px">properties</text>
+<path d="M170 266 V282" class="arrow"/>
+<path d="M164 276 L170 283 L176 276" class="arrow" style="stroke-width:2.5"/>
+<rect x="30" y="286" width="280" height="144" rx="12" class="panel"/>
+<text x="48" y="316" class="h" text-anchor="start">STEP 2</text>
+<text x="48" y="346" class="t" text-anchor="start" style="font-size:18px">Policy check</text>
+<text x="48" y="372" class="s" text-anchor="start" style="font-size:15px">Describes visible</text>
+<text x="48" y="393" class="s" text-anchor="start" style="font-size:15px">content, follows</text>
+<text x="48" y="414" class="s" text-anchor="start" style="font-size:15px">the guidelines</text>
+<path d="M312 358 H324" class="arrow-d"/>
+<rect x="328" y="286" width="242" height="144" rx="12" class="panel-d"/>
+<text x="344" y="316" class="hd" text-anchor="start">DROPS OUT IF</text>
+<text x="344" y="344" class="s" text-anchor="start" style="font-size:15px">Misleading markup:</text>
+<text x="344" y="365" class="s" text-anchor="start" style="font-size:15px">manual action</text>
+<text x="344" y="386" class="s" text-anchor="start" style="font-size:15px">removes eligibility</text>
+<path d="M170 432 V448" class="arrow"/>
+<path d="M164 442 L170 449 L176 442" class="arrow" style="stroke-width:2.5"/>
+<rect x="30" y="452" width="280" height="144" rx="12" class="panel"/>
+<text x="48" y="482" class="h" text-anchor="start">STEP 3</text>
+<text x="48" y="512" class="t" text-anchor="start" style="font-size:18px">Supported feature</text>
+<text x="48" y="538" class="s" text-anchor="start" style="font-size:15px">Type is listed in</text>
+<text x="48" y="559" class="s" text-anchor="start" style="font-size:15px">Google’s search</text>
+<text x="48" y="580" class="s" text-anchor="start" style="font-size:15px">gallery</text>
+<path d="M312 524 H324" class="arrow-d"/>
+<rect x="328" y="452" width="242" height="144" rx="12" class="panel-d"/>
+<text x="344" y="482" class="hd" text-anchor="start">DROPS OUT IF</text>
+<text x="344" y="510" class="s" text-anchor="start" style="font-size:15px">Retired types such</text>
+<text x="344" y="531" class="s" text-anchor="start" style="font-size:15px">as FAQ and HowTo</text>
+<text x="344" y="552" class="s" text-anchor="start" style="font-size:15px">show nothing</text>
+<path d="M170 598 V614" class="arrow"/>
+<path d="M164 608 L170 615 L176 608" class="arrow" style="stroke-width:2.5"/>
+<rect x="30" y="618" width="280" height="144" rx="12" class="panel"/>
+<text x="48" y="648" class="h" text-anchor="start">STEP 4</text>
+<text x="48" y="678" class="t" text-anchor="start" style="font-size:18px">Google’s choice</text>
+<text x="48" y="704" class="s" text-anchor="start" style="font-size:15px">Decided per query</text>
+<text x="48" y="725" class="s" text-anchor="start" style="font-size:15px">and per device</text>
+<path d="M312 690 H324" class="arrow-d"/>
+<rect x="328" y="618" width="242" height="144" rx="12" class="panel-d"/>
+<text x="344" y="648" class="hd" text-anchor="start">DROPS OUT IF</text>
+<text x="344" y="676" class="s" text-anchor="start" style="font-size:15px">Another feature or</text>
+<text x="344" y="697" class="s" text-anchor="start" style="font-size:15px">a plain result may</text>
+<text x="344" y="718" class="s" text-anchor="start" style="font-size:15px">be shown instead</text>
+<path d="M170 764 V780" class="arrow"/>
+<path d="M164 774 L170 781 L176 774" class="arrow" style="stroke-width:2.5"/>
+<rect x="30" y="784" width="280" height="144" rx="12" class="panel-a"/>
+<text x="48" y="814" class="h" text-anchor="start">STEP 5</text>
+<text x="48" y="844" class="t" text-anchor="start" style="font-size:18px">Rich result shown</text>
+<text x="48" y="870" class="s" text-anchor="start" style="font-size:15px">Extra detail next</text>
+<text x="48" y="891" class="s" text-anchor="start" style="font-size:15px">to the result</text>
+<path d="M312 856 H324" class="arrow-d"/>
+<rect x="328" y="784" width="242" height="144" rx="12" class="panel-d"/>
+<text x="344" y="814" class="hd" text-anchor="start">THEN</text>
+<text x="344" y="842" class="s" text-anchor="start" style="font-size:15px">Searchers click only</text>
+<text x="344" y="863" class="s" text-anchor="start" style="font-size:15px">if the detail makes</text>
+<text x="344" y="884" class="s" text-anchor="start" style="font-size:15px">it worth clicking</text>
+<rect x="30" y="954" width="540" height="104" rx="12" class="panel-a"/>
+<text x="300" y="992" class="a" text-anchor="middle">Rankings: not affected at any step</text>
+<text x="300" y="1020" class="s" text-anchor="middle" style="font-size:15px">A manual action removes the rich result,</text>
+<text x="300" y="1042" class="s" text-anchor="middle" style="font-size:15px">not the page’s position.</text>
+</svg>

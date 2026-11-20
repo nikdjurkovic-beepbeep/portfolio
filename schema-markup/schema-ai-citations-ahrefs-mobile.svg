@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 640" width="600" height="640" role="img" aria-labelledby="t d">
+<title id="t">Adding schema did not lift AI citations</title>
+<desc id="d">Bar chart of the Ahrefs matched difference-in-differences study, published May 2026. 1,885 pages that added JSON-LD between August 2025 and March 2026 were compared with matched control pages over 30 days before and after the change. Change in citations relative to controls: Google AI Overviews minus 4.6%, small but statistically significant; Google AI Mode plus 2.4%, statistically indistinguishable from zero; ChatGPT plus 2.2%, statistically indistinguishable from zero. All treated pages already had more than 100 AI Overview citations before adding schema.</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.panel-d{fill:#111d30;stroke:#6f8196;stroke-width:2;stroke-dasharray:8 7}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.sub{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 15px Arial,Helvetica,sans-serif;letter-spacing:2px}
+.hd{fill:#a9b8c9;font:700 13px Arial,Helvetica,sans-serif;letter-spacing:1.5px}
+.t{fill:#ecf2fa;font:600 19px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 16px Arial,Helvetica,sans-serif}
+.s{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.a{fill:#77e3c4;font:700 20px Arial,Helvetica,sans-serif}
+.v{fill:#ecf2fa;font:700 17px Arial,Helvetica,sans-serif}
+.va{fill:#77e3c4;font:700 17px Arial,Helvetica,sans-serif}
+.tick{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.note{fill:#a9b8c9;font:500 15px Arial,Helvetica,sans-serif}
+.grid{stroke:#26374b;stroke-width:1}
+.base{stroke:#6f8196;stroke-width:1.5}
+.bar{fill:#77e3c4}
+.bar-m{fill:#6f8196}
+.dot{fill:#77e3c4}
+.ci{stroke:#77e3c4;stroke-width:3}
+.ci-m{stroke:#6f8196;stroke-width:3}
+.arrow{stroke:#77e3c4;stroke-width:3;fill:none}
+.arrow-d{stroke:#6f8196;stroke-width:2.5;fill:none;stroke-dasharray:5 5}
+.line{stroke:#26374b;stroke-width:4}
+.node{fill:#0e192a;stroke:#77e3c4;stroke-width:3}
+.pill{fill:#111d30;stroke:#6f8196;stroke-width:1.5;stroke-dasharray:4 4}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="30" y="48" class="title" text-anchor="start" style="font-size:28px">Adding schema did not</text>
+<text x="30" y="80" class="title" text-anchor="start" style="font-size:28px">lift AI citations</text>
+<text x="30" y="108" class="sub" text-anchor="start" style="font-size:15px">Change vs matched control pages</text>
+<line x1="50.0" y1="130" x2="50.0" y2="470" class="grid"/>
+<text x="50.0" y="490" class="tick" text-anchor="middle">−6%</text>
+<line x1="175.0" y1="130" x2="175.0" y2="470" class="grid"/>
+<text x="175.0" y="490" class="tick" text-anchor="middle">−3%</text>
+<line x1="300.0" y1="130" x2="300.0" y2="470" class="base"/>
+<text x="300.0" y="490" class="tick" text-anchor="middle">0%</text>
+<line x1="425.0" y1="130" x2="425.0" y2="470" class="grid"/>
+<text x="425.0" y="490" class="tick" text-anchor="middle">+3%</text>
+<line x1="550.0" y1="130" x2="550.0" y2="470" class="grid"/>
+<text x="550.0" y="490" class="tick" text-anchor="middle">+6%</text>
+<text x="30" y="160" class="t" text-anchor="start" style="font-size:17px">Google AI Overviews</text>
+<text x="30" y="180" class="s" text-anchor="start" style="font-size:13px">statistically significant</text>
+<rect x="108.3" y="199" width="191.7" height="26" rx="3" class="bar"/>
+<text x="100.3" y="218" class="v" text-anchor="end">−4.6%</text>
+<text x="30" y="266" class="t" text-anchor="start" style="font-size:17px">Google AI Mode</text>
+<text x="30" y="286" class="s" text-anchor="start" style="font-size:13px">indistinguishable from zero</text>
+<rect x="300.0" y="305" width="100.0" height="26" rx="3" class="bar-m"/>
+<text x="408.0" y="324" class="v" text-anchor="start">+2.4%</text>
+<text x="30" y="372" class="t" text-anchor="start" style="font-size:17px">ChatGPT</text>
+<text x="30" y="392" class="s" text-anchor="start" style="font-size:13px">indistinguishable from zero</text>
+<rect x="300.0" y="411" width="91.69999999999999" height="26" rx="3" class="bar-m"/>
+<text x="399.7" y="430" class="v" text-anchor="start">+2.2%</text>
+<rect x="30" y="512" width="540" height="104" rx="10" class="panel-d"/>
+<text x="300" y="542" class="note" text-anchor="middle" style="font-size:14px">1,885 pages that added JSON-LD,</text>
+<text x="300" y="564" class="note" text-anchor="middle" style="font-size:14px">30 days before and after. All already had</text>
+<text x="300" y="586" class="note" text-anchor="middle" style="font-size:14px">100+ AI Overview citations. Ahrefs study.</text>
+</svg>
