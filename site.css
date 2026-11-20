@@ -203,6 +203,11 @@
   }
   .dropdown-panel a{padding:11px 12px;font-size:13px;line-height:1.35;border-radius:8px;white-space:normal}
   .dropdown-panel a:hover,.dropdown-panel a[aria-current="page"]{background:#1a2c43;color:var(--accent)}
+  /* Anchor dropdowns to the full nav row, not to their trigger. Centering under
+     a trigger near the right edge (SEO Studies) pushed the panel off-screen. */
+  header nav{position:relative}
+  .nav-dropdown{position:static}
+  .dropdown-panel{left:0;right:0;transform:none;width:auto;max-width:none;top:calc(100% + 10px)}
   .tool-top,.tool-body{padding:19px}
   .url-input{min-height:170px}
   .tool-actions{gap:9px}
