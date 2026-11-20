@@ -1,0 +1,5 @@
+# GitHub Pages (Jekyll) settings. The site is plain HTML; Jekyll only copies files.
+# Keep the CMS Worker source, tests and tooling out of the published site.
+exclude:
+  - cms
+  - node_modules

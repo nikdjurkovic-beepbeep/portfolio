@@ -1,0 +1,33 @@
+# NikolaSEO CMS edge Worker.
+# Sits on the nikolaseo.com route in front of the GitHub Pages origin.
+name = "nikolaseo-cms"
+main = "src/index.js"
+compatibility_date = "2025-11-01"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = false
+
+routes = [
+  { pattern = "nikolaseo.com/*", zone_name = "nikolaseo.com" }
+]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "nikolaseo-cms"
+database_id = "REPLACE_AFTER_wrangler_d1_create"
+migrations_dir = "migrations"
+
+[triggers]
+crons = ["*/5 * * * *"]   # scheduled publishing
+
+[vars]
+GITHUB_REPO = "nikdjurkovic-beepbeep/portfolio"
+GITHUB_BRANCH = "main"
+LIVE_CHECKER_URL = "https://nikolaseo-http-status-checker.nik-djurkovic.workers.dev"
+
+# Secrets (set with `npx wrangler secret put NAME`, never committed):
+#   GITHUB_TOKEN    fine-grained token, Contents: read & write, this repository only
+#   SESSION_SECRET  random 32+ byte string (signs password-page cookies)
+#   SETUP_TOKEN     one-time token used to create the first administrator
+
+[observability]
+enabled = true

@@ -1,41 +1,83 @@
-# NikolaSEO Content Studio
+# NikolaSEO Content Studio — user guide
 
-The content editor is available at **https://nikolaseo.com/admin/** after the site is published from the `main` branch.
+The Content Studio is at **https://nikolaseo.com/admin/**. Sign in with your CMS account; there are no GitHub tokens to paste any more. (First-time deployment steps: [cms/docs/DEPLOY.md](cms/docs/DEPLOY.md).)
 
-## Connect GitHub
+## Pages
 
-The editor is a static page hosted with the site. It uses GitHub to read and publish website files; it does not use a separate CMS server.
+- **Pages** lists every page with its status: Published, Draft, Scheduled, Private, Password or Trash. A yellow **Unpublished changes** badge means a saved draft exists for a live page.
+- **Edit** opens the editor. Article pages have fields for the eyebrow, headline, standfirst and byline date. The body uses a WordPress-style visual editor that looks like the real site.
+- **Save draft** (Ctrl/⌘+S) stores your changes in the CMS only; the live page does not change. Drafts autosave every 30 seconds.
+- **Preview** shows the page with your unpublished changes.
+- **Publish** / **Update live page** commits the page and an updated `sitemap.xml`. GitHub Pages updates the site in about a minute.
+- **Schedule** publishes at a set time. A scheduled update to a live page keeps the current version online until then.
+- **Visibility**:
+  - *Public*: anyone can see the page.
+  - *Private*: only signed-in users can see it.
+  - *Password protected*: visitors must enter the page password.
 
-1. Create a **fine-grained personal access token** at <https://github.com/settings/personal-access-tokens/new>.
-2. Set the resource owner to `nikdjurkovic-beepbeep` and limit the token to the `portfolio` repository.
-3. Grant **Contents: Read and write**. Metadata read access is included by GitHub.
-4. Open <https://nikolaseo.com/admin/> and paste the token into the connection field. The editor holds it in memory for that browser tab and does not save it in browser storage or website files.
+  Private and password pages are served by the CMS and removed from the public repository. Versions that were public before remain in git history.
+- **URL**: change the slug. For live pages, tick “Create a 301 redirect” so old links keep working.
+- **Revisions**: view, compare and restore any earlier version. A restored version comes back as a draft; nothing goes live until you publish.
+- **Duplicate**, **Unpublish**, **Move to trash** (restorable) and **Delete permanently** are in the Pages list and the editor.
+- Interactive tool areas on SEO tool pages show as locked “preserved” blocks. Edit the text around them; the tools keep working.
+- If someone else saves the page while you have it open, saving tells you instead of overwriting their work. The same happens if the file was changed directly on GitHub.
 
-Use a short expiry and never put the token in a public file, commit, or chat. It can be revoked from GitHub's personal access token settings.
+## Links
 
-## Edit a page
+Select text, then click the link button:
+- Choose one of your pages, or a section of it, from **Link list**, or type any URL.
+- Set **Open link in** (same tab or new tab).
+- Set **Rel** (nofollow, sponsored, ugc…).
 
-1. Choose **All pages** to find the homepage, SEO Studies article, or any of the SEO tool pages.
-2. Click **Edit**. Click text in the preview to change it, or select text and use the formatting toolbar.
-3. To add an internal link, select the text, click the link icon, choose a destination page, and optionally select a section heading. The editor inserts a root-relative site link.
-4. Update the browser title or search description in **Page details** if needed. The existing canonical URL is shown as read-only.
-5. Choose **Publish changes**. The editor makes a GitHub commit on `main`; GitHub Pages then updates the public site.
+Click inside a link to edit or remove it.
 
-The page list is read from the repository each time you connect or refresh it. Newly added HTML pages appear automatically and use the same editor.
+## SEO tab
 
-## Add a page
+- SEO title and meta description, with a Google-style preview and a pixel-width check.
+- Canonical URL, index/follow, extra robots directives, sitemap inclusion and breadcrumb schema.
+- Open Graph and X/Twitter title, description and image.
+- JSON-LD schema with validation and an Article template.
+- Redirects that point to this page.
 
-1. Choose **All pages → New page** and enter a title, URL slug, and search description.
-2. Edit the page in the visual editor.
-3. Optionally select **Add to the SEO Studies menu**. If selected, the editor updates the menu on every website page. Otherwise the page stays off the menu.
-4. Choose **Publish page**. The editor creates the page at `/<slug>/`, adds its canonical URL, and adds the URL to `sitemap.xml` in the same commit.
+## Media
 
-## Upload media
+Upload images and documents (drag and drop, up to 10 MB). JPEG/PNG can be converted to WebP automatically. Each file can have a title, alt text, caption and collection.
 
-Use **Media library** to upload PNG, JPG, WEBP, or GIF images up to 5 MB each. Uploaded files go in `assets/uploads/`. From a page editor, use the image button to choose an existing image or upload one and insert it at the current cursor position.
+**Replace** keeps the same URL, so every page using the file updates. **Delete** warns you if any page still uses the file.
 
-## Deployment
+## Redirects
 
-The site is published from the repository root on the `main` branch through GitHub Pages. Adding `admin/` does not require DNS, CNAME, Search Console, or sitemap changes. The editor is excluded from the sitemap and marked `noindex`.
+- **Add redirect**:
+  - Codes: 301, 302, 303, 307 or 308.
+  - Match types: exact, wildcard (`/blog/*` → `/studies/*`) or regex (`^/old/(\d+)$` → `/new/$1`).
+  - Query string: pass through, ignore, or must match exactly.
+  - Options for case and trailing slash.
+  - **Test before saving** shows exactly what the live site will do.
+- The list shows hits, last hit and diagnostics: loops, chains, conflicts, duplicates, invalid rules, unknown targets, and rules that hide a live page. You can filter, sort and apply bulk actions.
+- **Import CSV**: download the template, upload your file and review the preview. You can fix rows inline or exclude them, then import. Conflicts with existing rules are only overwritten if you type OVERWRITE. A backup is taken first.
+- **Export** all redirects or only the current filter. **Backups** lets you restore any automatic backup.
+- **Verify live** requests the selected URLs from the live site and compares the status code and Location header.
 
-Keep `CNAME` and `googlec6d6026729dc585e.html` at the repository root. The editor excludes the Search Console verification file from its page list and does not modify it.
+## Navigation
+
+Edit the header menu:
+- reorder items (↑ ↓)
+- nest items into dropdowns (→ ←)
+- add pages or external links
+- choose whether a link opens in a new tab
+
+**Save** first, check the **Preview**, then **Publish to site**, which updates the header on every page in one commit.
+
+## Users
+
+Administrators add users and send them a one-time link to set their password.
+
+| Role | Can do |
+|---|---|
+| Administrator | Everything |
+| Editor | All content; redirects only if granted |
+| Author | Own pages |
+| Contributor | Drafts of own pages only |
+| Subscriber | View private pages |
+
+Individual permissions can be granted or removed per user. A forgotten password is handled with **Users → Reset link**.
