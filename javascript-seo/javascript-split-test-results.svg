@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520" width="1000" height="520" role="img" aria-labelledby="t d">
+<title id="t">JavaScript split tests: two gains, two null results</title>
+<desc id="d">Chart of four SearchPilot SEO split tests that changed how JavaScript delivered content or links. 2017, category pages listing products: product information and links made visible without JavaScript, more than 6% uplift in organic traffic, statistically significant. 2021, ecommerce product pages rebuilt in React with server-side rendering, content already in the source: 13% uplift, attributed to better user experience and speed, no interval published. 2021, listing site profile pages: main AngularJS content pre-rendered in the HTML, no detectable change. 2021, travel site: internal links moved out of a JavaScript-only tab into the HTML, inconclusive at 95% confidence. Vendor-reported; no test publishes its sample size or duration.</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.panel-d{fill:#111d30;stroke:#6f8196;stroke-width:2;stroke-dasharray:8 7}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.sub{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 14px Arial,Helvetica,sans-serif;letter-spacing:1.5px}
+.hd{fill:#a9b8c9;font:700 13px Arial,Helvetica,sans-serif;letter-spacing:1.5px}
+.t{fill:#ecf2fa;font:700 18px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 15px Arial,Helvetica,sans-serif}
+.mw{fill:#d0dbe8;font:500 15px Arial,Helvetica,sans-serif}
+.s{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.v{fill:#ecf2fa;font:700 16px Arial,Helvetica,sans-serif}
+.va{fill:#77e3c4;font:700 16px Arial,Helvetica,sans-serif}
+.tick{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.note{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.grid{stroke:#26374b;stroke-width:1}
+.base{stroke:#6f8196;stroke-width:1.5}
+.bar{fill:#77e3c4}
+.bar-m{fill:#6f8196}
+.arrow{stroke:#77e3c4;stroke-width:3;fill:none}
+.arrow-d{stroke:#6f8196;stroke-width:2;fill:none;stroke-dasharray:5 5}
+.num{fill:#0e192a;stroke:#77e3c4;stroke-width:2.5}
+.numt{fill:#77e3c4;font:700 15px Arial,Helvetica,sans-serif}
+.pill{fill:#111d30;stroke:#6f8196;stroke-width:1.5;stroke-dasharray:4 4}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="40" y="50" class="title" text-anchor="start">JavaScript split tests: two gains, two null results</text>
+<text x="40" y="80" class="sub" text-anchor="start">Change in organic traffic in SearchPilot’s published tests, 2017–2021</text>
+<line x1="430.0" y1="115" x2="430.0" y2="445" class="grid"/>
+<text x="430.0" y="467" class="tick" text-anchor="middle">0%</text>
+<line x1="586.7" y1="115" x2="586.7" y2="445" class="grid"/>
+<text x="586.7" y="467" class="tick" text-anchor="middle">+5%</text>
+<line x1="743.3" y1="115" x2="743.3" y2="445" class="grid"/>
+<text x="743.3" y="467" class="tick" text-anchor="middle">+10%</text>
+<line x1="900.0" y1="115" x2="900.0" y2="445" class="grid"/>
+<text x="900.0" y="467" class="tick" text-anchor="middle">+15%</text>
+<text x="40" y="149" class="v" text-anchor="start">2017 · Category pages</text>
+<text x="40" y="172" class="s" text-anchor="start">Content and links visible without JS</text>
+<rect x="430" y="137" width="188.0" height="30" rx="3" class="bar"/>
+<text x="628.0" y="158" class="va" text-anchor="start">More than +6%</text>
+<text x="438" y="187" class="s" text-anchor="start">Significant</text>
+<text x="40" y="231" class="v" text-anchor="start">2021 · Product pages</text>
+<text x="40" y="254" class="s" text-anchor="start">Rebuilt in React with server rendering</text>
+<rect x="430" y="219" width="407.3" height="30" rx="3" class="bar"/>
+<text x="847.3" y="240" class="va" text-anchor="start">+13%</text>
+<text x="438" y="269" class="s" text-anchor="start">Speed and UX, per SearchPilot</text>
+<text x="40" y="313" class="v" text-anchor="start">2021 · Listing profiles</text>
+<text x="40" y="336" class="s" text-anchor="start">AngularJS content pre-rendered</text>
+<rect x="438" y="299" width="220" height="34" rx="17" class="pill"/>
+<text x="548" y="321" class="v" text-anchor="middle">No detectable change</text>
+<text x="40" y="395" class="v" text-anchor="start">2021 · Travel pages</text>
+<text x="40" y="418" class="s" text-anchor="start">Links moved out of a JS-only tab</text>
+<rect x="438" y="381" width="220" height="34" rx="17" class="pill"/>
+<text x="548" y="403" class="v" text-anchor="middle">Inconclusive at 95%</text>
+<line x1="430" y1="115" x2="430" y2="445" class="base"/>
+<text x="40" y="500" class="note" text-anchor="start">Vendor-reported; one site per test; no sample sizes or durations published. The 2017 test predates the evergreen Googlebot.</text>
+</svg>

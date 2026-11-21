@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1230" width="600" height="1230" role="img" aria-labelledby="t d">
+<title id="t">How Google handles a JavaScript page</title>
+<desc id="d">Diagram of the path a JavaScript page takes from crawl to ranking in Google Search, with the points where it can drop out. Step 1, HTTP response: pages with a 200 status are queued for rendering; with a non-200 status, rendering may be skipped, so an error page is not rendered. Step 2, initial HTML: if it contains noindex, Google may skip rendering and JavaScript execution, so JavaScript that removes the tag may never run. Step 3, render queue: in Vercel and MERJ's April 2024 measurement on nextjs.org the median wait between crawl and render was 10 seconds and the 99th percentile about 18 hours. Step 4, the Web Rendering Service renders the page once in Chromium: no clicks or scroll events, permission prompts declined, cookies and storage cleared, HTTP requests only, 2MB per resource; content that needs any of these is missing. Step 5, rendered HTML: links are parsed from a elements with href, the canonical is read before and after rendering, Google decides whether to index, and the indexed page is ranked; conflicting raw and rendered signals cause problems here.</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.panel-d{fill:#111d30;stroke:#6f8196;stroke-width:2;stroke-dasharray:8 7}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.sub{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 14px Arial,Helvetica,sans-serif;letter-spacing:1.5px}
+.hd{fill:#a9b8c9;font:700 13px Arial,Helvetica,sans-serif;letter-spacing:1.5px}
+.t{fill:#ecf2fa;font:700 18px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 15px Arial,Helvetica,sans-serif}
+.mw{fill:#d0dbe8;font:500 15px Arial,Helvetica,sans-serif}
+.s{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.v{fill:#ecf2fa;font:700 16px Arial,Helvetica,sans-serif}
+.va{fill:#77e3c4;font:700 16px Arial,Helvetica,sans-serif}
+.tick{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.note{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.grid{stroke:#26374b;stroke-width:1}
+.base{stroke:#6f8196;stroke-width:1.5}
+.bar{fill:#77e3c4}
+.bar-m{fill:#6f8196}
+.arrow{stroke:#77e3c4;stroke-width:3;fill:none}
+.arrow-d{stroke:#6f8196;stroke-width:2;fill:none;stroke-dasharray:5 5}
+.num{fill:#0e192a;stroke:#77e3c4;stroke-width:2.5}
+.numt{fill:#77e3c4;font:700 15px Arial,Helvetica,sans-serif}
+.pill{fill:#111d30;stroke:#6f8196;stroke-width:1.5;stroke-dasharray:4 4}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="30" y="50" class="title" text-anchor="start">How Google handles</text>
+<text x="30" y="86" class="title" text-anchor="start">a JavaScript page</text>
+<rect x="30" y="120" width="540" height="196" rx="12" class="panel-a"/>
+<text x="50" y="150" class="h" text-anchor="start">1 · RESPONSE</text>
+<text x="50" y="180" class="t" text-anchor="start">HTTP status</text>
+<text x="50" y="212" class="mw" text-anchor="start">200: queued for</text>
+<text x="50" y="234" class="mw" text-anchor="start">rendering</text>
+<text x="50" y="256" class="mw" text-anchor="start">Non-200: rendering</text>
+<text x="50" y="278" class="mw" text-anchor="start">may be skipped</text>
+<rect x="318" y="138" width="234" height="160" rx="10" class="panel-d"/>
+<text x="334" y="166" class="hd" text-anchor="start">DROPS OUT</text>
+<text x="334" y="194" class="s" text-anchor="start">Error pages may</text>
+<text x="334" y="215" class="s" text-anchor="start">not be rendered</text>
+<line x1="170" y1="317" x2="170" y2="331" class="arrow"/>
+<rect x="30" y="334" width="540" height="196" rx="12" class="panel-a"/>
+<text x="50" y="364" class="h" text-anchor="start">2 · RAW HTML</text>
+<text x="50" y="394" class="t" text-anchor="start">noindex check</text>
+<text x="50" y="426" class="mw" text-anchor="start">noindex in the</text>
+<text x="50" y="448" class="mw" text-anchor="start">initial HTML: Google</text>
+<text x="50" y="470" class="mw" text-anchor="start">may skip rendering</text>
+<text x="50" y="492" class="mw" text-anchor="start">and JavaScript</text>
+<rect x="318" y="352" width="234" height="160" rx="10" class="panel-d"/>
+<text x="334" y="380" class="hd" text-anchor="start">DROPS OUT</text>
+<text x="334" y="408" class="s" text-anchor="start">JS that removes</text>
+<text x="334" y="429" class="s" text-anchor="start">noindex may</text>
+<text x="334" y="450" class="s" text-anchor="start">never run</text>
+<line x1="170" y1="531" x2="170" y2="545" class="arrow"/>
+<rect x="30" y="548" width="540" height="196" rx="12" class="panel-a"/>
+<text x="50" y="578" class="h" text-anchor="start">3 · QUEUE</text>
+<text x="50" y="608" class="t" text-anchor="start">Render queue</text>
+<text x="50" y="640" class="mw" text-anchor="start">Median wait:</text>
+<text x="50" y="662" class="mw" text-anchor="start">10 seconds</text>
+<text x="50" y="684" class="mw" text-anchor="start">99th percentile:</text>
+<text x="50" y="706" class="mw" text-anchor="start">about 18 hours</text>
+<rect x="318" y="566" width="234" height="160" rx="10" class="panel-d"/>
+<text x="334" y="594" class="hd" text-anchor="start">DROPS OUT</text>
+<text x="334" y="622" class="s" text-anchor="start">Long tail for</text>
+<text x="334" y="643" class="s" text-anchor="start">low-priority and</text>
+<text x="334" y="664" class="s" text-anchor="start">parameter URLs</text>
+<line x1="170" y1="745" x2="170" y2="759" class="arrow"/>
+<rect x="30" y="762" width="540" height="196" rx="12" class="panel-a"/>
+<text x="50" y="792" class="h" text-anchor="start">4 · RENDER</text>
+<text x="50" y="822" class="t" text-anchor="start">Single render</text>
+<text x="50" y="854" class="mw" text-anchor="start">No clicks or scroll</text>
+<text x="50" y="876" class="mw" text-anchor="start">Permissions declined</text>
+<text x="50" y="898" class="mw" text-anchor="start">Cookies cleared</text>
+<text x="50" y="920" class="mw" text-anchor="start">HTTP only, 2MB</text>
+<text x="50" y="942" class="mw" text-anchor="start">per resource</text>
+<rect x="318" y="780" width="234" height="160" rx="10" class="panel-d"/>
+<text x="334" y="808" class="hd" text-anchor="start">DROPS OUT</text>
+<text x="334" y="836" class="s" text-anchor="start">Content that needs</text>
+<text x="334" y="857" class="s" text-anchor="start">interaction or state</text>
+<text x="334" y="878" class="s" text-anchor="start">is missing</text>
+<line x1="170" y1="959" x2="170" y2="973" class="arrow"/>
+<rect x="30" y="976" width="540" height="196" rx="12" class="panel-a"/>
+<text x="50" y="1006" class="h" text-anchor="start">5 · INDEX</text>
+<text x="50" y="1036" class="t" text-anchor="start">Rendered HTML</text>
+<text x="50" y="1068" class="mw" text-anchor="start">Links from &lt;a href&gt;</text>
+<text x="50" y="1090" class="mw" text-anchor="start">Canonical read</text>
+<text x="50" y="1112" class="mw" text-anchor="start">before and after</text>
+<text x="50" y="1134" class="mw" text-anchor="start">Index decision,</text>
+<text x="50" y="1156" class="mw" text-anchor="start">then ranking</text>
+<rect x="318" y="994" width="234" height="160" rx="10" class="panel-d"/>
+<text x="334" y="1022" class="hd" text-anchor="start">DROPS OUT</text>
+<text x="334" y="1050" class="s" text-anchor="start">Raw and rendered</text>
+<text x="334" y="1071" class="s" text-anchor="start">signals that differ</text>
+<text x="334" y="1092" class="s" text-anchor="start">send two answers</text>
+<text x="30" y="1214" class="note" text-anchor="start">Sources: Google documentation; Vercel and MERJ, April 2024.</text>
+</svg>
