@@ -4,6 +4,7 @@ import * as R from '../../../admin/js/shared/redirects.js';
 import * as H from './html.js';
 import * as A from './auth.js';
 import { GitHub } from './github.js';
+import * as M from './mfa.js';
 
 class HttpError extends Error {
   constructor(status, message, extra = {}) { super(message); this.status = status; this.extra = extra; }
@@ -132,7 +133,7 @@ async function serveProtected(request, env, url, ref) {
   if (!page) return origin(request, env);
   if (page.visibility === 'private') {
     const session = await A.getSession(env, request);
-    if (!session) return Response.redirect(`${url.origin}/admin/?next=${encodeURIComponent(url.pathname)}#login`, 302);
+    if (!session || await mustEnrollMfa(env, session.user)) return Response.redirect(`${url.origin}/admin/?next=${encodeURIComponent(url.pathname)}#login`, 302);
     if (!session.caps.has('private.read')) return new Response(simplePage('Private page', '<p>Your account does not have access to private pages.</p>'), { status: 403, headers: PROTECTED_HEADERS });
     return new Response(page.published_html, { status: 200, headers: PROTECTED_HEADERS });
   }
@@ -188,6 +189,7 @@ async function api(request, env, ctx, url) {
       if (o && o !== url.origin) fail(403, 'Cross-site request blocked.');
       if (request.headers.get('X-CSRF-Token') !== session.csrf) fail(403, 'Security token missing or expired. Reload the page.');
     }
+    if (!r.mfaExempt && await mustEnrollMfa(env, session.user)) fail(403, 'Set up two-factor authentication to continue.', { code: 'mfa_enrollment_required' });
     if (r.cap && !(Array.isArray(r.cap) ? r.cap.some(c => session.caps.has(c)) : session.caps.has(r.cap))) fail(403, 'Your role does not allow this action.');
   }
   let body = null;
@@ -245,24 +247,168 @@ route('POST', '/auth/login', null, async c => {
     await log(c.env, user?.id ?? null, 'auth.login_failed', email, null, 'warning', c.ip);
     fail(401, 'Email or password is incorrect.');
   }
-  await A.clearRateLimit(c.env, `login:${email}`);
-  const s = await A.createSession(c.env, user, c.request);
-  await log(c.env, user.id, 'auth.login', email, null, 'info', c.ip);
-  return json({ user: publicUser(user), caps: [...A.capsFor(user)], csrf: s.csrf }, 200, { 'Set-Cookie': A.sessionCookie(c.env, s.token, s.maxAge) });
+  if (user.totp_enabled) {
+    // Password is right; the session is only created after the second factor.
+    const token = A.randomToken(32);
+    await c.env.DB.batch([
+      c.env.DB.prepare('DELETE FROM login_challenges WHERE expires_at < ? OR user_id = ?').bind(nowIso(), user.id),
+      c.env.DB.prepare('INSERT INTO login_challenges (id_hash, user_id, expires_at, ip) VALUES (?,?,?,?)').bind(await A.sha256(token), user.id, new Date(Date.now() + CHALLENGE_MS).toISOString(), c.ip)
+    ]);
+    await log(c.env, user.id, 'auth.password_ok_awaiting_2fa', email, null, 'info', c.ip);
+    return json({ twoFactorRequired: true, challenge: token, expiresIn: CHALLENGE_MS / 1000 });
+  }
+  return finishLogin(c, user, 'password');
 }, { public: true });
+
+const CHALLENGE_MS = 5 * 60e3;
+const CHALLENGE_ATTEMPTS = 5;
+
+async function finishLogin(c, user, method, extra = {}) {
+  await A.clearRateLimit(c.env, `login:${user.email}`);
+  const s = await A.createSession(c.env, user, c.request);
+  await log(c.env, user.id, 'auth.login', user.email, { method }, 'info', c.ip);
+  const fresh = await c.env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(user.id).first();
+  return json({ user: publicUser(fresh), caps: [...A.capsFor(fresh)], csrf: s.csrf, mfa: await mfaStatus(c.env, fresh), ...extra }, 200, { 'Set-Cookie': A.sessionCookie(c.env, s.token, s.maxAge) });
+}
+
+/* ---------- two-factor authentication ---------- */
+
+const MFA_POLICIES = ['none', 'administrators', 'staff', 'all'];
+
+async function mfaPolicy(env) {
+  const v = (await env.DB.prepare("SELECT value FROM settings WHERE key = 'require_2fa'").first())?.value;
+  return MFA_POLICIES.includes(v) ? v : 'staff';
+}
+
+function mfaRequiredFor(policy, role) {
+  if (policy === 'all') return true;
+  if (policy === 'staff') return role !== 'subscriber';
+  if (policy === 'administrators') return role === 'administrator';
+  return false;
+}
+
+/** A signed-in user who must use 2FA but has not set it up may only reach the enrolment endpoints. */
+async function mustEnrollMfa(env, user) {
+  if (!user || user.totp_enabled || !env.MFA_KEY) return false; // without a server key 2FA cannot be enforced (dashboard warns)
+  return mfaRequiredFor(await mfaPolicy(env), user.role);
+}
+
+async function mfaStatus(env, user) {
+  const policy = await mfaPolicy(env);
+  return {
+    enabled: Boolean(user.totp_enabled),
+    enabledAt: user.totp_enabled_at || null,
+    required: mfaRequiredFor(policy, user.role),
+    mustEnroll: await mustEnrollMfa(env, user),
+    configured: Boolean(env.MFA_KEY),
+    policy,
+    // Session users never carry the code hashes, so count them in the database.
+    recoveryCodesRemaining: user.totp_enabled ? (await env.DB.prepare('SELECT json_array_length(recovery_codes) AS n FROM users WHERE id = ?').bind(user.id).first())?.n ?? 0 : 0
+  };
+}
+
+/**
+ * Check a TOTP code or a recovery code for `user` (full DB row). Consumes recovery codes and
+ * records the TOTP step so a code can never be used twice. Returns 'totp' | 'recovery' | null.
+ */
+async function checkSecondFactor(env, user, { code, recoveryCode }) {
+  if (recoveryCode) {
+    const hash = await M.hashRecovery(recoveryCode);
+    const codes = safeJson(user.recovery_codes, []);
+    if (!codes.includes(hash)) return null;
+    const left = codes.filter(h => h !== hash);
+    const res = await env.DB.prepare('UPDATE users SET recovery_codes = ? WHERE id = ? AND recovery_codes = ?').bind(JSON.stringify(left), user.id, user.recovery_codes).run();
+    return res.meta.changes === 1 ? 'recovery' : null;
+  }
+  const secret = await M.decryptSecret(env, user.totp_secret, user.id);
+  const step = await M.verifyTotp(secret, code, { lastStep: user.totp_last_step ?? null });
+  if (step === null) return null;
+  const res = await env.DB.prepare('UPDATE users SET totp_last_step = ? WHERE id = ? AND (totp_last_step IS NULL OR totp_last_step < ?)').bind(step, user.id, step).run();
+  return res.meta.changes === 1 ? 'totp' : null; // lost a race with the same code = replay
+}
+
+route('POST', '/auth/login/2fa', null, async c => {
+  const ch = await c.env.DB.prepare('SELECT * FROM login_challenges WHERE id_hash = ?').bind(await A.sha256(String(c.body.challenge || ''))).first();
+  const expired = () => fail(401, 'Your sign-in timed out. Enter your email and password again.', { code: 'challenge_expired' });
+  if (!ch || new Date(ch.expires_at) < new Date()) expired();
+  const user = await c.env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(ch.user_id).first();
+  if (!user || !user.active || !user.totp_enabled) { await c.env.DB.prepare('DELETE FROM login_challenges WHERE id_hash = ?').bind(ch.id_hash).run(); expired(); }
+  if (await A.rateLimited(c.env, `login:${user.email}`, 8, 900)) fail(429, 'Too many failed sign-in attempts. Wait 15 minutes and try again.');
+  const method = await checkSecondFactor(c.env, user, { code: c.body.code, recoveryCode: c.body.recoveryCode });
+  if (!method) {
+    const attempts = ch.attempts + 1;
+    if (attempts >= CHALLENGE_ATTEMPTS) await c.env.DB.prepare('DELETE FROM login_challenges WHERE id_hash = ?').bind(ch.id_hash).run();
+    else await c.env.DB.prepare('UPDATE login_challenges SET attempts = ? WHERE id_hash = ?').bind(attempts, ch.id_hash).run();
+    await A.rateHit(c.env, `login:${user.email}`, 900);
+    await A.rateHit(c.env, `login-ip:${c.ip}`, 900);
+    await log(c.env, user.id, 'auth.2fa_failed', user.email, { recovery: Boolean(c.body.recoveryCode) }, 'warning', c.ip);
+    if (attempts >= CHALLENGE_ATTEMPTS) expired();
+    fail(401, c.body.recoveryCode ? 'That recovery code is not valid or was already used.' : 'That code is not correct. Codes change every 30 seconds — make sure your phone\'s clock is set automatically.', { code: 'bad_code', attemptsLeft: CHALLENGE_ATTEMPTS - attempts });
+  }
+  await c.env.DB.prepare('DELETE FROM login_challenges WHERE id_hash = ?').bind(ch.id_hash).run();
+  return finishLogin(c, user, method === 'recovery' ? '2fa-recovery-code' : '2fa-totp');
+}, { public: true });
+
+route('POST', '/auth/2fa/setup', null, async c => {
+  const user = await c.env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(c.user.id).first();
+  if (user.totp_enabled) {
+    // Moving to a new phone: prove possession of the current factor first.
+    if (!(await A.verifyPassword(String(c.body.password || ''), user.pw_hash))) fail(403, 'Current password is incorrect.');
+    if (!(await checkSecondFactor(c.env, user, c.body))) fail(403, 'Enter a current code from your authenticator app (or a recovery code).');
+  }
+  const secret = M.newSecret();
+  await c.env.DB.prepare('UPDATE users SET totp_pending = ? WHERE id = ?').bind(await M.encryptSecret(c.env, secret, user.id), user.id).run();
+  return json({ secret, uri: M.otpauthUri(secret, user.email), issuer: M.ISSUER, account: user.email });
+}, { mfaExempt: true });
+
+route('POST', '/auth/2fa/enable', null, async c => {
+  const user = await c.env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(c.user.id).first();
+  if (!user.totp_pending) fail(409, 'Start the setup again.');
+  const secret = await M.decryptSecret(c.env, user.totp_pending, user.id);
+  const step = await M.verifyTotp(secret, c.body.code);
+  if (step === null) fail(422, 'That code is not correct. Scan the QR code again or check that your phone\'s clock is set automatically.', { code: 'bad_code' });
+  const codes = M.newRecoveryCodes();
+  const hashes = await Promise.all(codes.map(M.hashRecovery));
+  await c.env.DB.prepare("UPDATE users SET totp_secret = totp_pending, totp_pending = NULL, totp_enabled = 1, totp_last_step = ?, totp_enabled_at = datetime('now'), recovery_codes = ?, updated_at = datetime('now') WHERE id = ?")
+    .bind(step, JSON.stringify(hashes), user.id).run();
+  await c.env.DB.prepare('DELETE FROM sessions WHERE user_id = ? AND id_hash != ?').bind(user.id, c.session.idHash).run();
+  audit(c, user.totp_enabled ? 'auth.2fa_moved_device' : 'auth.2fa_enabled', user.email);
+  return json({ ok: true, recoveryCodes: codes });
+}, { mfaExempt: true });
+
+route('POST', '/auth/2fa/recovery-codes', null, async c => {
+  const user = await c.env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(c.user.id).first();
+  if (!user.totp_enabled) fail(409, 'Two-factor authentication is not enabled.');
+  if (!(await checkSecondFactor(c.env, user, { code: c.body.code }))) fail(403, 'Enter a current code from your authenticator app.');
+  const codes = M.newRecoveryCodes();
+  await c.env.DB.prepare('UPDATE users SET recovery_codes = ? WHERE id = ?').bind(JSON.stringify(await Promise.all(codes.map(M.hashRecovery))), user.id).run();
+  audit(c, 'auth.2fa_recovery_regenerated', user.email);
+  return json({ recoveryCodes: codes });
+});
+
+route('POST', '/auth/2fa/disable', null, async c => {
+  const user = await c.env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(c.user.id).first();
+  if (!user.totp_enabled) fail(409, 'Two-factor authentication is not enabled.');
+  if (mfaRequiredFor(await mfaPolicy(c.env), user.role)) fail(409, 'Your role must use two-factor authentication. To switch phones, use “Move to a new phone” instead.');
+  if (!(await A.verifyPassword(String(c.body.password || ''), user.pw_hash))) fail(403, 'Current password is incorrect.');
+  if (!(await checkSecondFactor(c.env, user, c.body))) fail(403, 'Enter a current code from your authenticator app (or a recovery code).');
+  await c.env.DB.prepare("UPDATE users SET totp_enabled = 0, totp_secret = NULL, totp_pending = NULL, totp_last_step = NULL, totp_enabled_at = NULL, recovery_codes = '[]' WHERE id = ?").bind(user.id).run();
+  audit(c, 'auth.2fa_disabled', user.email);
+  return json({ ok: true });
+});
 
 route('POST', '/auth/logout', null, async c => {
   await c.env.DB.prepare('DELETE FROM sessions WHERE id_hash = ?').bind(c.session.idHash).run();
   return json({ ok: true }, 200, { 'Set-Cookie': A.sessionCookie(c.env, '', 0) });
-});
+}, { mfaExempt: true });
 
 route('POST', '/auth/logout-all', null, async c => {
   await c.env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(c.user.id).run();
   audit(c, 'auth.logout_all', c.user.email);
   return json({ ok: true }, 200, { 'Set-Cookie': A.sessionCookie(c.env, '', 0) });
-});
+}, { mfaExempt: true });
 
-route('GET', '/auth/me', null, async c => json({ user: publicUser(c.user), caps: [...c.caps], csrf: c.session.csrf }));
+route('GET', '/auth/me', null, async c => json({ user: publicUser(c.user), caps: [...c.caps], csrf: c.session.csrf, mfa: await mfaStatus(c.env, c.user) }), { mfaExempt: true });
 
 route('GET', '/auth/sessions', null, async c => {
   const rows = (await c.env.DB.prepare('SELECT created_at, last_seen, expires_at, ip, ua, id_hash = ? AS current FROM sessions WHERE user_id = ? ORDER BY last_seen DESC').bind(c.session.idHash, c.user.id).all()).results;
@@ -294,7 +440,7 @@ route('POST', '/auth/reset', null, async c => {
 }, { public: true });
 
 function publicUser(u) {
-  return { id: u.id, email: u.email, name: u.name, role: u.role, active: Boolean(u.active), caps: safeJson(u.caps, {}), created_at: u.created_at, last_login: u.last_login };
+  return { id: u.id, email: u.email, name: u.name, role: u.role, active: Boolean(u.active), caps: safeJson(u.caps, {}), created_at: u.created_at, last_login: u.last_login, twoFactor: Boolean(u.totp_enabled) };
 }
 function safeJson(text, fallback) { try { return JSON.parse(text); } catch { return fallback; } }
 
@@ -361,6 +507,20 @@ async function makeResetLink(c, id, hours = 1) {
   await c.env.DB.prepare('UPDATE users SET reset_hash = ?, reset_expires = ? WHERE id = ?').bind(await A.sha256(token), new Date(Date.now() + hours * 3600e3).toISOString(), id).run();
   return `${c.url.origin}/admin/#reset=${token}`;
 }
+
+route('POST', '/users/:id/reset-2fa', 'users.manage', async c => {
+  const id = intId(c.params.id);
+  if (id === c.user.id) fail(409, 'Manage your own two-factor settings from your Account page.');
+  const u = await c.env.DB.prepare('SELECT email FROM users WHERE id = ?').bind(id).first();
+  if (!u) fail(404, 'User not found.');
+  await c.env.DB.batch([
+    c.env.DB.prepare("UPDATE users SET totp_enabled = 0, totp_secret = NULL, totp_pending = NULL, totp_last_step = NULL, totp_enabled_at = NULL, recovery_codes = '[]' WHERE id = ?").bind(id),
+    c.env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(id),
+    c.env.DB.prepare('DELETE FROM login_challenges WHERE user_id = ?').bind(id)
+  ]);
+  await log(c.env, c.user.id, 'user.2fa_reset', u.email, null, 'warning', c.ip);
+  return json({ ok: true, note: 'Two-factor authentication was removed and the user was signed out. If 2FA is required for their role, they will set it up again at their next sign-in.' });
+});
 
 route('POST', '/users/:id/reset-link', 'users.manage', async c => {
   const id = intId(c.params.id);
@@ -1589,7 +1749,7 @@ route('POST', '/redirects/verify-live', 'redirects.read', async c => {
 
 /* --------------------------------------------------- Settings / system ---- */
 
-const SETTING_KEYS = ['redirect_default_query', 'default_og_image', 'site_name'];
+const SETTING_KEYS = ['redirect_default_query', 'default_og_image', 'site_name', 'require_2fa'];
 
 route('GET', '/settings', 'pages.read', async c => {
   const rows = (await c.env.DB.prepare('SELECT key, value FROM settings').all()).results;
@@ -1598,7 +1758,7 @@ route('GET', '/settings', 'pages.read', async c => {
     settings: Object.fromEntries(SETTING_KEYS.map(k => [k, s[k] ?? ''])),
     system: {
       githubConfigured: Boolean(c.env.GITHUB_TOKEN && c.env.GITHUB_REPO), repo: c.env.GITHUB_REPO, branch: c.env.GITHUB_BRANCH || 'main',
-      liveChecker: Boolean(c.env.LIVE_CHECKER_URL), cronLastRun: s.cron_last_run || null, schemaVersion: s.schema_version,
+      liveChecker: Boolean(c.env.LIVE_CHECKER_URL), mfaConfigured: Boolean(c.env.MFA_KEY), cronLastRun: s.cron_last_run || null, schemaVersion: s.schema_version,
       counts: {
         pages: (await c.env.DB.prepare('SELECT COUNT(*) n FROM pages').first()).n,
         redirects: (await c.env.DB.prepare('SELECT COUNT(*) n FROM redirects').first()).n,
@@ -1615,6 +1775,7 @@ route('PUT', '/settings', 'settings.manage', async c => {
     if (c.body[k] === undefined) continue;
     let v = str(c.body[k], 600);
     if (k === 'redirect_default_query' && !R.QUERY_MODES.includes(v)) fail(422, 'Invalid default query handling.');
+    if (k === 'require_2fa' && !MFA_POLICIES.includes(v)) fail(422, 'Invalid two-factor policy.');
     stmts.push(c.env.DB.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(k, v));
   }
   if (stmts.length) await c.env.DB.batch(stmts);

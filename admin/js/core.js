@@ -1,6 +1,6 @@
 // Shared admin helpers: API client, escaping, toasts, modals, formatting.
 
-export const state = { user: null, caps: new Set(), csrf: '', settings: null };
+export const state = { user: null, caps: new Set(), csrf: '', settings: null, mfa: null };
 
 export const can = cap => state.caps.has(cap);
 export const canAny = (...caps) => caps.some(c => state.caps.has(c));
@@ -33,6 +33,7 @@ export async function api(method, path, body, { form, raw } = {}) {
   if (res.status === 401 && !path.startsWith('/auth/') && !path.startsWith('/setup')) {
     window.dispatchEvent(new CustomEvent('cms:signed-out'));
   }
+  if (res.status === 403 && data.code === 'mfa_enrollment_required') window.dispatchEvent(new CustomEvent('cms:mfa-required'));
   if (!res.ok) throw new ApiError(data.error || `Request failed (${res.status}).`, res.status, data);
   return data;
 }

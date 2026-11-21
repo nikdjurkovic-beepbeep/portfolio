@@ -2,6 +2,20 @@
 
 The Content Studio is at **https://nikolaseo.com/admin/**. Sign in with your CMS account; there are no GitHub tokens to paste any more. (First-time deployment steps: [cms/docs/DEPLOY.md](cms/docs/DEPLOY.md).)
 
+## Signing in
+
+Sign in with your email and password, then enter the 6-digit code from your authenticator app (Google Authenticator or similar).
+
+The first time, the CMS walks you through setup:
+1. Scan the QR code with the app.
+2. Enter the code the app shows.
+3. Save the 10 recovery codes. Each one works once if you lose your phone.
+
+**Account** lets you:
+- move 2FA to a new phone
+- generate new recovery codes
+- see how many recovery codes are left
+
 ## Pages
 
 - **Pages** lists every page with its status: Published, Draft, Scheduled, Private, Password or Trash. A yellow **Unpublished changes** badge means a saved draft exists for a live page.

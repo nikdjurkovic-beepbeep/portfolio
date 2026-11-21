@@ -1,6 +1,6 @@
 # CMS functionality matrix
 
-Updated 2026-11-21 · branch `cms-v2` · **deployed: no** (nothing below is live yet).
+Updated 2026-11-22 · branch `cms-v2` · **deployed: no** (nothing below is live yet).
 
 Status key:
 - **Tested** = tested and verified locally: real Worker runtime (`wrangler dev` / workerd) with a local D1 database, a mock GitHub API, and a mock GitHub Pages origin that serves whatever was committed, plus headless Chrome for the UI.
@@ -8,7 +8,16 @@ Status key:
 - **Blocked** = needs something outside the code.
 - After deploy, run `cms/scripts/verify-deploy.mjs` against the live site to turn "Tested" into "Deployed + verified".
 
-Test suites: `test/redirects.test.mjs` (16), `test/compare.mjs` editor round-trip (14 pages), `test/api.test.mjs` (13), `test/api2.test.mjs` (14), `test/ui_smoke.py` (36 browser checks), `scripts/verify-deploy.mjs` (2,024 HTTP checks locally).
+Test suites:
+- `test/redirects.test.mjs`: 16
+- `test/mfa.test.mjs`: 6 (RFC 6238 vectors)
+- `test/compare.mjs`: editor round-trip on 15 pages
+- `test/api.test.mjs`: 13
+- `test/api2.test.mjs`: 14
+- `test/api3.test.mjs`: 9 (2FA)
+- `test/ui_smoke.py`: 36 browser checks
+- `test/ui_2fa.py`: 16 browser checks
+- `scripts/verify-deploy.mjs`: 2,024 HTTP checks locally
 
 ## Priority 1 — Core CMS
 
@@ -19,13 +28,22 @@ Test suites: `test/redirects.test.mjs` (16), `test/compare.mjs` editor round-tri
 | CSRF protection (token header + Origin check) | Tested | api #2 |
 | Login rate limit (failures only, per IP and per account) | Tested | api #13 |
 | Password change, admin-issued reset link (single use, revokes sessions) | Tested | api #12 |
+| Two-factor login: email + password + 6-digit authenticator code (Google Authenticator / any TOTP app) | Tested | mfa unit (RFC 6238 vectors), api3 #4, ui_2fa |
+| 2FA setup with QR code + manual key; QR decodes to a valid `otpauth://` URI | Tested | ui_2fa, QR decoded from screenshot |
+| 10 one-time recovery codes (hashed), copy/download/print, regenerate | Tested | api3 #5–6, ui_2fa |
+| Replay protection, 5 tries per sign-in challenge, shared account lock | Tested | api3 #4, #7 |
+| 2FA policy (none / admins / staff / all) enforced server-side | Tested | api3 #1, #8 |
+| Move to a new phone (password + current code) | Tested | api3 #6 |
+| Admin "Reset 2FA" for a lost device; can't reset own | Tested | api3 #8 |
+| Secrets encrypted at rest (AES-GCM, `MFA_KEY`), never in API responses or backups | Tested | mfa unit, api3 #3 |
+| Password reset does not bypass 2FA | Tested | api3 #9 |
 | Self-service email password reset | Blocked | needs an email provider |
 | Roles: administrator, editor, author, contributor, subscriber | Tested | api #12 |
 | Per-user grant/revoke capabilities | Tested | api #12 (editor granted `redirects.manage`) |
 | Server-side permission enforcement | Tested | api #12 (403s on API, not just hidden buttons) |
 | Page list with states, hierarchy, search, filters | Tested | ui |
 | Create page (article / basic layout, optional parent) | Tested | api #8, ui |
-| Edit page (TinyMCE) without changing other markup | Tested | round-trip on all 14 pages: 0 diffs |
+| Edit page (TinyMCE) without changing other markup | Tested | round-trip on all 15 pages: 0 diffs (hand-written TOC labels kept) |
 | Interactive tool UIs and scripts preserved as locked blocks | Tested | api #11 |
 | Save draft (never touches the live site) | Tested | api #4 |
 | Autosave (30 s) | Implemented | same endpoint as drafts |

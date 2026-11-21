@@ -179,7 +179,9 @@ export function updateToc(doc, article) {
     return { id, label: h.textContent.trim().replace(/\s+/g, ' ') };
   });
   navs.forEach(nav => {
-    nav.innerHTML = records.map(r => `<a href="#${escapeAttr(r.id)}">${escapeText(r.label)}</a>`).join('');
+    // Keep hand-written TOC labels (e.g. shortened headings); only new headings get their H2 text.
+    const existing = new Map([...nav.querySelectorAll('a[href^="#"]')].map(a => [a.getAttribute('href').slice(1), a.innerHTML]));
+    nav.innerHTML = records.map(r => `<a href="#${escapeAttr(r.id)}">${existing.has(r.id) ? existing.get(r.id) : escapeText(r.label)}</a>`).join('');
   });
 }
 

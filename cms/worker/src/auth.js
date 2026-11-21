@@ -119,7 +119,8 @@ export async function getSession(env, request) {
     const expires = new Date(Date.now() + SESSION_HOURS * 3600e3).toISOString();
     await env.DB.prepare("UPDATE sessions SET last_seen = datetime('now'), expires_at = ? WHERE id_hash = ?").bind(expires, idHash).run();
   }
-  const { pw_hash, reset_hash, reset_expires, id_hash, csrf, ...user } = row;
+  // Never let secrets travel further than this function.
+  const { pw_hash, reset_hash, reset_expires, id_hash, csrf, totp_secret, totp_pending, recovery_codes, ...user } = row;
   return { idHash, csrf, user, caps: capsFor(row) };
 }
 

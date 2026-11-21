@@ -22,6 +22,7 @@ cms/worker/
   src/index.js             edge router (redirects, private pages, pass-through) + CMS API
   src/html.js              page model: editable regions, SEO head, nav, sitemap, sanitizer
   src/auth.js              PBKDF2 passwords, sessions, roles/capabilities, rate limits
+  src/mfa.js               TOTP 2FA, encrypted secrets, recovery codes
   src/github.js            git-data API client (atomic multi-file commits, sha checks)
   migrations/              D1 schema
 cms/test/                  unit, API, round-trip and browser tests + mocks
@@ -46,8 +47,11 @@ cd cms && npm install
 node --test test/redirects.test.mjs     # redirect engine
 node test/extract.mjs $(cd .. && ls *.html */index.html | grep -v -e admin/ -e google) \
   && python3 test/roundtrip.py && node test/compare.mjs   # editor round-trip on every page
+node --test test/mfa.test.mjs           # TOTP (RFC 6238 vectors), encryption, recovery codes
 node --test --test-concurrency=1 test/api.test.mjs test/api2.test.mjs
 python3 test/ui_smoke.py                # headless Chrome (needs Playwright + Chrome)
+node --test test/api3.test.mjs          # 2FA end to end (turns enforcement on; run after the above)
+python3 test/ui_2fa.py                  # 2FA in the browser
 ```
 
 Then open http://localhost:8787/admin/. The API tests create `admin@nikolaseo.com` / `correct horse battery staple`.

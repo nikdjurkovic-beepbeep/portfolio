@@ -4,6 +4,7 @@ import { renderEditor, leaveEditorGuard } from './editor.js';
 import { renderRedirects } from './redirects-view.js';
 import { renderMedia } from './media.js';
 import { renderMenus } from './menus.js';
+import { forcedEnrollment, accountPanel } from './mfa.js';
 
 const root = document.getElementById('root');
 
@@ -11,11 +12,13 @@ const root = document.getElementById('root');
 
 async function boot() {
   window.addEventListener('cms:signed-out', () => { if (state.user) { state.user = null; toast('Your session ended. Sign in again.', 'error'); renderLogin(); } });
+  window.addEventListener('cms:mfa-required', () => { if (state.user) startForcedEnrollment(); });
   const hash = location.hash;
   if (hash.startsWith('#reset=')) return renderReset(hash.slice(7));
   try {
     const me = await api('GET', '/auth/me');
     setSession(me);
+    if (me.mfa?.mustEnroll) return startForcedEnrollment();
     listen();
     route();
   } catch {
@@ -25,7 +28,25 @@ async function boot() {
 }
 
 function setSession(me) {
-  state.user = me.user; state.caps = new Set(me.caps); state.csrf = me.csrf;
+  state.user = me.user; state.caps = new Set(me.caps); state.csrf = me.csrf; state.mfa = me.mfa || null;
+}
+
+function enterApp() {
+  if (state.mfa?.mustEnroll) return startForcedEnrollment();
+  const next = new URLSearchParams(location.search).get('next');
+  if (next && /^\/(?![\/\\])[^\\]*$/.test(next)) { location.href = next; return; } // same-origin paths only (blocks //host and /\host)
+  if (!location.hash || location.hash === '#login') history.replaceState(null, '', '#/dashboard');
+  listen();
+  route();
+}
+
+function startForcedEnrollment() {
+  document.getElementById('app')?.remove();
+  forcedEnrollment(root, {
+    email: state.user.email,
+    onSignOut: async () => { await api('POST', '/auth/logout').catch(() => {}); state.user = null; renderLogin(); },
+    onDone: async () => { setSession(await api('GET', '/auth/me')); root.innerHTML = ''; enterApp(); }
+  });
 }
 
 /* ============================================================ Auth ==== */
@@ -52,17 +73,56 @@ function renderLogin(message = '') {
     btn.disabled = true;
     try {
       const me = await api('POST', '/auth/login', { email: form.email.value, password: form.password.value });
+      if (me.twoFactorRequired) { renderCodeStep(me.challenge, form.email.value); return; }
       setSession(me);
-      const next = new URLSearchParams(location.search).get('next');
-      if (next && /^\/(?![\/\\])[^\\]*$/.test(next)) { location.href = next; return; } // same-origin paths only (blocks //host and /\host)
-      if (!location.hash || location.hash === '#login') history.replaceState(null, '', '#/dashboard');
-      listen();
-      route();
+      enterApp();
     } catch (err) {
       const box = form.querySelector('.form-error'); box.hidden = false; box.textContent = err.message;
     } finally { btn.disabled = false; }
   });
   form.email.focus();
+}
+
+function renderCodeStep(challenge, email) {
+  let recovery = false;
+  authShell(`<div class="login-kicker">TWO-FACTOR AUTHENTICATION</div><h1>Enter your code</h1>
+    <p class="login-intro" id="codeIntro">Open your authenticator app and enter the 6-digit code for <b>NikolaSEO</b> (${esc(email)}).</p>
+    <form id="codeForm" autocomplete="off">
+      <div class="field"><label for="otp" id="otpLabel">Authentication code</label><input id="otp" class="otp-input big" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="123 456" required></div>
+      <div class="form-error" role="alert" hidden></div>
+      <button class="button primary wide" type="submit">Verify</button>
+    </form>
+    <p class="hint"><button type="button" class="link-btn" id="useRecovery">Lost your phone? Use a recovery code</button> · <button type="button" class="link-btn" id="backToLogin">Start over</button></p>`);
+  const form = document.getElementById('codeForm');
+  const input = form.otp;
+  input.focus();
+  input.addEventListener('input', () => { if (!recovery && input.value.replace(/\D/g, '').length === 6) form.requestSubmit(); });
+  document.getElementById('backToLogin').onclick = () => renderLogin();
+  document.getElementById('useRecovery').onclick = e => {
+    recovery = !recovery;
+    document.getElementById('otpLabel').textContent = recovery ? 'Recovery code' : 'Authentication code';
+    document.getElementById('codeIntro').textContent = recovery ? 'Enter one of the recovery codes you saved when you set up two-factor authentication. Each code works once.' : 'Open your authenticator app and enter the 6-digit code.';
+    input.value = ''; input.placeholder = recovery ? 'abcde-fghjk' : '123 456'; input.maxLength = recovery ? 20 : 7;
+    if (recovery) input.removeAttribute('inputmode'); else input.setAttribute('inputmode', 'numeric');
+    e.target.textContent = recovery ? 'Use the authenticator app instead' : 'Lost your phone? Use a recovery code';
+    input.focus();
+  };
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = form.querySelector('button[type=submit]');
+    if (btn.disabled) return;
+    btn.disabled = true;
+    const box = form.querySelector('.form-error');
+    try {
+      const me = await api('POST', '/auth/login/2fa', recovery ? { challenge, recoveryCode: input.value } : { challenge, code: input.value.replace(/\s/g, '') });
+      setSession(me);
+      if (recovery) toast(`Signed in with a recovery code. ${me.mfa.recoveryCodesRemaining} left. If you lost your phone, use “Move to a new phone” on your Account page.`, 'warn', 12000);
+      enterApp();
+    } catch (err) {
+      if (err.data?.code === 'challenge_expired') { renderLogin(err.message); return; }
+      box.hidden = false; box.textContent = err.message; input.select();
+    } finally { btn.disabled = false; }
+  });
 }
 
 function renderSetup() {
@@ -209,6 +269,7 @@ async function renderDashboard(ws) {
   ws.innerHTML = `${pageHeading('YOUR WEBSITE', 'Content at a glance', 'Pages, drafts and redirects for nikolaseo.com.', can('pages.create') ? '<a class="button primary" href="#/pages" data-new>＋ New page</a>' : '')}
     ${sys.counts.pages === 0 && can('pages.edit_any') ? `<div class="notice">The CMS has not imported the site yet. <button class="button primary small" id="firstSync">Import pages from the repository</button></div>` : ''}
     ${!sys.githubConfigured ? '<div class="notice error">Publishing is not configured on the server (GITHUB_TOKEN). Drafts work; publishing will fail.</div>' : ''}
+    ${!sys.mfaConfigured ? '<div class="notice warn">Two-factor authentication is unavailable: the server has no MFA_KEY secret, so sign-in is password-only.</div>' : (!state.mfa?.enabled ? '<div class="notice">Your account is protected by a password only. <a href="#/account">Set up two-factor authentication</a>.</div>' : '')}
     <div class="stat-grid">
       ${[['published', 'Published'], ['draft', 'Drafts'], ['scheduled', 'Scheduled'], ['private', 'Private'], ['password', 'Password']].map(([k, l]) => `<a class="stat-card" href="#/pages?state=${k}"><div class="stat-label">${l}</div><div class="stat-value">${by(k).length}</div></a>`).join('')}
       ${redirects ? `<a class="stat-card" href="#/redirects"><div class="stat-label">Redirects</div><div class="stat-value">${redirects.total}</div><div class="stat-note">${issues.length ? `${issues.reduce((a, [, n]) => a + n, 0)} issue(s)` : 'No issues'}</div></a>` : ''}
@@ -355,9 +416,9 @@ const ROLE_HELP = {
 async function renderUsers(ws) {
   const { users, roles, caps } = await api('GET', '/users');
   ws.innerHTML = `${pageHeading('PEOPLE', 'Users', 'Roles are enforced by the server on every request.', '<button class="button primary" id="addUser">＋ Add user</button>')}
-    <section class="panel table-panel"><div class="table-scroll"><table class="data-table"><thead><tr><th>User</th><th>Role</th><th>Status</th><th>Last sign-in</th><th></th></tr></thead><tbody>
-    ${users.map(u => `<tr><td><b>${esc(u.name || '—')}</b><small class="block">${esc(u.email)}</small></td><td>${esc(u.role)}${(u.caps.grant || []).length || (u.caps.revoke || []).length ? ' <span class="pill">custom</span>' : ''}</td><td>${u.active ? '<span class="ok">Active</span>' : '<span class="bad">Disabled</span>'}</td><td>${fmtAgo(u.last_login)}</td>
-    <td class="row-actions"><button class="button quiet small" data-edit="${u.id}">Edit</button><button class="button quiet small" data-reset="${u.id}">Reset link</button>${u.id !== state.user.id ? `<button class="button quiet small danger-text" data-del="${u.id}">Delete</button>` : ''}</td></tr>`).join('')}
+    <section class="panel table-panel"><div class="table-scroll"><table class="data-table"><thead><tr><th>User</th><th>Role</th><th>Status</th><th>2FA</th><th>Last sign-in</th><th></th></tr></thead><tbody>
+    ${users.map(u => `<tr><td><b>${esc(u.name || '—')}</b><small class="block">${esc(u.email)}</small></td><td>${esc(u.role)}${(u.caps.grant || []).length || (u.caps.revoke || []).length ? ' <span class="pill">custom</span>' : ''}</td><td>${u.active ? '<span class="ok">Active</span>' : '<span class="bad">Disabled</span>'}</td><td>${u.twoFactor ? '<span class="pill ok-pill">On</span>' : '<span class="pill">Off</span>'}</td><td>${fmtAgo(u.last_login)}</td>
+    <td class="row-actions"><button class="button quiet small" data-edit="${u.id}">Edit</button><button class="button quiet small" data-reset="${u.id}">Reset link</button>${u.twoFactor && u.id !== state.user.id ? `<button class="button quiet small" data-reset2fa="${u.id}">Reset 2FA</button>` : ''}${u.id !== state.user.id ? `<button class="button quiet small danger-text" data-del="${u.id}">Delete</button>` : ''}</td></tr>`).join('')}
     </tbody></table></div></section>
     <section class="panel"><h2>Roles</h2><dl class="kv">${roles.map(r => `<dt>${r}</dt><dd>${ROLE_HELP[r]}</dd>`).join('')}</dl></section>`;
   const form = (u = {}) => `<div class="field"><label for="uEmail">Email</label><input id="uEmail" type="email" value="${esc(u.email || '')}" ${u.id ? 'disabled' : ''}></div>
@@ -387,7 +448,13 @@ async function renderUsers(ws) {
         bindRole(m);
         m.$('#save').onclick = action(m.$('#save'), async () => { await api('PATCH', `/users/${u.id}`, { name: m.$('#uName').value, role: m.$('#uRole').value, active: m.$('#uActive').checked, caps: collect(m) }); m.close(); toast('User saved.'); route(); }, 'Saving…');
       }
-      if (b.dataset.reset) { const r = await api('POST', `/users/${b.dataset.reset}/reset-link`, {}); showLink('Password reset link', `Valid for ${r.expiresInHours} hours, single use. Existing sessions end when it is used.`, r.url); }
+      if (b.dataset.reset) { const r = await api('POST', `/users/${b.dataset.reset}/reset-link`, {}); showLink('Password reset link', `Valid for ${r.expiresInHours} hours, single use. Existing sessions end when it is used. Two-factor authentication stays on; a reset link does not bypass it.`, r.url); }
+      if (b.dataset.reset2fa) {
+        const u = users.find(x => x.id === Number(b.dataset.reset2fa));
+        if (await confirmDialog('Reset two-factor authentication?', `Use this when <b>${esc(u.email)}</b> lost their phone and their recovery codes. Their authenticator is removed and they are signed out everywhere. Confirm their identity another way first.`, { danger: true, confirmLabel: 'Reset 2FA' })) {
+          const r = await api('POST', `/users/${u.id}/reset-2fa`, {}); toast(r.note, 'success', 9000); route();
+        }
+      }
       if (b.dataset.del && await confirmDialog('Delete user?', 'Their pages stay; authorship is cleared.', { danger: true, confirmLabel: 'Delete user' })) { await api('DELETE', `/users/${b.dataset.del}`); toast('User deleted.'); route(); }
     } catch (err) { toastError(err); }
   });
@@ -410,10 +477,14 @@ async function renderSettings(ws) {
         <option value="pass" ${settings.redirect_default_query !== 'ignore' && settings.redirect_default_query !== 'exact' ? 'selected' : ''}>Pass through — match ignoring the query, keep visitor's query (recommended for SEO)</option>
         <option value="ignore" ${settings.redirect_default_query === 'ignore' ? 'selected' : ''}>Ignore — match ignoring the query, drop it</option>
         <option value="exact" ${settings.redirect_default_query === 'exact' ? 'selected' : ''}>Exact — the query must match the source</option></select></div>
+      <div class="field"><label for="s2fa">Require two-factor authentication for</label><select id="s2fa" ${admin ? '' : 'disabled'}>
+        ${[['none', 'Nobody (optional for everyone)'], ['administrators', 'Administrators'], ['staff', 'Everyone with CMS access (recommended)'], ['all', 'All accounts, including subscribers']].map(([v, l]) => `<option value="${v}" ${(settings.require_2fa || 'staff') === v ? 'selected' : ''}>${l}</option>`).join('')}</select>
+        <small class="hint">${system.mfaConfigured ? 'People in these roles without 2FA must set it up before they can do anything else.' : '<span class="warn-text">Not enforced: the server has no MFA_KEY secret.</span>'}</small></div>
       <div class="field"><label for="sOg">Default social image URL (used as a suggestion in the SEO panel)</label><input id="sOg" value="${esc(settings.default_og_image)}" ${admin ? '' : 'disabled'} placeholder="https://nikolaseo.com/…"></div>
       ${admin ? '<button class="button primary">Save settings</button>' : ''}</form></section>
     <section class="panel"><h2>System</h2><dl class="kv">
       <dt>Repository</dt><dd>${esc(system.repo)} · ${esc(system.branch)}</dd><dt>Publishing token</dt><dd>${system.githubConfigured ? '<span class="ok">Configured (server-side secret)</span>' : '<span class="bad">Missing</span>'}</dd>
+      <dt>Two-factor</dt><dd>${system.mfaConfigured ? '<span class="ok">Available</span>' : '<span class="bad">MFA_KEY missing</span>'}</dd>
       <dt>Scheduler</dt><dd>every 5 minutes · last run ${system.cronLastRun ? fmtAgo(system.cronLastRun) : 'never'}</dd><dt>Live redirect checker</dt><dd>${system.liveChecker ? 'Configured' : 'Not configured'}</dd>
       <dt>Database</dt><dd>${system.counts.pages} pages · ${system.counts.redirects} redirects · ${system.counts.media} media · ${system.counts.users} users</dd></dl></section>
     ${can('backups.manage') ? `<section class="panel"><h2>Backup &amp; restore</h2><p class="muted">Download a JSON backup of pages, revisions, redirects, media metadata, menus, terms and settings (no passwords). Cloudflare D1 also keeps point-in-time recovery (Time Travel).</p>
@@ -422,7 +493,9 @@ async function renderSettings(ws) {
       <div class="field"><span class="label">Restore these parts</span>${['redirects', 'menus', 'terms', 'settings', 'media'].map(p => `<label class="check"><input type="checkbox" data-part="${p}" ${p === 'redirects' ? 'checked' : ''}> ${p}</label>`).join('')}</div>
       <button class="button danger" id="restoreBtn">Restore…</button><p class="hint">Pages are restored individually from revision history, not from here, so a restore can never overwrite live pages in bulk.</p></section>` : ''}
     </div>`;
-  ws.querySelector('#settingsForm').addEventListener('submit', async e => { e.preventDefault(); try { await api('PUT', '/settings', { redirect_default_query: ws.querySelector('#sDefQuery').value, default_og_image: ws.querySelector('#sOg').value }); toast('Settings saved.'); } catch (err) { toastError(err); } });
+  ws.querySelector('#settingsForm').addEventListener('submit', async e => { e.preventDefault(); try { await api('PUT', '/settings', { redirect_default_query: ws.querySelector('#sDefQuery').value, default_og_image: ws.querySelector('#sOg').value, require_2fa: ws.querySelector('#s2fa').value }); toast('Settings saved.');
+      setSession(await api('GET', '/auth/me'));
+      if (state.mfa?.mustEnroll) startForcedEnrollment(); } catch (err) { toastError(err); } });
   ws.querySelector('#dlBackup')?.addEventListener('click', () => downloadFromApi('/backup', 'nikolaseo-cms-backup.json').catch(toastError));
   ws.querySelector('#restoreBtn')?.addEventListener('click', async () => {
     const file = ws.querySelector('#restoreFile').files[0];
@@ -455,10 +528,14 @@ async function renderAccount(ws) {
       <div class="field"><label for="cur">Current password</label><input id="cur" type="password" required autocomplete="current-password"></div>
       <div class="field"><label for="nw">New password <small>(12+ characters)</small></label><input id="nw" type="password" minlength="12" required autocomplete="new-password"></div>
       <button class="button primary">Change password</button><p class="hint">Your other sessions are signed out.</p></form></section>
+    <section class="panel" id="mfaPanel"></section>
     <section class="panel"><h2>Active sessions</h2><ul class="plain-list">${sessions.map(s => `<li><span><b>${s.current ? 'This browser' : esc((s.ua || '').slice(0, 60))}</b><small>${esc(s.ip || '')} · last active ${fmtAgo(s.last_seen)}</small></span></li>`).join('')}</ul>
       <button class="button secondary" id="logoutAll">Sign out everywhere</button></section></div>`;
   ws.querySelector('#pwForm').addEventListener('submit', async e => { e.preventDefault(); try { await api('POST', '/auth/password', { current: ws.querySelector('#cur').value, next: ws.querySelector('#nw').value }); toast('Password changed.'); e.target.reset(); } catch (err) { toastError(err); } });
   ws.querySelector('#logoutAll').onclick = async () => { await api('POST', '/auth/logout-all', {}); state.user = null; renderLogin('Signed out on all devices.'); };
+  const me = await api('GET', '/auth/me');
+  setSession(me);
+  accountPanel(ws.querySelector('#mfaPanel'), { me, onChange: () => route() });
 }
 
 export { route };

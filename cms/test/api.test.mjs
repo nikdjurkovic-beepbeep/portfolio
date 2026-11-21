@@ -3,7 +3,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
+import fs from 'node:fs';
 const W = 'http://localhost:8787';
+const ROOT = new URL('../../', import.meta.url).pathname;
+const SITE_PAGES = [...fs.readdirSync(ROOT).filter(f => f.endsWith('.html') && !f.startsWith('google')),
+  ...fs.readdirSync(ROOT, { withFileTypes: true }).filter(d => d.isDirectory() && fs.existsSync(`${ROOT}${d.name}/index.html`) && !['admin', 'cms'].includes(d.name)).map(d => `${d.name}/index.html`)].length;
 const GH = 'http://localhost:8789/repos/o/r';
 const ADMIN = { email: 'admin@nikolaseo.com', password: 'correct horse battery staple' };
 
@@ -68,12 +72,12 @@ test('auth: wrong password rejected, login works, CSRF enforced, session cookie 
   assert.equal(crossSite.status, 403);
 });
 
-test('pages: sync imports all 14 site pages; cookies are not forwarded to origin', async () => {
+test('pages: sync imports every site page; cookies are not forwarded to origin', async () => {
   const r = await admin.req('POST', '/cms-api/pages/sync', {});
   assert.equal(r.status, 200, JSON.stringify(r.data));
-  assert.equal(r.data.added.length, 14);
+  assert.equal(r.data.added.length, SITE_PAGES);
   const list = await admin.req('GET', '/cms-api/pages');
-  assert.equal(list.data.pages.length, 14);
+  assert.equal(list.data.pages.length, SITE_PAGES);
   assert.ok(list.data.pages.every(p => p.state === 'published'));
   const res = await live('/seo-myths/', { headers: { Cookie: admin.cookie } });
   assert.equal(res.headers.get('x-got-cookie'), 'no');
@@ -137,7 +141,7 @@ test('publish: commits page + sitemap, live site shows the change, SEO tags are 
   assert.ok(html.includes('<script src="../nav.js"></script>') || html.includes('nav.js'));
   assert.ok(html.includes('Why SEO myths survive'));
   const sm = await (await live('/sitemap.xml')).text();
-  assert.equal((sm.match(/<loc>/g) || []).length, 14);
+  assert.equal((sm.match(/<loc>/g) || []).length, SITE_PAGES);
 });
 
 test('SEO: noindex removes from sitemap, robots meta correct, schema validated, OG/Twitter written', async () => {

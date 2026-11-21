@@ -28,6 +28,7 @@ LIVE_CHECKER_URL = "https://nikolaseo-http-status-checker.nik-djurkovic.workers.
 #   GITHUB_TOKEN    fine-grained token, Contents: read & write, this repository only
 #   SESSION_SECRET  random 32+ byte string (signs password-page cookies)
 #   SETUP_TOKEN     one-time token used to create the first administrator
+#   MFA_KEY         random 32+ characters; encrypts authenticator secrets (losing it = everyone re-enrols 2FA)
 
 [observability]
 enabled = true
