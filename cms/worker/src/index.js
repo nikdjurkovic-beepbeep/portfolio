@@ -1778,7 +1778,8 @@ route('POST', '/redirects/verify-live', 'redirects.read', async c => {
     const expected = R.match(compiled, item.url);
     let live = null, error = null;
     try {
-      const res = await fetch(`${checker}/check`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: item.url }) });
+      // The checker only answers requests from the site's origin; server-side fetches send none by default.
+      const res = await fetch(`${checker}/check`, { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: H.SITE }, body: JSON.stringify({ url: item.url }) });
       live = await res.json();
       if (!res.ok) error = live.error || `Checker returned ${res.status}`;
     } catch (e) { error = e.message; }
