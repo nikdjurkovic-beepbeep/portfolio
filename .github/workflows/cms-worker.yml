@@ -1,0 +1,130 @@
+# Deploys the NikolaSEO CMS Worker (Cloudflare) and verifies the live site.
+#
+# Runs only when a tag is pushed:
+#   cms-deploy-*   create/migrate the D1 database, deploy the Worker + route + cron, set secrets, verify
+#   cms-verify-*   only verify the live site
+#
+# Repository secrets (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN    Workers Scripts:Edit, D1:Edit, Workers Routes:Edit (zone nikolaseo.com)
+#   CLOUDFLARE_ACCOUNT_ID   Cloudflare account id
+#   CMS_GITHUB_TOKEN        fine-grained token, this repo only, Contents: Read and write
+#   CMS_SETUP_TOKEN         token typed on the first-time setup screen (16+ chars; only works while no user exists)
+# Optional (generated once on the Worker if absent; never printed):
+#   CMS_SESSION_SECRET, CMS_MFA_KEY
+#
+# This repository is public, so its Actions logs are public: nothing below prints a secret.
+name: CMS Worker
+
+on:
+  push:
+    tags: ['cms-deploy-*', 'cms-verify-*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cms-worker
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: startsWith(github.ref_name, 'cms-deploy-')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cms/package-lock.json
+
+      - name: Check required secrets
+        env:
+          CMS_GITHUB_TOKEN: ${{ secrets.CMS_GITHUB_TOKEN }}
+          CMS_SETUP_TOKEN: ${{ secrets.CMS_SETUP_TOKEN }}
+          CMS_MFA_KEY: ${{ secrets.CMS_MFA_KEY }}
+        run: |
+          missing=0
+          for n in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID CMS_GITHUB_TOKEN; do
+            if [ -z "${!n}" ]; then echo "::error::Repository secret $n is missing"; missing=1; fi
+          done
+          if [ -n "$CMS_MFA_KEY" ] && [ ${#CMS_MFA_KEY} -lt 32 ]; then echo "::error::CMS_MFA_KEY must be at least 32 characters"; missing=1; fi
+          if [ -z "$CMS_SETUP_TOKEN" ]; then echo "::warning::CMS_SETUP_TOKEN is not set: first-time setup in /admin/ will not be possible (fine once the administrator exists)"; fi
+          if [ ${#CMS_SETUP_TOKEN} -gt 0 ] && [ ${#CMS_SETUP_TOKEN} -lt 16 ]; then echo "::error::CMS_SETUP_TOKEN must be at least 16 characters"; missing=1; fi
+          exit $missing
+
+      - name: Install
+        working-directory: cms
+        run: npm ci --no-audit --no-fund
+
+      - name: Unit tests
+        working-directory: cms
+        run: node --test test/redirects.test.mjs test/mfa.test.mjs
+
+      - name: D1 database (create once) and migrations
+        working-directory: cms/worker
+        run: |
+          find_id() { npx wrangler d1 list --json | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const j=JSON.parse(s.slice(s.indexOf("["),s.lastIndexOf("]")+1));const db=j.find(d=>d.name==="nikolaseo-cms");process.stdout.write(db?(db.uuid||db.id||""):"")})'; }
+          ID="$(find_id)"
+          if [ -z "$ID" ]; then
+            echo "Creating D1 database nikolaseo-cms"
+            npx wrangler d1 create nikolaseo-cms > /dev/null
+            ID="$(find_id)"
+          fi
+          if [ -z "$ID" ]; then echo "::error::Could not find or create the D1 database"; exit 1; fi
+          sed -i "s/^database_id = .*/database_id = \"$ID\"/" wrangler.toml
+          grep -q "database_id = \"$ID\"" wrangler.toml
+          npx wrangler d1 migrations apply nikolaseo-cms --remote
+
+      - name: Deploy Worker, route and scheduler
+        working-directory: cms/worker
+        run: npx wrangler deploy
+
+      - name: Worker secrets
+        working-directory: cms/worker
+        env:
+          CMS_GITHUB_TOKEN: ${{ secrets.CMS_GITHUB_TOKEN }}
+          CMS_SETUP_TOKEN: ${{ secrets.CMS_SETUP_TOKEN }}
+          CMS_SESSION_SECRET: ${{ secrets.CMS_SESSION_SECRET }}
+          CMS_MFA_KEY: ${{ secrets.CMS_MFA_KEY }}
+        run: |
+          # Must succeed: guessing "no secrets yet" could regenerate MFA_KEY and break every authenticator.
+          existing="$(npx wrangler secret list --format json)"
+          umask 077
+          node - "$existing" > "$RUNNER_TEMP/secrets.json" <<'JS'
+          const crypto = require('crypto');
+          const raw = process.argv[2] || '';
+          const existing = new Set(JSON.parse(raw.slice(raw.indexOf('['), raw.lastIndexOf(']') + 1)).map(s => s.name)); // throws (stops the job) if unreadable
+          const out = { GITHUB_TOKEN: process.env.CMS_GITHUB_TOKEN };
+          if (process.env.CMS_SETUP_TOKEN) out.SETUP_TOKEN = process.env.CMS_SETUP_TOKEN; // only usable while no user exists
+          // Keys that must stay stable: set from the repo secret if given, otherwise generate only the first time.
+          for (const [name, src] of [['SESSION_SECRET', 'CMS_SESSION_SECRET'], ['MFA_KEY', 'CMS_MFA_KEY']]) {
+            if (process.env[src]) out[name] = process.env[src];
+            else if (!existing.has(name)) out[name] = crypto.randomBytes(48).toString('base64');
+          }
+          process.stdout.write(JSON.stringify(out));
+          JS
+          npx wrangler secret bulk "$RUNNER_TEMP/secrets.json"
+          rm -f "$RUNNER_TEMP/secrets.json"
+
+      - name: Verify the live site
+        working-directory: cms
+        run: node scripts/verify-deploy.mjs https://nikolaseo.com --setup-may-be-pending
+
+  verify:
+    if: startsWith(github.ref_name, 'cms-verify-')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify the live site
+        working-directory: cms
+        run: node scripts/verify-deploy.mjs https://nikolaseo.com

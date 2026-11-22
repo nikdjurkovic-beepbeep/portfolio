@@ -9,8 +9,19 @@
 import fs from 'node:fs';
 import * as R from '../../admin/js/shared/redirects.js';
 
-const base = (process.argv[2] || 'https://nikolaseo.com').replace(/\/$/, '');
-const csvPath = process.argv[3];
+const args = process.argv.slice(2);
+const setupMayBePending = args.includes('--setup-may-be-pending');
+const positional = args.filter(a => !a.startsWith('--'));
+const base = (positional[0] || 'https://nikolaseo.com').replace(/\/$/, '');
+const csvPath = positional[1];
+
+// Right after a deploy the route can take a few seconds to attach: wait for the CMS API.
+for (let i = 0; i < 24; i++) {
+  const r = await fetch(`${base}/cms-api/setup`).catch(() => null);
+  if (r && (r.headers.get('content-type') || '').includes('json')) break;
+  if (i === 23) console.log('WARN  CMS API did not answer within 2 minutes');
+  await new Promise(res => setTimeout(res, 5000));
+}
 let pass = 0, fail = 0;
 const ok = (cond, label, detail = '') => { cond ? pass++ : fail++; console.log(`${cond ? 'PASS' : 'FAIL'}  ${label}${detail ? `  — ${detail}` : ''}`); };
 const get = (path, opts = {}) => fetch(path.startsWith('http') ? path : base + path, { redirect: 'manual', ...opts });
@@ -30,7 +41,8 @@ ok(admin.status === 200 && admin.headers.get('x-frame-options') === 'DENY' && /n
 const setup = await get('/cms-api/setup');
 ok(setup.status === 200 && (setup.headers.get('content-type') || '').includes('json'), 'CMS API reachable', `status ${setup.status}`);
 const needs = setup.status === 200 ? (await setup.json()).needsSetup : null;
-ok(needs === false, 'first administrator exists (setup closed)', needs ? 'run setup in /admin/ now and then remove SETUP_TOKEN' : '');
+if (needs && setupMayBePending) console.log('NOTE  first-time setup is pending: open /admin/ to create the administrator');
+else ok(needs === false, 'first administrator exists (setup closed)', needs ? 'run setup in /admin/ now and then remove SETUP_TOKEN' : '');
 const unauth = await get('/cms-api/pages');
 ok(unauth.status === 401, 'API rejects anonymous requests', `status ${unauth.status}`);
 const missing = await get('/this-page-should-not-exist-cms-check/');

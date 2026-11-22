@@ -35,6 +35,7 @@ export default {
       return await edge(request, env, ctx, url);
     } catch (e) {
       // Fail open: the public site must keep working even if the CMS layer has a problem.
+      // (Private/password pages are not in the public repository, so the origin answers 404 for them.)
       console.error('edge error', e?.stack || e);
       return origin(request, env);
     }
@@ -139,7 +140,8 @@ async function serveProtected(request, env, url, ref) {
   }
   // Password-protected
   const cookieKey = `cms_pp_${page.id}`;
-  const expected = await A.hmac(env.SESSION_SECRET || 'dev-secret', `${page.id}:${page.password_hash}`);
+  if (!env.SESSION_SECRET) throw new Error('SESSION_SECRET is not configured'); // fail closed: never sign cookies with a default key
+  const expected = await A.hmac(env.SESSION_SECRET, `${page.id}:${page.password_hash}`);
   if (request.method === 'POST') {
     const ip = request.headers.get('CF-Connecting-IP') || 'local';
     if (await A.rateLimited(env, `pp:${page.id}:${ip}`, 10, 900)) {
