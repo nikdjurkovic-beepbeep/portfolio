@@ -4,56 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow,noarchive">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src https://api.github.com; frame-src 'self' https://nikolaseo.com">
-  <title>Site editor | NikolaSEO</title>
-  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="admin.css?v=range-unlink-fix-4">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self'; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; media-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Content Studio | NikolaSEO</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/admin/admin.css?v=2">
 </head>
 <body>
-  <section class="login-screen" id="loginScreen">
-    <div class="login-card">
-      <a class="brand" href="../"><span class="brand-mark">ND<span>.</span></span><span class="brand-copy">NIKOLASEO <small>CONTENT STUDIO</small></span></a>
-      <div class="login-kicker">YOUR WEBSITE, EDITABLE</div>
-      <h1>Welcome back.</h1>
-      <p class="login-intro">Connect to your website repository to manage SEO Studies and media. Your access key stays in this tab and is sent only to GitHub.</p>
-      <form id="connectForm">
-        <label for="accessToken">GitHub access key</label>
-        <input id="accessToken" name="accessToken" type="password" autocomplete="off" placeholder="github_pat_…" required>
-        <button class="button primary wide" type="submit" id="connectButton">Connect to NikolaSEO</button>
-      </form>
-      <div class="login-error" id="loginError" role="alert" hidden></div>
-      <p class="help-text">Use a fine-grained key for <b>nikdjurkovic-beepbeep/portfolio</b> with Contents read and write access. <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noreferrer">Create a key on GitHub ↗</a></p>
-      <div class="trust-note"><span class="trust-icon">✓</span><span>Only this repository · No key saved on this device · Revoke anytime on GitHub</span></div>
-    </div>
-    <div class="login-footer">NikolaSEO.com <span>·</span> A simple publishing studio for your site</div>
-  </section>
-
-  <div class="app" id="app" hidden>
-    <aside class="sidebar" id="sidebar">
-      <a class="brand sidebar-brand" href="../"><span class="brand-mark">ND<span>.</span></span><span class="brand-copy">NIKOLASEO <small>CONTENT STUDIO</small></span></a>
-      <div class="side-label">WORKSPACE</div>
-      <nav class="side-nav" aria-label="Content studio">
-        <button class="side-link active" data-view="overview"><span class="nav-icon">⌂</span>Overview</button>
-        <button class="side-link" data-view="pages"><span class="nav-icon">▤</span>All pages<span class="nav-count" id="pageCount">—</span></button>
-        <button class="side-link" data-view="media"><span class="nav-icon">▧</span>Media library</button>
-        <button class="side-link" data-view="settings"><span class="nav-icon">⚙</span>Settings</button>
-      </nav>
-      <div class="side-bottom">
-        <div class="connected-user"><span class="user-avatar">N</span><span><b>Repository access</b><small id="branchLabel">main branch</small></span><i class="online-dot"></i></div>
-      </div>
-    </aside>
-
-    <div class="main-shell">
-      <header class="topbar">
-        <button class="mobile-menu" id="mobileMenu" aria-label="Open menu">☰</button>
-        <div class="breadcrumbs"><span>Content Studio</span><span class="crumb-sep">/</span><b id="currentSection">Overview</b></div>
-        <div class="top-actions"><span class="save-indicator"><i></i><span id="connectionStatus">Connected</span></span><a class="button quiet preview-site" href="https://nikolaseo.com" target="_blank" rel="noreferrer">View site <span>↗</span></a></div>
-      </header>
-      <main class="workspace" id="workspace" tabindex="-1"></main>
-      <footer class="app-footer"><span>CONTENT STUDIO <b>·</b> NIKOLASEO.COM</span><span>Changes publish through GitHub Pages</span></footer>
-    </div>
-  </div>
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="admin.js?v=range-unlink-fix-4" defer></script>
+  <div id="root"><div class="loading full">Loading Content Studio…</div></div>
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+  <noscript>The Content Studio needs JavaScript.</noscript>
+  <script src="/admin/vendor/tinymce/tinymce.min.js"></script>
+  <script type="module" src="/admin/js/app.js?v=2"></script>
 </body>
 </html>
