@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 857" width="600" height="857" role="img" aria-labelledby="t d">
+<title id="t">Visibility lost after three documented migrations</title>
+<desc id="d">Bar chart of visibility lost after three migrations documented by SISTRIX. The Guardian, 2013, guardian.co.uk to theguardian.com: about 49% lost, from about 550 to about 280 points, back at its previous level in about three months. Lush, 2015 to 2016, lush.co.uk to lush.com: 81% lost, from 8.808 to 1.646 points; most redirects ended in 404 pages. Clarks, 2020, country domains merged into clarks.eu with a platform change at the same time, with redirect chains and hreflang errors: Germany 61% lost, France 92% lost, Spain 97% lost. Measured at different points after each move.</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.sub{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 13px Arial,Helvetica,sans-serif;letter-spacing:1.5px}
+.t{fill:#ecf2fa;font:700 18px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 15px Arial,Helvetica,sans-serif}
+.mw{fill:#d0dbe8;font:500 15px Arial,Helvetica,sans-serif}
+.s{fill:#a9b8c9;font:500 16px Arial,Helvetica,sans-serif}
+.v{fill:#ecf2fa;font:700 18px Arial,Helvetica,sans-serif}
+.va{fill:#77e3c4;font:700 18px Arial,Helvetica,sans-serif}
+.vb{fill:#77e3c4;font:700 22px Arial,Helvetica,sans-serif}
+.tick{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.note{fill:#a9b8c9;font:500 16px Arial,Helvetica,sans-serif}
+.grid{stroke:#26374b;stroke-width:1}
+.base{stroke:#6f8196;stroke-width:1.5}
+.bar{fill:#77e3c4}
+.bar-m{fill:#6f8196}
+.line{stroke:#77e3c4;stroke-width:3;fill:none}
+.dash{stroke:#a9b8c9;stroke-width:1.5;stroke-dasharray:5 5;fill:none}
+.band{fill:#77e3c4;fill-opacity:.12}
+.dot{fill:#0e192a;stroke:#77e3c4;stroke-width:2.5}
+.arrow{stroke:#77e3c4;stroke-width:2.5;fill:none}
+.num{fill:#0e192a;stroke:#77e3c4;stroke-width:2.5}
+.numt{fill:#77e3c4;font:700 15px Arial,Helvetica,sans-serif}
+.bul{fill:#77e3c4}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="30.0" y="50.0" class="title" text-anchor="start">Visibility lost after three</text>
+<text x="30.0" y="86.0" class="title" text-anchor="start">documented migrations</text>
+<text x="30.0" y="120.0" class="sub" text-anchor="start">SISTRIX Visibility Index, before vs. low point</text>
+<text x="30.0" y="165.0" class="v" text-anchor="start">The Guardian, 2013</text>
+<text x="30.0" y="188.0" class="s" text-anchor="start">guardian.co.uk → theguardian.com</text>
+<rect x="30" y="201" width="440" height="26" rx="3" fill="#111d30" stroke="#26374b"/>
+<rect x="30" y="201" width="215.6" height="26" rx="3" class="bar-m"/>
+<text x="482.0" y="221.0" class="va" text-anchor="start">≈ −49%</text>
+<text x="30.0" y="253.0" class="s" text-anchor="start">Back at its previous level in about 3 months</text>
+<text x="30.0" y="295.0" class="v" text-anchor="start">Lush, 2015–16</text>
+<text x="30.0" y="318.0" class="s" text-anchor="start">lush.co.uk → lush.com</text>
+<rect x="30" y="331" width="440" height="26" rx="3" fill="#111d30" stroke="#26374b"/>
+<rect x="30" y="331" width="356.4" height="26" rx="3" class="bar"/>
+<text x="482.0" y="351.0" class="va" text-anchor="start">−81%</text>
+<text x="30.0" y="383.0" class="s" text-anchor="start">Most redirects ended in 404 pages</text>
+<text x="30.0" y="425.0" class="v" text-anchor="start">Clarks Germany, 2020</text>
+<text x="30.0" y="448.0" class="s" text-anchor="start">clarks.de → clarks.eu</text>
+<rect x="30" y="461" width="440" height="26" rx="3" fill="#111d30" stroke="#26374b"/>
+<rect x="30" y="461" width="268.4" height="26" rx="3" class="bar"/>
+<text x="482.0" y="481.0" class="va" text-anchor="start">−61%</text>
+<text x="30.0" y="529.0" class="v" text-anchor="start">Clarks France, 2020</text>
+<text x="30.0" y="552.0" class="s" text-anchor="start">clarks.fr → clarks.eu</text>
+<rect x="30" y="565" width="440" height="26" rx="3" fill="#111d30" stroke="#26374b"/>
+<rect x="30" y="565" width="404.8" height="26" rx="3" class="bar"/>
+<text x="482.0" y="585.0" class="va" text-anchor="start">−92%</text>
+<text x="30.0" y="633.0" class="v" text-anchor="start">Clarks Spain, 2020</text>
+<text x="30.0" y="656.0" class="s" text-anchor="start">clarks.es → clarks.eu</text>
+<rect x="30" y="669" width="440" height="26" rx="3" fill="#111d30" stroke="#26374b"/>
+<rect x="30" y="669" width="426.8" height="26" rx="3" class="bar"/>
+<text x="482.0" y="689.0" class="va" text-anchor="start">−97%</text>
+<text x="30.0" y="741.0" class="note" text-anchor="start">Clarks: domains merged and platform changed at once; redirect chains and</text>
+<text x="30.0" y="763.0" class="note" text-anchor="start">hreflang errors.</text>
+<text x="30.0" y="785.0" class="note" text-anchor="start">Grey bar: the one move that recovered in the source. Lows measured at</text>
+<text x="30.0" y="807.0" class="note" text-anchor="start">different points after each move.</text>
+</svg>

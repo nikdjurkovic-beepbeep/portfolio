@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 720" width="600" height="720" role="img" aria-labelledby="t d">
+<title id="t">How long domain migrations took to recover</title>
+<desc id="d">Line chart of cumulative recovery in SALT.agency’s 2026 study of 1,052 domain migrations. Share of migrations whose organic traffic had returned to the pre-move baseline: day 30: 5.1%, day 60: 12.7%, day 90: 22.8%, day 120: 27.8%, day 180: 35.4%, day 270: 43.0%, day 365: 59.5%, day 547: 75.9%, day 730: 83.5%, day 1095: 86.1%. The median recovery time was 304 days. 13.9% had not recovered after three years. A shaded band from day 30 to day 90 marks the typical range Google gave for processing a site move, one to three months, which measures indexing rather than traffic. Agency study, partly crowdsourced; monthly data, about plus or minus 30 days.</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.sub{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 13px Arial,Helvetica,sans-serif;letter-spacing:1.5px}
+.t{fill:#ecf2fa;font:700 18px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 15px Arial,Helvetica,sans-serif}
+.mw{fill:#d0dbe8;font:500 15px Arial,Helvetica,sans-serif}
+.s{fill:#a9b8c9;font:500 16px Arial,Helvetica,sans-serif}
+.v{fill:#ecf2fa;font:700 16px Arial,Helvetica,sans-serif}
+.va{fill:#77e3c4;font:700 18px Arial,Helvetica,sans-serif}
+.vb{fill:#77e3c4;font:700 22px Arial,Helvetica,sans-serif}
+.tick{fill:#a9b8c9;font:500 16px Arial,Helvetica,sans-serif}
+.note{fill:#a9b8c9;font:500 16px Arial,Helvetica,sans-serif}
+.grid{stroke:#26374b;stroke-width:1}
+.base{stroke:#6f8196;stroke-width:1.5}
+.bar{fill:#77e3c4}
+.bar-m{fill:#6f8196}
+.line{stroke:#77e3c4;stroke-width:3;fill:none}
+.dash{stroke:#a9b8c9;stroke-width:1.5;stroke-dasharray:5 5;fill:none}
+.band{fill:#77e3c4;fill-opacity:.12}
+.dot{fill:#0e192a;stroke:#77e3c4;stroke-width:2.5}
+.arrow{stroke:#77e3c4;stroke-width:2.5;fill:none}
+.num{fill:#0e192a;stroke:#77e3c4;stroke-width:2.5}
+.numt{fill:#77e3c4;font:700 15px Arial,Helvetica,sans-serif}
+.bul{fill:#77e3c4}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="30.0" y="50.0" class="title" text-anchor="start">How long domain migrations took</text>
+<text x="30.0" y="86.0" class="title" text-anchor="start">to recover</text>
+<text x="30.0" y="120.0" class="sub" text-anchor="start">Share of 1,052 domain migrations whose organic traffic was back at its</text>
+<text x="30.0" y="143.0" class="sub" text-anchor="start">pre-move baseline</text>
+<rect x="92.1" y="230" width="24.1" height="330" class="band"/>
+<line x1="80" y1="560.0" x2="520" y2="560.0" class="base"/>
+<text x="70.0" y="565.0" class="tick" text-anchor="end">0%</text>
+<line x1="80" y1="477.5" x2="520" y2="477.5" class="grid"/>
+<text x="70.0" y="482.5" class="tick" text-anchor="end">25%</text>
+<line x1="80" y1="395.0" x2="520" y2="395.0" class="grid"/>
+<text x="70.0" y="400.0" class="tick" text-anchor="end">50%</text>
+<line x1="80" y1="312.5" x2="520" y2="312.5" class="grid"/>
+<text x="70.0" y="317.5" class="tick" text-anchor="end">75%</text>
+<line x1="80" y1="230.0" x2="520" y2="230.0" class="grid"/>
+<text x="70.0" y="235.0" class="tick" text-anchor="end">100%</text>
+<line x1="80.0" y1="560" x2="80.0" y2="566" class="base"/>
+<text x="80.0" y="589.1" class="tick" text-anchor="middle">0</text>
+<line x1="152.3" y1="560" x2="152.3" y2="566" class="base"/>
+<text x="152.3" y="589.1" class="tick" text-anchor="middle">6 months</text>
+<line x1="226.7" y1="560" x2="226.7" y2="566" class="base"/>
+<text x="226.7" y="589.1" class="tick" text-anchor="middle">1 year</text>
+<line x1="373.3" y1="560" x2="373.3" y2="566" class="base"/>
+<text x="373.3" y="589.1" class="tick" text-anchor="middle">2 years</text>
+<line x1="520.0" y1="560" x2="520.0" y2="566" class="base"/>
+<text x="520.0" y="589.1" class="tick" text-anchor="middle">3 years</text>
+<text x="96.1" y="200.0" class="s" text-anchor="start">Shaded: Google’s typical site-move</text>
+<text x="96.1" y="220.0" class="s" text-anchor="start">processing, 1–3 months (not traffic)</text>
+<path d="M80 395.0 L202.2 395.0 L202.2 560" class="dash"/>
+<polyline points="80.0,560.0 92.1,543.2 104.1,518.1 116.2,484.8 128.2,468.3 152.3,443.2 188.5,418.1 226.7,363.6 299.8,309.5 373.3,284.4 520.0,275.9" class="line"/>
+<circle cx="92.1" cy="543.2" r="4.5" class="dot"/>
+<circle cx="104.1" cy="518.1" r="4.5" class="dot"/>
+<circle cx="116.2" cy="484.8" r="4.5" class="dot"/>
+<circle cx="128.2" cy="468.3" r="4.5" class="dot"/>
+<circle cx="152.3" cy="443.2" r="4.5" class="dot"/>
+<circle cx="188.5" cy="418.1" r="4.5" class="dot"/>
+<circle cx="226.7" cy="363.6" r="4.5" class="dot"/>
+<circle cx="299.8" cy="309.5" r="4.5" class="dot"/>
+<circle cx="373.3" cy="284.4" r="4.5" class="dot"/>
+<circle cx="520.0" cy="275.9" r="4.5" class="dot"/>
+<text x="210.2" y="417.0" class="va" text-anchor="start">Median</text>
+<text x="210.2" y="439.0" class="va" text-anchor="start">304 days</text>
+<rect x="120.2" y="489.8" width="146.1" height="24" class="bg"/>
+<text x="124.2" y="506.8" class="va" text-anchor="start">22.8% by day 90</text>
+<text x="216.7" y="351.6" class="va" text-anchor="end">59.5% by 1 year</text>
+<text x="516.0" y="261.9" class="va" text-anchor="end">86.1% by 3 years</text>
+<path d="M532 230.0 L540 230.0 L540 275.9 L532 275.9" class="dash"/>
+<text x="80.0" y="622.0" class="note" text-anchor="start">13.9% had not recovered after three years.</text>
+<text x="80.0" y="646.0" class="note" text-anchor="start">Agency study, partly crowdsourced; monthly</text>
+<text x="80.0" y="668.0" class="note" text-anchor="start">data, about ±30 days. Source: SALT.agency, 2026.</text>
+</svg>

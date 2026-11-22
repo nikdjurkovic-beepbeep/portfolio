@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1407" width="600" height="1407" role="img" aria-labelledby="t d">
+<title id="t">A migration happens one URL at a time</title>
+<desc id="d">Diagram of how Google Search processes a site migration, one URL at a time, with documented failure points at each of five steps. Step 1, Old URL recrawled (Every old URL, at least once): fails when server errors (5xx, 429) make Google’s crawlers slow down; rarely crawled URLs move last: weeks to never for a refresh. Step 2, Redirect followed (301 or 308, straight to the target): fails when target returns a 404, or many URLs land on the home page (soft 404); chains beyond 3 to 5 hops; a 302 or 307 is only a weak signal; a JavaScript redirect is missed if rendering fails. Step 3, New URL crawled (More heavily than usual, for a while): fails when development noindex or robots.txt blocks are still live; the new server cannot absorb the extra crawling. Step 4, Canonical chosen (New URL picked over the old one): fails when canonicals, internal links, sitemaps or hreflang still name old URLs. Step 5, Signals consolidated (Old URL fades from results): fails when templates, content or platform changed on the same day; redirects removed early: Change of Address runs 180 days; Google says keep them at least a year. Google: a move is complete only when Googlebot has visited every old and new URL at least once. Permanent redirects lose no PageRank.</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.sub{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 13px Arial,Helvetica,sans-serif;letter-spacing:1.5px}
+.t{fill:#ecf2fa;font:700 20px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 15px Arial,Helvetica,sans-serif}
+.mw{fill:#d0dbe8;font:500 17px Arial,Helvetica,sans-serif}
+.s{fill:#a9b8c9;font:500 16px Arial,Helvetica,sans-serif}
+.v{fill:#ecf2fa;font:700 16px Arial,Helvetica,sans-serif}
+.va{fill:#77e3c4;font:700 16px Arial,Helvetica,sans-serif}
+.vb{fill:#77e3c4;font:700 22px Arial,Helvetica,sans-serif}
+.tick{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.note{fill:#a9b8c9;font:500 16px Arial,Helvetica,sans-serif}
+.grid{stroke:#26374b;stroke-width:1}
+.base{stroke:#6f8196;stroke-width:1.5}
+.bar{fill:#77e3c4}
+.bar-m{fill:#6f8196}
+.line{stroke:#77e3c4;stroke-width:3;fill:none}
+.dash{stroke:#a9b8c9;stroke-width:1.5;stroke-dasharray:5 5;fill:none}
+.band{fill:#77e3c4;fill-opacity:.12}
+.dot{fill:#0e192a;stroke:#77e3c4;stroke-width:2.5}
+.arrow{stroke:#77e3c4;stroke-width:2.5;fill:none}
+.num{fill:#0e192a;stroke:#77e3c4;stroke-width:2.5}
+.numt{fill:#77e3c4;font:700 15px Arial,Helvetica,sans-serif}
+.bul{fill:#77e3c4}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="30.0" y="50.0" class="title" text-anchor="start">One URL at a time</text>
+<text x="30.0" y="82.0" class="sub" text-anchor="start">Five steps each old URL goes through in Google Search, and where</text>
+<text x="30.0" y="105.0" class="sub" text-anchor="start">each one fails.</text>
+<rect x="30" y="150" width="540" height="189" rx="12" class="panel"/>
+<rect x="30" y="150" width="540" height="81" rx="12" class="panel-a"/>
+<circle cx="62" cy="188" r="15" class="num"/>
+<text x="62.0" y="193.0" class="numt" text-anchor="middle">1</text>
+<text x="92.0" y="195.0" class="t" text-anchor="start">Old URL recrawled</text>
+<text x="92.0" y="220.0" class="s" text-anchor="start">Every old URL, at least once</text>
+<text x="52.0" y="261.0" class="h" text-anchor="start">FAILS WHEN</text>
+<circle cx="56" cy="283" r="4" class="bul"/>
+<text x="74.0" y="289.0" class="mw" text-anchor="start">Server errors (5xx, 429) make Google’s crawlers slow down</text>
+<circle cx="56" cy="315" r="4" class="bul"/>
+<text x="74.0" y="321.0" class="mw" text-anchor="start">Rarely crawled URLs move last: weeks to never for a refresh</text>
+<path d="M62 342 L62 369" class="arrow"/>
+<path d="M56 362 L62 369 L68 362" class="arrow"/>
+<rect x="30" y="373" width="540" height="245" rx="12" class="panel"/>
+<rect x="30" y="373" width="540" height="81" rx="12" class="panel-a"/>
+<circle cx="62" cy="411" r="15" class="num"/>
+<text x="62.0" y="416.0" class="numt" text-anchor="middle">2</text>
+<text x="92.0" y="418.0" class="t" text-anchor="start">Redirect followed</text>
+<text x="92.0" y="443.0" class="s" text-anchor="start">301 or 308, straight to the target</text>
+<text x="52.0" y="484.0" class="h" text-anchor="start">FAILS WHEN</text>
+<circle cx="56" cy="506" r="4" class="bul"/>
+<text x="74.0" y="512.0" class="mw" text-anchor="start">Target returns a 404, or many URLs land on the home page</text>
+<text x="74.0" y="536.0" class="mw" text-anchor="start">(soft 404)</text>
+<circle cx="56" cy="562" r="4" class="bul"/>
+<text x="74.0" y="568.0" class="mw" text-anchor="start">Chains beyond 3 to 5 hops; a 302 or 307 is only a weak signal</text>
+<circle cx="56" cy="594" r="4" class="bul"/>
+<text x="74.0" y="600.0" class="mw" text-anchor="start">A JavaScript redirect is missed if rendering fails</text>
+<path d="M62 621 L62 648" class="arrow"/>
+<path d="M56 641 L62 648 L68 641" class="arrow"/>
+<rect x="30" y="652" width="540" height="189" rx="12" class="panel"/>
+<rect x="30" y="652" width="540" height="81" rx="12" class="panel-a"/>
+<circle cx="62" cy="690" r="15" class="num"/>
+<text x="62.0" y="695.0" class="numt" text-anchor="middle">3</text>
+<text x="92.0" y="697.0" class="t" text-anchor="start">New URL crawled</text>
+<text x="92.0" y="722.0" class="s" text-anchor="start">More heavily than usual, for a while</text>
+<text x="52.0" y="763.0" class="h" text-anchor="start">FAILS WHEN</text>
+<circle cx="56" cy="785" r="4" class="bul"/>
+<text x="74.0" y="791.0" class="mw" text-anchor="start">Development noindex or robots.txt blocks are still live</text>
+<circle cx="56" cy="817" r="4" class="bul"/>
+<text x="74.0" y="823.0" class="mw" text-anchor="start">The new server cannot absorb the extra crawling</text>
+<path d="M62 844 L62 871" class="arrow"/>
+<path d="M56 864 L62 871 L68 864" class="arrow"/>
+<rect x="30" y="875" width="540" height="181" rx="12" class="panel"/>
+<rect x="30" y="875" width="540" height="81" rx="12" class="panel-a"/>
+<circle cx="62" cy="913" r="15" class="num"/>
+<text x="62.0" y="918.0" class="numt" text-anchor="middle">4</text>
+<text x="92.0" y="920.0" class="t" text-anchor="start">Canonical chosen</text>
+<text x="92.0" y="945.0" class="s" text-anchor="start">New URL picked over the old one</text>
+<text x="52.0" y="986.0" class="h" text-anchor="start">FAILS WHEN</text>
+<circle cx="56" cy="1008" r="4" class="bul"/>
+<text x="74.0" y="1014.0" class="mw" text-anchor="start">Canonicals, internal links, sitemaps or hreflang still name old</text>
+<text x="74.0" y="1038.0" class="mw" text-anchor="start">URLs</text>
+<path d="M62 1059 L62 1086" class="arrow"/>
+<path d="M56 1079 L62 1086 L68 1079" class="arrow"/>
+<rect x="30" y="1090" width="540" height="213" rx="12" class="panel"/>
+<rect x="30" y="1090" width="540" height="81" rx="12" class="panel-a"/>
+<circle cx="62" cy="1128" r="15" class="num"/>
+<text x="62.0" y="1133.0" class="numt" text-anchor="middle">5</text>
+<text x="92.0" y="1135.0" class="t" text-anchor="start">Signals consolidated</text>
+<text x="92.0" y="1160.0" class="s" text-anchor="start">Old URL fades from results</text>
+<text x="52.0" y="1201.0" class="h" text-anchor="start">FAILS WHEN</text>
+<circle cx="56" cy="1223" r="4" class="bul"/>
+<text x="74.0" y="1229.0" class="mw" text-anchor="start">Templates, content or platform changed on the same day</text>
+<circle cx="56" cy="1255" r="4" class="bul"/>
+<text x="74.0" y="1261.0" class="mw" text-anchor="start">Redirects removed early: Change of Address runs 180 days;</text>
+<text x="74.0" y="1285.0" class="mw" text-anchor="start">Google says keep them at least a year</text>
+<text x="30.0" y="1339.0" class="note" text-anchor="start">Google: a move is complete only when Googlebot has visited every old and</text>
+<text x="30.0" y="1361.0" class="note" text-anchor="start">new URL at least once. Permanent redirects lose no PageRank.</text>
+</svg>
