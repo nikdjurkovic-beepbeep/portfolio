@@ -4,7 +4,7 @@
   "description": "NikolaSEO CMS: edge Worker + admin tooling",
   "scripts": {
     "dev": "./test/restart.sh",
-    "test:unit": "node --test test/redirects.test.mjs test/mfa.test.mjs test/textof.test.mjs test/hero.test.mjs",
+    "test:unit": "node --test test/redirects.test.mjs test/mfa.test.mjs test/textof.test.mjs test/hero.test.mjs test/nav.test.mjs",
     "test:api": "node --test --test-concurrency=1 test/api.test.mjs test/api2.test.mjs && python3 test/ui_smoke.py && node --test test/api3.test.mjs && python3 test/ui_2fa.py",
     "test:ui": "python3 test/ui_smoke.py && python3 test/ui_2fa.py",
     "verify": "node scripts/verify-deploy.mjs",

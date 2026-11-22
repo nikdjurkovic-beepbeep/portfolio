@@ -377,10 +377,10 @@ function relHref(url, path) {
   if (/^(https?:|mailto:|tel:)/i.test(url)) return url;
   const prefix = depthPrefix(path);
   const [p, hash = ''] = url.split('#');
-  let target = p.replace(/^\//, '');
-  if (target === '' && hash) target = 'index.html'; // site convention: index.html#section
+  const target = p.replace(/^\//, '');
+  // Folder-style URLs only: never link to index.html, so the homepage is ./ or ../ (plus #section).
   const out = `${prefix}${target}${hash ? `#${hash}` : ''}`;
-  return out || './';
+  return out.startsWith('#') || out === '' ? `./${out}` : out;
 }
 
 export function renderNav(items, path) {
