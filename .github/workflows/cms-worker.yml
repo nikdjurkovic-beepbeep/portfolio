@@ -64,7 +64,7 @@ jobs:
 
       - name: Unit tests
         working-directory: cms
-        run: node --test test/redirects.test.mjs test/mfa.test.mjs
+        run: npm run -s test:unit
 
       - name: D1 database (create once) and migrations
         working-directory: cms/worker

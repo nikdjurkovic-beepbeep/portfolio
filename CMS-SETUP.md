@@ -35,6 +35,7 @@ The first time, the CMS walks you through setup:
 - **Duplicate**, **Unpublish**, **Move to trash** (restorable) and **Delete permanently** are in the Pages list and the editor.
 - Interactive tool areas on SEO tool pages show as locked “preserved” blocks. Edit the text around them; the tools keep working.
 - If someone else saves the page while you have it open, saving tells you instead of overwriting their work. The same happens if the file was changed directly on GitHub.
+- Pages committed straight to GitHub (for example by the writer agent) show up in **Pages** on their own within about 5 minutes. Changes to existing pages made on GitHub become the new live version; a page with an unpublished CMS draft keeps the draft, and publishing it is refused until you reload, so neither side is overwritten. **Sync from repository** does the same thing immediately.
 
 ## Links
 

@@ -565,45 +565,84 @@ async function getPage(c, id, need = 'read') {
 
 const EXCLUDE_PAGE = p => p.startsWith('admin/') || p.startsWith('cms/') || p.startsWith('.') || /^google[^/]*\.html$/i.test(p) || p.startsWith('assets/');
 
-route('POST', '/pages/sync', 'pages.edit_any', async c => {
-  const gh = new GitHub(c.env);
-  const { files } = await gh.tree();
+// Bump when page-title extraction changes so the next sync re-derives titles of unchanged pages once.
+const SYNC_REV = '2';
+const pageTitle = (doc, path) => (H.textOf(doc.querySelector('main h1, h1')) || H.textOf(doc.querySelector('title')) || path).slice(0, 200);
+
+/**
+ * Bring the CMS in line with the repository: import new HTML files, record files changed
+ * outside the CMS as the new live version, and move deleted public pages to drafts.
+ * Used by "Sync from repository" and, automatically, by the scheduler whenever the branch head moves.
+ */
+async function syncPages(env, userId) {
+  const gh = new GitHub(env);
+  const { head, files } = await gh.tree();
   const htmlPaths = [...files.keys()].filter(p => /\.html?$/i.test(p) && !EXCLUDE_PAGE(p));
-  const existing = new Map((await c.env.DB.prepare('SELECT id, path, status, visibility, live_sha FROM pages').all()).results.map(p => [p.path, p]));
-  const added = [], updated = [], missing = [];
+  const existing = new Map((await env.DB.prepare('SELECT id, path, title, status, visibility, live_sha FROM pages').all()).results.map(p => [p.path, p]));
+  const retitle = (await env.DB.prepare("SELECT value FROM settings WHERE key = 'sync_rev'").first())?.value !== SYNC_REV;
+  const added = [], updated = [], missing = [], retitled = [];
   for (const path of htmlPaths) {
     const sha = files.get(path).sha;
     const row = existing.get(path);
-    if (row && row.live_sha === sha) continue;
+    if (row && row.live_sha === sha) {
+      if (retitle) {
+        const title = pageTitle(H.parse(await gh.blobText(sha)), path);
+        if (title !== row.title) { await env.DB.prepare('UPDATE pages SET title = ? WHERE id = ?').bind(title, row.id).run(); retitled.push(path); }
+      }
+      continue;
+    }
     const text = await gh.blobText(sha);
     const doc = H.parse(text);
-    const title = (doc.querySelector('main h1, h1')?.textContent || doc.querySelector('title')?.textContent || path).trim().replace(/\s+/g, ' ').slice(0, 200);
+    const title = pageTitle(doc, path);
     const seo = H.readSeo(text, path);
     const template = H.detectTemplate(doc, path);
     if (!row) {
-      const parsed = H.readSeo(text, path);
-      await c.env.DB.prepare(`INSERT INTO pages (path, url, title, template, status, visibility, author_id, modified_by, live_sha, published_html, seo, sitemap, breadcrumbs, published_at)
-        VALUES (?,?,?,?, 'published', 'public', ?, ?, ?, ?, ?, ?, ?, ?)`).bind(path, H.urlForPath(path), title, template, c.user.id, c.user.id, sha, text, JSON.stringify(parsed), parsed.index ? 1 : 0, parsed.breadcrumbs ? 1 : 0, doc.querySelector('meta[property="article:published_time"]')?.getAttribute('content') || sqlNow()).run();
-      const id = (await c.env.DB.prepare('SELECT id FROM pages WHERE path = ?').bind(path).first()).id;
-      await c.env.DB.prepare("INSERT INTO revisions (page_id, kind, title, html, seo, user_id, page_version) VALUES (?, 'import', ?, ?, ?, ?, 1)").bind(id, title, text, JSON.stringify(parsed), c.user.id).run();
+      await env.DB.prepare(`INSERT INTO pages (path, url, title, template, status, visibility, author_id, modified_by, live_sha, published_html, seo, sitemap, breadcrumbs, published_at)
+        VALUES (?,?,?,?, 'published', 'public', ?, ?, ?, ?, ?, ?, ?, ?)`).bind(path, H.urlForPath(path), title, template, userId, userId, sha, text, JSON.stringify(seo), seo.index ? 1 : 0, seo.breadcrumbs ? 1 : 0, doc.querySelector('meta[property="article:published_time"]')?.getAttribute('content') || sqlNow()).run();
+      const id = (await env.DB.prepare('SELECT id FROM pages WHERE path = ?').bind(path).first()).id;
+      await env.DB.prepare("INSERT INTO revisions (page_id, kind, title, html, seo, user_id, page_version) VALUES (?, 'import', ?, ?, ?, ?, 1)").bind(id, title, text, JSON.stringify(seo), userId).run();
       added.push(path);
     } else {
       // File changed outside the CMS (e.g. a direct commit). Record it as the new live version.
-      await c.env.DB.prepare("UPDATE pages SET live_sha = ?, published_html = ?, title = ?, template = ?, seo = ?, status = CASE WHEN status = 'trash' THEN status ELSE 'published' END, visibility = 'public', updated_at = datetime('now') WHERE id = ?").bind(sha, text, title, template, JSON.stringify(seo), row.id).run();
-      await c.env.DB.prepare("INSERT INTO revisions (page_id, kind, title, html, seo, user_id) VALUES (?, 'import', ?, ?, ?, ?)").bind(row.id, title, text, JSON.stringify(seo), c.user.id).run();
+      // A page with unpublished CMS changes keeps its draft title and SEO; publishing it later
+      // is refused as "changed on GitHub" until the editor reloads, so nothing is overwritten silently.
+      await env.DB.prepare("UPDATE pages SET live_sha = ?, published_html = ?, title = CASE WHEN draft_html IS NULL THEN ? ELSE title END, template = ?, seo = CASE WHEN draft_html IS NULL THEN ? ELSE seo END, status = CASE WHEN status = 'trash' THEN status ELSE 'published' END, visibility = 'public', updated_at = datetime('now') WHERE id = ?").bind(sha, text, title, template, JSON.stringify(seo), row.id).run();
+      await env.DB.prepare("INSERT INTO revisions (page_id, kind, title, html, seo, user_id) VALUES (?, 'import', ?, ?, ?, ?)").bind(row.id, title, text, JSON.stringify(seo), userId).run();
       updated.push(path);
     }
   }
   for (const [path, row] of existing) {
     if (row.status === 'published' && row.visibility === 'public' && !files.has(path)) {
-      await c.env.DB.prepare("UPDATE pages SET status = 'draft', live_sha = NULL, draft_html = COALESCE(draft_html, published_html), updated_at = datetime('now') WHERE id = ?").bind(row.id).run();
+      await env.DB.prepare("UPDATE pages SET status = 'draft', live_sha = NULL, draft_html = COALESCE(draft_html, published_html), updated_at = datetime('now') WHERE id = ?").bind(row.id).run();
       missing.push(path);
     }
   }
-  if (added.length || updated.length || missing.length) await bump(c.env, 'content_version');
-  audit(c, 'pages.sync', null, { added: added.length, updated: updated.length, missing });
-  return json({ added, updated, missing });
+  const setSetting = (key, value) => env.DB.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(key, value);
+  await env.DB.batch([setSetting('repo_head_synced', head), setSetting('sync_rev', SYNC_REV)]);
+  if (added.length || updated.length || missing.length || retitled.length) await bump(env, 'content_version');
+  return { added, updated, missing, retitled };
+}
+
+route('POST', '/pages/sync', 'pages.edit_any', async c => {
+  const out = await syncPages(c.env, c.user.id);
+  audit(c, 'pages.sync', null, { added: out.added.length, updated: out.updated.length, missing: out.missing, retitled: out.retitled.length });
+  return json(out);
 });
+
+/** Scheduler: re-sync only when the branch head moved, so pages published outside the CMS appear on their own. */
+async function autoSyncPages(env) {
+  const imported = await env.DB.prepare('SELECT COUNT(*) AS n FROM pages').first();
+  if (!imported.n) return null; // the first import stays a deliberate click on the dashboard
+  const head = await new GitHub(env).headSha();
+  const last = (await env.DB.prepare("SELECT value FROM settings WHERE key = 'repo_head_synced'").first())?.value;
+  const rev = (await env.DB.prepare("SELECT value FROM settings WHERE key = 'sync_rev'").first())?.value;
+  if (head === last && rev === SYNC_REV) return null;
+  const out = await syncPages(env, null);
+  if (out.added.length || out.updated.length || out.missing.length || out.retitled.length) {
+    await log(env, null, 'pages.auto_sync', null, { added: out.added, updated: out.updated, missing: out.missing, retitled: out.retitled.length });
+  }
+  return out;
+}
 
 route('GET', '/pages/link-targets', 'pages.read', async c => {
   const rows = (await c.env.DB.prepare("SELECT id, url, title, path, visibility, status, COALESCE(draft_html, published_html) AS html FROM pages WHERE status != 'trash' ORDER BY url").all()).results;
@@ -613,7 +652,7 @@ route('GET', '/pages/link-targets', 'pages.read', async c => {
       try {
         const doc = H.parse(r.html || '');
         const root = doc.querySelector('article.article') || doc.querySelector('main') || doc.body;
-        sections = [...root.querySelectorAll('h1[id],h2[id],h3[id],section[id]')].map(el => ({ id: el.getAttribute('id'), label: el.textContent.trim().replace(/\s+/g, ' ').slice(0, 90) || el.getAttribute('id') }));
+        sections = [...root.querySelectorAll('h1[id],h2[id],h3[id],section[id]')].map(el => ({ id: el.getAttribute('id'), label: H.textOf(el).slice(0, 90) || el.getAttribute('id') }));
       } catch { /* ignore */ }
       return { id: r.id, url: r.url, title: r.title, published: r.status === 'published', visibility: r.visibility, sections };
     })
@@ -800,6 +839,9 @@ async function finalHtml(c, p, html) {
 }
 
 async function sitemapText(env, overrides = new Map()) {
+  // Pages committed straight to GitHub (e.g. by the writer agent) must be known before the
+  // sitemap is rebuilt, or a CMS publish would drop them from it.
+  await autoSyncPages(env);
   const rows = (await env.DB.prepare("SELECT id, url, status, visibility, sitemap, seo, published_at, updated_at FROM pages").all()).results;
   const entries = [];
   for (const r0 of rows) {
@@ -889,6 +931,7 @@ async function runScheduled(env) {
       await log(env, p.modified_by, 'page.schedule_failed', p.url, { message: e.message }, 'error');
     }
   }
+  try { await autoSyncPages(env); } catch (e) { await log(env, null, 'pages.auto_sync_failed', null, { message: e.message }, 'warning'); }
   await env.DB.prepare("INSERT INTO settings (key, value) VALUES ('cron_last_run', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").bind(nowIso()).run();
   return due.length;
 }

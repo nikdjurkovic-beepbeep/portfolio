@@ -1,6 +1,6 @@
 # CMS functionality matrix
 
-Updated 2026-11-22 · branch `cms-v2` · **deployed: no** (nothing below is live yet).
+Updated 2026-11-22 · `main` · **deployed 2026-11-22**: Worker live on nikolaseo.com via the `CMS Worker` workflow (Cloudflare Workers Free), admin served by GitHub Pages. First administrator created with 2FA; 16 pages imported.
 
 Status key:
 - **Tested** = tested and verified locally: real Worker runtime (`wrangler dev` / workerd) with a local D1 database, a mock GitHub API, and a mock GitHub Pages origin that serves whatever was committed, plus headless Chrome for the UI.
@@ -38,6 +38,9 @@ Test suites:
 | Secrets encrypted at rest (AES-GCM, `MFA_KEY`), never in API responses or backups | Tested | mfa unit, api3 #3 |
 | Password reset does not bypass 2FA | Tested | api3 #9 |
 | Self-service email password reset | Blocked | needs an email provider |
+| Setup and change-password forms ask for the password twice | Tested | ui_2fa |
+| Pages committed outside the CMS (writer agent, direct GitHub commits) imported automatically by the 5-minute scheduler; CMS publishes sync first so the sitemap never drops them | Tested | api2 #28–29 |
+| Titles from headings with `<br>` keep the word break ("access checker", not "accesschecker"); unchanged hero fields keep inline markup on save | Tested | textof + hero unit |
 | Roles: administrator, editor, author, contributor, subscriber | Tested | api #12 |
 | Per-user grant/revoke capabilities | Tested | api #12 (editor granted `redirects.manage`) |
 | Server-side permission enforcement | Tested | api #12 (403s on API, not just hidden buttons) |

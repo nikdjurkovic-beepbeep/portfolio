@@ -18,6 +18,26 @@ export function parse(html) {
   return document;
 }
 
+/**
+ * Visible text of an element with <br> treated as a space, whitespace collapsed.
+ * Plain textContent glues "access<br><span>checker.</span>" into "accesschecker.".
+ */
+export function textOf(el) {
+  if (!el) return '';
+  const out = [];
+  const walk = node => {
+    for (const child of node.childNodes) {
+      if (child.nodeType === 3) out.push(child.nodeValue);
+      else if (child.nodeType === 1) {
+        if (child.tagName === 'BR') out.push(' ');
+        else walk(child);
+      }
+    }
+  };
+  walk(el);
+  return out.join('').replace(/\s+/g, ' ').trim();
+}
+
 export function serialize(doc) {
   const html = doc.documentElement.outerHTML;
   return `<!doctype html>\n${html}\n`;
@@ -82,7 +102,7 @@ function hashString(value) {
 function placeholderLabel(el) {
   if (el.matches('script')) return 'Script (preserved)';
   if (el.matches('style')) return 'Style block (preserved)';
-  if (el.matches('.tool-shell')) return `Interactive tool: ${(el.querySelector('h3,h2')?.textContent || 'tool UI').trim()} (preserved)`;
+  if (el.matches('.tool-shell')) return `Interactive tool: ${(textOf(el.querySelector('h3,h2')) || 'tool UI')} (preserved)`;
   return 'Interactive block (preserved)';
 }
 
@@ -101,9 +121,9 @@ export function extractEditable(html, path) {
   const hero = {};
   if (template === 'article') {
     const heroEl = doc.querySelector('section.hero');
-    hero.eyebrow = heroEl?.querySelector('.eyebrow')?.textContent.trim() || '';
-    hero.headline = heroEl?.querySelector('h1')?.textContent.trim() || '';
-    hero.lead = heroEl?.querySelector('.lead')?.textContent.trim() || '';
+    hero.eyebrow = textOf(heroEl?.querySelector('.eyebrow'));
+    hero.headline = textOf(heroEl?.querySelector('h1'));
+    hero.lead = textOf(heroEl?.querySelector('.lead'));
     hero.date = heroEl?.querySelector('.meta time')?.getAttribute('datetime') || '';
   }
   return { template, body: root.innerHTML, hero, protectedCount: blocks.length };
@@ -147,7 +167,8 @@ export function composeEditable(currentHtml, path, { body, hero }, { allowRemove
   if (template === 'article' && hero) {
     const heroEl = doc.querySelector('section.hero');
     if (heroEl) {
-      const set = (sel, value) => { const el = heroEl.querySelector(sel); if (el && typeof value === 'string') el.textContent = value; };
+      // Only rewrite a field that actually changed, so inline markup (<br>, <span>, <em>) survives a save.
+      const set = (sel, value) => { const el = heroEl.querySelector(sel); if (el && typeof value === 'string' && value.replace(/\s+/g, ' ').trim() !== textOf(el)) el.textContent = value; };
       set('.eyebrow', hero.eyebrow);
       set('h1', hero.headline);
       set('.lead', hero.lead);
@@ -171,12 +192,12 @@ export function updateToc(doc, article) {
   const navs = [...doc.querySelectorAll('.toc nav, .mobile-toc nav')];
   const used = new Set();
   const records = [...article.querySelectorAll('h2')].map(h => {
-    let id = h.getAttribute('id') || slugify(h.textContent);
+    let id = h.getAttribute('id') || slugify(textOf(h));
     const base = id; let n = 2;
     while (used.has(id)) id = `${base}-${n++}`;
     used.add(id);
     h.setAttribute('id', id);
-    return { id, label: h.textContent.trim().replace(/\s+/g, ' ') };
+    return { id, label: textOf(h) };
   });
   navs.forEach(nav => {
     // Keep hand-written TOC labels (e.g. shortened headings); only new headings get their H2 text.
@@ -341,11 +362,11 @@ export function readMenuFromHtml(html) {
   };
   const items = [];
   for (const node of nav.children) {
-    if (node.tagName === 'A') items.push({ label: node.textContent.trim(), url: toUrl(node.getAttribute('href')), newTab: node.getAttribute('target') === '_blank', children: [] });
+    if (node.tagName === 'A') items.push({ label: textOf(node), url: toUrl(node.getAttribute('href')), newTab: node.getAttribute('target') === '_blank', children: [] });
     if (node.tagName === 'DETAILS') {
       items.push({
-        label: node.querySelector('summary')?.textContent.trim() || 'Menu', url: '', newTab: false,
-        children: [...node.querySelectorAll('.dropdown-panel > a')].map(a => ({ label: a.textContent.trim(), url: toUrl(a.getAttribute('href')), newTab: a.getAttribute('target') === '_blank', children: [] }))
+        label: textOf(node.querySelector('summary')) || 'Menu', url: '', newTab: false,
+        children: [...node.querySelectorAll('.dropdown-panel > a')].map(a => ({ label: textOf(a), url: toUrl(a.getAttribute('href')), newTab: a.getAttribute('target') === '_blank', children: [] }))
       });
     }
   }

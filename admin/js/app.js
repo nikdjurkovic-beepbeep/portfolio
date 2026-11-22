@@ -133,12 +133,15 @@ function renderSetup() {
       <div class="field"><label for="name">Your name</label><input id="name" required></div>
       <div class="field"><label for="email">Email</label><input id="email" type="email" required autocomplete="username"></div>
       <div class="field"><label for="password">Password <small>(12+ characters)</small></label><input id="password" type="password" minlength="12" required autocomplete="new-password"></div>
+      <div class="field"><label for="password2">Repeat password</label><input id="password2" type="password" minlength="12" required autocomplete="new-password"></div>
       <div class="form-error" role="alert" hidden></div>
       <button class="button primary wide" type="submit">Create administrator</button>
     </form>`);
   const form = document.getElementById('setupForm');
   form.addEventListener('submit', async e => {
     e.preventDefault();
+    const box = form.querySelector('.form-error');
+    if (form.password.value !== form.password2.value) { box.hidden = false; box.textContent = 'The two passwords do not match.'; form.password2.focus(); return; }
     try {
       await api('POST', '/setup', { setupToken: form.setupToken.value, name: form.name.value, email: form.email.value, password: form.password.value });
       toast('Administrator created. Sign in to continue.');
@@ -527,11 +530,12 @@ async function renderAccount(ws) {
     <div class="two-col"><section class="panel"><h2>Change password</h2><form id="pwForm">
       <div class="field"><label for="cur">Current password</label><input id="cur" type="password" required autocomplete="current-password"></div>
       <div class="field"><label for="nw">New password <small>(12+ characters)</small></label><input id="nw" type="password" minlength="12" required autocomplete="new-password"></div>
+      <div class="field"><label for="nw2">Repeat new password</label><input id="nw2" type="password" minlength="12" required autocomplete="new-password"></div>
       <button class="button primary">Change password</button><p class="hint">Your other sessions are signed out.</p></form></section>
     <section class="panel" id="mfaPanel"></section>
     <section class="panel"><h2>Active sessions</h2><ul class="plain-list">${sessions.map(s => `<li><span><b>${s.current ? 'This browser' : esc((s.ua || '').slice(0, 60))}</b><small>${esc(s.ip || '')} · last active ${fmtAgo(s.last_seen)}</small></span></li>`).join('')}</ul>
       <button class="button secondary" id="logoutAll">Sign out everywhere</button></section></div>`;
-  ws.querySelector('#pwForm').addEventListener('submit', async e => { e.preventDefault(); try { await api('POST', '/auth/password', { current: ws.querySelector('#cur').value, next: ws.querySelector('#nw').value }); toast('Password changed.'); e.target.reset(); } catch (err) { toastError(err); } });
+  ws.querySelector('#pwForm').addEventListener('submit', async e => { e.preventDefault(); if (ws.querySelector('#nw').value !== ws.querySelector('#nw2').value) { toastError(new Error('The two new passwords do not match.')); ws.querySelector('#nw2').focus(); return; } try { await api('POST', '/auth/password', { current: ws.querySelector('#cur').value, next: ws.querySelector('#nw').value }); toast('Password changed.'); e.target.reset(); } catch (err) { toastError(err); } });
   ws.querySelector('#logoutAll').onclick = async () => { await api('POST', '/auth/logout-all', {}); state.user = null; renderLogin('Signed out on all devices.'); };
   const me = await api('GET', '/auth/me');
   setSession(me);

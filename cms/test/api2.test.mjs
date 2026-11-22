@@ -317,3 +317,45 @@ test('public site still served correctly for every original page', async () => {
     assert.equal((await live(p)).status, 200, p);
   }
 });
+
+test('pages committed straight to GitHub (writer agent) appear on their own; titles keep spaces at <br>', async () => {
+  const GH = 'http://localhost:8789';
+  const pages0 = (await req('GET', '/cms-api/pages')).data.pages;
+  const home = pages0.find(x => x.url === '/');
+  assert.ok(!/SEO\.At/.test(home.title), `home title: ${home.title}`);
+  const html = '<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Agent article | NikolaSEO</title><meta name="description" content="x"><link rel="canonical" href="https://nikolaseo.com/agent-article/"></head><body><main><h1>Agent<br><span>article.</span></h1><p>Body</p></main></body></html>';
+  await fetch(`${GH}/_external-commit`, { method: 'POST', headers: { Authorization: 'Bearer test-token', 'Content-Type': 'application/json' }, body: JSON.stringify({ path: 'agent-article/index.html', text: html }) });
+  assert.ok(!(await req('GET', '/cms-api/pages')).data.pages.some(x => x.url === '/agent-article/'), 'not imported before the scheduler runs');
+  await fetch(`${W}/__scheduled`);
+  let p;
+  for (let i = 0; i < 30 && !p; i++) { // the scheduled handler finishes in waitUntil
+    p = (await req('GET', '/cms-api/pages')).data.pages.find(x => x.url === '/agent-article/');
+    if (!p) await new Promise(r => setTimeout(r, 200));
+  }
+  assert.ok(p, 'imported by the scheduler');
+  assert.equal(p.title, 'Agent article.');
+  const edit = await req('GET', `/cms-api/pages/${p.id}`);
+  assert.equal(edit.status, 200);
+  const audit = await req('GET', '/cms-api/audit');
+  assert.ok(audit.data.entries.some(e => e.action === 'pages.auto_sync'));
+  // A second run with no new commits does nothing.
+  await fetch(`${W}/__scheduled`); await new Promise(r => setTimeout(r, 1500));
+  const after = (await req('GET', '/cms-api/audit')).data.entries.filter(e => e.action === 'pages.auto_sync').length;
+  assert.equal(after, audit.data.entries.filter(e => e.action === 'pages.auto_sync').length);
+});
+
+test('a CMS publish never drops a page the writer agent just committed from the sitemap', async () => {
+  const GH = 'http://localhost:8789';
+  const html = '<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Fresh | NikolaSEO</title><link rel="canonical" href="https://nikolaseo.com/fresh-agent/"></head><body><main><h1>Fresh</h1></main></body></html>';
+  await fetch(`${GH}/_external-commit`, { method: 'POST', headers: { Authorization: 'Bearer test-token', 'Content-Type': 'application/json' }, body: JSON.stringify({ path: 'fresh-agent/index.html', text: html }) });
+  // No scheduler run in between: publish something in the CMS right away.
+  const pages = (await req('GET', '/cms-api/pages')).data.pages;
+  const p = pages.find(x => x.url === '/crawl-budget/');
+  const pg = await req('GET', `/cms-api/pages/${p.id}`);
+  const d = await req('PUT', `/cms-api/pages/${p.id}/draft`, { base_version: pg.data.page.version, seo: { ...pg.data.page.seo, description: 'Sitemap race check' } });
+  assert.equal(d.status, 200, JSON.stringify(d.data));
+  const pub = await req('POST', `/cms-api/pages/${p.id}/publish`, {});
+  assert.equal(pub.status, 200, JSON.stringify(pub.data));
+  const sm = await (await live('/sitemap.xml')).text();
+  assert.ok(sm.includes('https://nikolaseo.com/fresh-agent/'), 'writer page kept in the sitemap');
+});
