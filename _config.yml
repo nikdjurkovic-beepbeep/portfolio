@@ -3,3 +3,4 @@
 exclude:
   - cms
   - node_modules
+  - CMS-SETUP.md   # CMS user guide: keep in the repo, don't publish on the site

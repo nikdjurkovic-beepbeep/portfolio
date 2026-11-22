@@ -1,6 +1,6 @@
 # Deploying the NikolaSEO CMS (v2)
 
-**Status: prepared, NOT deployed.** Nothing below has been run against production. Every step needs the owner's go-ahead.
+**Status: deployed (Nov 2026).** The Worker runs on `nikolaseo.com/*`; later deploys go through the tag-triggered workflow (`cms-deploy-*`, see `.github/workflows/cms-worker.yml`). The steps below are the original first-time setup, kept for rebuilding from scratch. Every production change still needs the owner's go-ahead.
 
 ## What changes in production
 
