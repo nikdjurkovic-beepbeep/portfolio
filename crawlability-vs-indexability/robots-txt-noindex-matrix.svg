@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 494" width="1000" height="494" role="img" aria-labelledby="t d">
+<title id="t">robots.txt and noindex are not interchangeable</title>
+<desc id="d">Two-by-two grid of robots.txt and noindex combinations. Crawling allowed and no noindex on the page: Crawled and evaluated. Indexed only if Google selects it. Duplicates fold into one canonical. Crawling allowed and noindex on the page: Crawled, noindex seen. Dropped from Google Search results once Googlebot reads the tag. Blocked in robots.txt and no noindex on the page: Not crawled. The URL can still be indexed if other pages link to it, shown without a description. Blocked in robots.txt and noindex on the page: Not crawled, noindex never seen. The block hides the tag. The URL can still appear in results if other pages link to it. The last combination is highlighted as the common mistake. To keep a page out of Google, it has to be crawlable so the noindex can be read.</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.sub{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 13px Arial,Helvetica,sans-serif;letter-spacing:1.5px}
+.t{fill:#ecf2fa;font:700 18px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 15px Arial,Helvetica,sans-serif}
+.mw{fill:#d0dbe8;font:500 15px Arial,Helvetica,sans-serif}
+.st{fill:#77e3c4;font:600 14px Arial,Helvetica,sans-serif}
+.note{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.tick{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.va{fill:#77e3c4;font:700 18px Arial,Helvetica,sans-serif}
+.grid{stroke:#26374b;stroke-width:1}
+.base{stroke:#6f8196;stroke-width:1.5}
+.bar{fill:#77e3c4}
+.band{fill:#77e3c4;fill-opacity:.35}
+.num{fill:#0e192a;stroke:#77e3c4;stroke-width:2.5}
+.numt{fill:#77e3c4;font:700 15px Arial,Helvetica,sans-serif}
+.bul{fill:#77e3c4}
+.brk{stroke:#77e3c4;stroke-width:2.5;fill:none}
+.arrow{stroke:#6f8196;stroke-width:2;fill:none}
+.arrowh{fill:#6f8196}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="40.0" y="50.0" class="title" text-anchor="start">robots.txt and noindex are not interchangeable</text>
+<text x="40.0" y="80.0" class="sub" text-anchor="start">What Google can do with a URL under each combination of the two controls.</text>
+<text x="274.0" y="124.0" class="h" text-anchor="start">NO NOINDEX ON THE PAGE</text>
+<text x="639.0" y="124.0" class="h" text-anchor="start">NOINDEX ON THE PAGE</text>
+<text x="40.0" y="180.0" class="t" text-anchor="start">Crawling allowed</text>
+<text x="40.0" y="204.0" class="m" text-anchor="start">Googlebot can fetch the URL</text>
+<rect x="270" y="140" width="345" height="136" rx="12" class="panel"/>
+<text x="290.0" y="178.0" class="t" text-anchor="start">Crawled and evaluated</text>
+<text x="290.0" y="206.0" class="mw" text-anchor="start">Indexed only if Google selects it. Duplicates</text>
+<text x="290.0" y="227.0" class="mw" text-anchor="start">fold into one canonical.</text>
+<rect x="635" y="140" width="345" height="136" rx="12" class="panel"/>
+<text x="655.0" y="178.0" class="t" text-anchor="start">Crawled, noindex seen</text>
+<text x="655.0" y="206.0" class="mw" text-anchor="start">Dropped from Google Search results once</text>
+<text x="655.0" y="227.0" class="mw" text-anchor="start">Googlebot reads the tag.</text>
+<text x="40.0" y="332.0" class="t" text-anchor="start">Blocked in robots.txt</text>
+<text x="40.0" y="356.0" class="m" text-anchor="start">Googlebot cannot fetch the</text>
+<text x="40.0" y="376.0" class="m" text-anchor="start">URL</text>
+<rect x="270" y="292" width="345" height="136" rx="12" class="panel"/>
+<text x="290.0" y="330.0" class="t" text-anchor="start">Not crawled</text>
+<text x="290.0" y="358.0" class="mw" text-anchor="start">The URL can still be indexed if other pages</text>
+<text x="290.0" y="379.0" class="mw" text-anchor="start">link to it, shown without a description.</text>
+<rect x="635" y="292" width="345" height="136" rx="12" class="panel-a"/>
+<text x="655.0" y="328.0" class="h" text-anchor="start">COMMON MISTAKE</text>
+<text x="655.0" y="354.0" class="t" text-anchor="start">Not crawled, noindex never seen</text>
+<text x="655.0" y="382.0" class="mw" text-anchor="start">The block hides the tag. The URL can still</text>
+<text x="655.0" y="403.0" class="mw" text-anchor="start">appear in results if other pages link to it.</text>
+<text x="40.0" y="468.0" class="note" text-anchor="start">To keep a page out of Google, it has to be crawlable so the noindex can be read.</text>
+</svg>

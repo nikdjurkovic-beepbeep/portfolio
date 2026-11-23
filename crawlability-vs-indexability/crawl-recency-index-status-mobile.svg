@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 653" width="600" height="653" role="img" aria-labelledby="t d">
+<title id="t">Pages Google stops recrawling drop out of the index</title>
+<desc id="d">Horizontal bar chart from a 2025 Indexing Insight vendor study of 18 websites and 1.4 million monitored pages, showing the share of pages indexed by days since Google last crawled them. Crawled within the last 30 days: 97% indexed. 100 to 130 days: between 85% and 94% indexed. 131 to 151 days: the indexed share falls from about 32% to 0%. More than 151 days: 0% indexed. The study text gives no figures for 31 to 99 days. Technical and duplicate errors were excluded. The data is observational.</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.sub{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 13px Arial,Helvetica,sans-serif;letter-spacing:1.5px}
+.t{fill:#ecf2fa;font:700 18px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 15px Arial,Helvetica,sans-serif}
+.mw{fill:#d0dbe8;font:500 15px Arial,Helvetica,sans-serif}
+.st{fill:#77e3c4;font:600 14px Arial,Helvetica,sans-serif}
+.note{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.tick{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.va{fill:#77e3c4;font:700 18px Arial,Helvetica,sans-serif}
+.grid{stroke:#26374b;stroke-width:1}
+.base{stroke:#6f8196;stroke-width:1.5}
+.bar{fill:#77e3c4}
+.band{fill:#77e3c4;fill-opacity:.35}
+.num{fill:#0e192a;stroke:#77e3c4;stroke-width:2.5}
+.numt{fill:#77e3c4;font:700 15px Arial,Helvetica,sans-serif}
+.bul{fill:#77e3c4}
+.brk{stroke:#77e3c4;stroke-width:2.5;fill:none}
+.arrow{stroke:#6f8196;stroke-width:2;fill:none}
+.arrowh{fill:#6f8196}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="30.0" y="50.0" class="title" text-anchor="start">Pages Google stops recrawling drop</text>
+<text x="30.0" y="86.0" class="title" text-anchor="start">out of the index</text>
+<text x="30.0" y="122.0" class="sub" text-anchor="start">Share of monitored pages indexed, by days since Google last crawled</text>
+<text x="30.0" y="146.0" class="sub" text-anchor="start">them</text>
+<text x="30.0" y="540.0" class="tick" text-anchor="middle">0%</text>
+<text x="250.0" y="540.0" class="tick" text-anchor="middle">50%</text>
+<text x="470.0" y="540.0" class="tick" text-anchor="middle">100%</text>
+<text x="30" y="210" class="t" style="font-size:19px">0–30 days</text>
+<text x="30" y="232" class="m" style="font-size:16px">Crawled in the last month</text>
+<line x1="250.0" y1="236" x2="250.0" y2="276" class="grid"/>
+<line x1="470.0" y1="236" x2="470.0" y2="276" class="grid"/>
+<line x1="30" y1="236" x2="30" y2="276" class="base"/>
+<rect x="30" y="242" width="426.8" height="28" rx="3" class="bar"/>
+<text x="466.8" y="263" class="va" style="font-size:18px">97%</text>
+<text x="30" y="302" class="t" style="font-size:19px">100–130 days</text>
+<line x1="250.0" y1="308" x2="250.0" y2="348" class="grid"/>
+<line x1="470.0" y1="308" x2="470.0" y2="348" class="grid"/>
+<line x1="30" y1="308" x2="30" y2="348" class="base"/>
+<rect x="30" y="314" width="374.0" height="28" rx="3" class="bar"/>
+<rect x="404.0" y="314" width="39.6" height="28" rx="3" class="band"/>
+<text x="453.6" y="335" class="va" style="font-size:18px">85–94%</text>
+<text x="30" y="374" class="t" style="font-size:19px">131–151 days</text>
+<text x="30" y="396" class="m" style="font-size:16px">Share falls through the range</text>
+<line x1="250.0" y1="400" x2="250.0" y2="440" class="grid"/>
+<line x1="470.0" y1="400" x2="470.0" y2="440" class="grid"/>
+<line x1="30" y1="400" x2="30" y2="440" class="base"/>
+<rect x="30.0" y="406" width="140.8" height="28" rx="3" class="band"/>
+<text x="180.8" y="427" class="va" style="font-size:18px">32% → 0%</text>
+<text x="30" y="466" class="t" style="font-size:19px">Over 151 days</text>
+<line x1="250.0" y1="472" x2="250.0" y2="512" class="grid"/>
+<line x1="470.0" y1="472" x2="470.0" y2="512" class="grid"/>
+<line x1="30" y1="472" x2="30" y2="512" class="base"/>
+<text x="40.0" y="499" class="va" style="font-size:18px">0%</text>
+<text x="30" y="578" class="note" style="font-size:15px">No figures are given in the study text for 31–99 days. Bands show stated ranges.</text>
+<text x="30" y="599" class="note" style="font-size:15px">Indexing Insight, 2025: 18 sites, 1.4 million monitored pages; technical and</text>
+<text x="30" y="620" class="note" style="font-size:15px">duplicate errors excluded.</text>
+</svg>

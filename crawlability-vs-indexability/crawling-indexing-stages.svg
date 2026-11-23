@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 758" width="1000" height="758" role="img" aria-labelledby="t d">
+<title id="t">Crawled is not the same as indexed</title>
+<desc id="d">Diagram of the five stages a URL passes through in Google Search, with the controls and Search Console statuses at each stage. Stages 1 and 2 are labelled crawlability; stage 4 is labelled indexability and index selection. Stage 1, Discovery: Google learns the URL exists. Controlled by Internal and external links, XML sitemaps, Redirects from known URLs. Search Console statuses: Discovered – currently not indexed. Stage 2, Crawling: Googlebot fetches the URL. Controlled by robots.txt rules, Server status and speed (5xx, 429), Crawl demand and capacity. Search Console statuses: URL blocked by robots.txt, Server error (5xx), Redirect error. Stage 3, Rendering: Google runs the page’s JavaScript. Controlled by Scripts and resources Google can fetch, Content present in the rendered HTML. Search Console statuses: No separate status; URL Inspection shows the rendered page. Stage 4, Indexing: Google decides whether to store the page. Controlled by noindex (meta tag or HTTP header), Canonical clustering of duplicates, Soft 404 detection, Index selection: quality and signals. Search Console statuses: URL marked ‘noindex’, Duplicate … canonical statuses, Soft 404, Crawled – currently not indexed. Stage 5, Serving: Indexed pages compete for queries. Controlled by Relevance and ranking systems. Search Console statuses: Indexed. robots.txt acts on crawling. noindex, canonicals and quality act on indexing. Google: “Indexing isn’t guaranteed; not every page that Google processes will be indexed.”</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.sub{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 13px Arial,Helvetica,sans-serif;letter-spacing:1.5px}
+.t{fill:#ecf2fa;font:700 18px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 15px Arial,Helvetica,sans-serif}
+.mw{fill:#d0dbe8;font:500 15px Arial,Helvetica,sans-serif}
+.st{fill:#77e3c4;font:600 14px Arial,Helvetica,sans-serif}
+.note{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.tick{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.va{fill:#77e3c4;font:700 18px Arial,Helvetica,sans-serif}
+.grid{stroke:#26374b;stroke-width:1}
+.base{stroke:#6f8196;stroke-width:1.5}
+.bar{fill:#77e3c4}
+.band{fill:#77e3c4;fill-opacity:.35}
+.num{fill:#0e192a;stroke:#77e3c4;stroke-width:2.5}
+.numt{fill:#77e3c4;font:700 15px Arial,Helvetica,sans-serif}
+.bul{fill:#77e3c4}
+.brk{stroke:#77e3c4;stroke-width:2.5;fill:none}
+.arrow{stroke:#6f8196;stroke-width:2;fill:none}
+.arrowh{fill:#6f8196}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="40.0" y="50.0" class="title" text-anchor="start">Crawled is not the same as indexed</text>
+<text x="40.0" y="80.0" class="sub" text-anchor="start">Five stages in Google Search. Each one can stop a URL, and each has its own controls.</text>
+<text x="92.0" y="122.0" class="h" text-anchor="start">STAGE</text>
+<text x="410.0" y="122.0" class="h" text-anchor="start">CONTROLLED BY</text>
+<text x="700.0" y="122.0" class="h" text-anchor="start">SEARCH CONSOLE STATUSES</text>
+<rect x="80" y="138" width="300" height="92" rx="12" class="panel"/>
+<circle cx="110" cy="168" r="15" class="num"/>
+<text x="110.0" y="173.0" class="numt" text-anchor="middle">1</text>
+<text x="136.0" y="174.0" class="t" text-anchor="start">Discovery</text>
+<text x="136.0" y="198.0" class="m" text-anchor="start">Google learns the URL exists</text>
+<circle cx="414" cy="163" r="3.5" class="bul"/>
+<text x="426.0" y="168.0" class="mw" text-anchor="start">Internal and external links</text>
+<circle cx="414" cy="185" r="3.5" class="bul"/>
+<text x="426.0" y="190.0" class="mw" text-anchor="start">XML sitemaps</text>
+<circle cx="414" cy="207" r="3.5" class="bul"/>
+<text x="426.0" y="212.0" class="mw" text-anchor="start">Redirects from known URLs</text>
+<text x="700.0" y="168.0" class="st" text-anchor="start">Discovered – currently not indexed</text>
+<path d="M230 232 V240" class="arrow"/><path d="M225 238 L230 243 L235 238 Z" class="arrowh"/>
+<rect x="80" y="244" width="300" height="92" rx="12" class="panel-a"/>
+<circle cx="110" cy="274" r="15" class="num"/>
+<text x="110.0" y="279.0" class="numt" text-anchor="middle">2</text>
+<text x="136.0" y="280.0" class="t" text-anchor="start">Crawling</text>
+<text x="136.0" y="304.0" class="m" text-anchor="start">Googlebot fetches the URL</text>
+<circle cx="414" cy="269" r="3.5" class="bul"/>
+<text x="426.0" y="274.0" class="mw" text-anchor="start">robots.txt rules</text>
+<circle cx="414" cy="291" r="3.5" class="bul"/>
+<text x="426.0" y="296.0" class="mw" text-anchor="start">Server status and speed (5xx, 429)</text>
+<circle cx="414" cy="313" r="3.5" class="bul"/>
+<text x="426.0" y="318.0" class="mw" text-anchor="start">Crawl demand and capacity</text>
+<text x="700.0" y="274.0" class="st" text-anchor="start">URL blocked by robots.txt</text>
+<text x="700.0" y="295.0" class="st" text-anchor="start">Server error (5xx)</text>
+<text x="700.0" y="316.0" class="st" text-anchor="start">Redirect error</text>
+<path d="M230 338 V346" class="arrow"/><path d="M225 344 L230 349 L235 344 Z" class="arrowh"/>
+<rect x="80" y="350" width="300" height="92" rx="12" class="panel"/>
+<circle cx="110" cy="380" r="15" class="num"/>
+<text x="110.0" y="385.0" class="numt" text-anchor="middle">3</text>
+<text x="136.0" y="386.0" class="t" text-anchor="start">Rendering</text>
+<text x="136.0" y="410.0" class="m" text-anchor="start">Google runs the page’s</text>
+<text x="136.0" y="430.0" class="m" text-anchor="start">JavaScript</text>
+<circle cx="414" cy="375" r="3.5" class="bul"/>
+<text x="426.0" y="380.0" class="mw" text-anchor="start">Scripts and resources Google can fetch</text>
+<circle cx="414" cy="397" r="3.5" class="bul"/>
+<text x="426.0" y="402.0" class="mw" text-anchor="start">Content present in the rendered HTML</text>
+<text x="700.0" y="380.0" class="st" text-anchor="start">No separate status; URL Inspection</text>
+<text x="700.0" y="401.0" class="st" text-anchor="start">shows the rendered page</text>
+<path d="M230 444 V452" class="arrow"/><path d="M225 450 L230 455 L235 450 Z" class="arrowh"/>
+<rect x="80" y="456" width="300" height="114" rx="12" class="panel-a"/>
+<circle cx="110" cy="486" r="15" class="num"/>
+<text x="110.0" y="491.0" class="numt" text-anchor="middle">4</text>
+<text x="136.0" y="492.0" class="t" text-anchor="start">Indexing</text>
+<text x="136.0" y="516.0" class="m" text-anchor="start">Google decides whether to store</text>
+<text x="136.0" y="536.0" class="m" text-anchor="start">the page</text>
+<circle cx="414" cy="481" r="3.5" class="bul"/>
+<text x="426.0" y="486.0" class="mw" text-anchor="start">noindex (meta tag or HTTP header)</text>
+<circle cx="414" cy="503" r="3.5" class="bul"/>
+<text x="426.0" y="508.0" class="mw" text-anchor="start">Canonical clustering of duplicates</text>
+<circle cx="414" cy="525" r="3.5" class="bul"/>
+<text x="426.0" y="530.0" class="mw" text-anchor="start">Soft 404 detection</text>
+<circle cx="414" cy="547" r="3.5" class="bul"/>
+<text x="426.0" y="552.0" class="mw" text-anchor="start">Index selection: quality and signals</text>
+<text x="700.0" y="486.0" class="st" text-anchor="start">URL marked ‘noindex’</text>
+<text x="700.0" y="507.0" class="st" text-anchor="start">Duplicate … canonical statuses</text>
+<text x="700.0" y="528.0" class="st" text-anchor="start">Soft 404</text>
+<text x="700.0" y="549.0" class="st" text-anchor="start">Crawled – currently not indexed</text>
+<path d="M230 572 V580" class="arrow"/><path d="M225 578 L230 583 L235 578 Z" class="arrowh"/>
+<rect x="80" y="584" width="300" height="92" rx="12" class="panel"/>
+<circle cx="110" cy="614" r="15" class="num"/>
+<text x="110.0" y="619.0" class="numt" text-anchor="middle">5</text>
+<text x="136.0" y="620.0" class="t" text-anchor="start">Serving</text>
+<text x="136.0" y="644.0" class="m" text-anchor="start">Indexed pages compete for</text>
+<text x="136.0" y="664.0" class="m" text-anchor="start">queries</text>
+<circle cx="414" cy="609" r="3.5" class="bul"/>
+<text x="426.0" y="614.0" class="mw" text-anchor="start">Relevance and ranking systems</text>
+<text x="700.0" y="614.0" class="st" text-anchor="start">Indexed</text>
+<path d="M64 142 H56 V332 H64" class="brk"/>
+<text x="46.0" y="237.0" class="h" text-anchor="middle" transform="rotate(-90 46 237.0)">CRAWLABILITY</text>
+<path d="M64 460 H56 V566 H64" class="brk"/>
+<text x="46.0" y="513.0" class="h" text-anchor="middle" transform="rotate(-90 46 513.0)">INDEXABILITY</text>
+<text x="40.0" y="712.0" class="note" text-anchor="start">robots.txt acts on crawling. noindex, canonicals and quality act on indexing.</text>
+<text x="40.0" y="734.0" class="note" text-anchor="start">Google: “Indexing isn’t guaranteed; not every page that Google processes will be indexed.”</text>
+</svg>
