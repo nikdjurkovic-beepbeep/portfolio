@@ -636,12 +636,45 @@ async function autoSyncPages(env) {
   const head = await new GitHub(env).headSha();
   const last = (await env.DB.prepare("SELECT value FROM settings WHERE key = 'repo_head_synced'").first())?.value;
   const rev = (await env.DB.prepare("SELECT value FROM settings WHERE key = 'sync_rev'").first())?.value;
-  if (head === last && rev === SYNC_REV) return null;
-  const out = await syncPages(env, null);
-  if (out.added.length || out.updated.length || out.missing.length || out.retitled.length) {
-    await log(env, null, 'pages.auto_sync', null, { added: out.added, updated: out.updated, missing: out.missing, retitled: out.retitled.length });
+  let out = null;
+  if (head !== last || rev !== SYNC_REV) {
+    out = await syncPages(env, null);
+    if (out.added.length || out.updated.length || out.missing.length || out.retitled.length) {
+      await log(env, null, 'pages.auto_sync', null, { added: out.added, updated: out.updated, missing: out.missing, retitled: out.retitled.length });
+    }
   }
+  await syncMenuFromSite(env, head);
   return out;
+}
+
+/**
+ * Keep the primary menu in step with headers committed straight to GitHub (e.g. a new SEO Studies
+ * entry added by the writer agent). Otherwise the next CMS page or menu publish would write the
+ * older menu back into the header. Runs once per repository head, after the pages are synced.
+ * A menu with unpublished CMS edits is never touched.
+ */
+async function syncMenuFromSite(env, head) {
+  const done = (await env.DB.prepare("SELECT value FROM settings WHERE key = 'menu_synced_head'").first())?.value;
+  if (done === head) return null;
+  let result = null;
+  const m = await env.DB.prepare("SELECT id, items, published_items FROM menus WHERE location = 'primary'").first();
+  const home = await env.DB.prepare("SELECT published_html FROM pages WHERE path = 'index.html' AND status = 'published'").first();
+  if (m && home?.published_html) {
+    const fromSite = H.readMenuFromHtml(home.published_html);
+    if (fromSite.length && !H.sameMenu(fromSite, safeJson(m.published_items, []))) {
+      if (m.items !== m.published_items) {
+        result = { skipped: 'unpublished menu edits' };
+        await log(env, null, 'menu.auto_import_skipped', 'primary', { head, reason: 'The menu has unpublished edits in the CMS.' }, 'warning');
+      } else {
+        const items = JSON.stringify(fromSite);
+        await env.DB.prepare("UPDATE menus SET items = ?, published_items = ?, updated_at = datetime('now') WHERE id = ? AND items = ?").bind(items, items, m.id, m.items).run();
+        result = { updated: true };
+        await log(env, null, 'menu.auto_imported', 'primary', { head });
+      }
+    }
+  }
+  await env.DB.prepare("INSERT INTO settings (key, value) VALUES ('menu_synced_head', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").bind(head).run();
+  return result;
 }
 
 route('GET', '/pages/link-targets', 'pages.read', async c => {

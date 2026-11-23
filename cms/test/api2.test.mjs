@@ -278,8 +278,8 @@ test('navigation: edit, preview, publish to every page with correct relative lin
   assert.ok(article.includes('<a href="../crawl-budget/">Crawl Budget (pinned)</a>'));
   assert.ok(article.includes('<summary class="active">SEO Studies</summary>'));
   assert.ok(article.includes('<a href="../schema-markup/" aria-current="page">'));
-  const tool = await (await live('/serp-preview.html')).text();
-  assert.ok(tool.includes('<a href="serp-preview.html" aria-current="page">'));
+  const tool = await (await live('/serp-preview/')).text();
+  assert.ok(tool.includes('<a href="../serp-preview/" aria-current="page">'));
   // Second menu cannot replace the primary silently; delete protected
   assert.equal((await req('POST', '/cms-api/menus', { name: 'Footer', location: 'primary' })).status, 409);
   assert.equal((await req('DELETE', `/cms-api/menus/${primary.id}`)).status, 409);
@@ -313,7 +313,7 @@ test('backup export contains no password hashes; audit log records actions', asy
 });
 
 test('public site still served correctly for every original page', async () => {
-  for (const p of ['/', '/seo-myths/', '/crawl-budget/', '/schema-markup/', '/seo-vs-geo-case-study/', '/serp-preview.html', '/http-status-checker.html', '/robots.txt', '/Nikola_Djurkovic_CV.pdf', '/googlec6d6026729dc585e.html']) {
+  for (const p of ['/', '/seo-myths/', '/crawl-budget/', '/schema-markup/', '/seo-vs-geo-case-study/', '/serp-preview/', '/http-status-checker/', '/robots.txt', '/Nikola_Djurkovic_CV.pdf', '/googlec6d6026729dc585e.html']) {
     assert.equal((await live(p)).status, 200, p);
   }
 });
@@ -342,6 +342,49 @@ test('pages committed straight to GitHub (writer agent) appear on their own; tit
   await fetch(`${W}/__scheduled`); await new Promise(r => setTimeout(r, 1500));
   const after = (await req('GET', '/cms-api/audit')).data.entries.filter(e => e.action === 'pages.auto_sync').length;
   assert.equal(after, audit.data.entries.filter(e => e.action === 'pages.auto_sync').length);
+});
+
+test('a menu entry the writer agent adds to the headers is imported, and a CMS publish keeps it', async () => {
+  const GH = 'http://localhost:8789';
+  const pages = (await req('GET', '/cms-api/pages')).data.pages;
+  const homeHtml = await (await fetch('http://localhost:8788/index.html')).text(); // the mock GitHub Pages origin serves the head commit
+  assert.ok(homeHtml.includes('SEO Studies'), 'homepage source available');
+  const next = homeHtml.replace(/(<summary[^>]*>SEO Studies<\/summary><div class="dropdown-panel">[\s\S]*?)(<\/div><\/details>)/, '$1<a href="agent-study/">Agent Study</a>$2');
+  assert.notEqual(next, homeHtml, 'entry added to the SEO Studies dropdown');
+  await fetch(`${GH}/_external-commit`, { method: 'POST', headers: { Authorization: 'Bearer test-token', 'Content-Type': 'application/json' }, body: JSON.stringify({ path: 'index.html', text: next }) });
+  const hasEntry = m => JSON.stringify(m?.published_items || []).includes('/agent-study/');
+  await fetch(`${W}/__scheduled`);
+  let menu;
+  for (let i = 0; i < 30 && !hasEntry(menu); i++) {
+    menu = (await req('GET', '/cms-api/menus')).data.menus.find(m => m.location === 'primary');
+    if (!hasEntry(menu)) await new Promise(r => setTimeout(r, 200));
+  }
+  assert.ok(hasEntry(menu), 'primary menu picked up the new entry');
+  assert.equal(menu.unpublished, false);
+  assert.ok((await req('GET', '/cms-api/audit')).data.entries.some(e => e.action === 'menu.auto_imported'));
+  // A CMS publish of another page now writes the new entry into that page's header.
+  const p = pages.find(x => x.url === '/seo-myths/');
+  const pg = await req('GET', `/cms-api/pages/${p.id}`);
+  const d = await req('PUT', `/cms-api/pages/${p.id}/draft`, { base_version: pg.data.page.version, seo: { ...pg.data.page.seo, description: 'Menu sync check' } });
+  assert.equal(d.status, 200, JSON.stringify(d.data));
+  const pub = await req('POST', `/cms-api/pages/${p.id}/publish`, {});
+  assert.equal(pub.status, 200, JSON.stringify(pub.data));
+  assert.ok((await (await live('/seo-myths/')).text()).includes('href="../agent-study/"'), 'published header keeps the agent entry');
+  // Unpublished menu edits in the CMS are never overwritten by a later repository change.
+  await req('PUT', `/cms-api/menus/${menu.id}`, { items: [...menu.items, { label: 'Draft item', url: '/draft-item/', children: [] }] });
+  const home2 = await (await fetch('http://localhost:8788/index.html')).text();
+  await fetch(`${GH}/_external-commit`, { method: 'POST', headers: { Authorization: 'Bearer test-token', 'Content-Type': 'application/json' }, body: JSON.stringify({ path: 'index.html', text: home2.replace('>Agent Study<', '>Agent Study 2<') }) });
+  await fetch(`${W}/__scheduled`);
+  let skipped = false;
+  for (let i = 0; i < 30 && !skipped; i++) {
+    skipped = (await req('GET', '/cms-api/audit')).data.entries.some(e => e.action === 'menu.auto_import_skipped');
+    if (!skipped) await new Promise(r => setTimeout(r, 200));
+  }
+  assert.ok(skipped, 'skip is logged');
+  const after = (await req('GET', '/cms-api/menus')).data.menus.find(m => m.location === 'primary');
+  assert.ok(JSON.stringify(after.items).includes('/draft-item/'), 'draft edit kept');
+  assert.ok(!JSON.stringify(after.published_items).includes('Agent Study 2'), 'published menu untouched while a draft exists');
+  await req('PUT', `/cms-api/menus/${menu.id}`, { items: after.published_items }); // clean up the draft
 });
 
 test('a CMS publish never drops a page the writer agent just committed from the sitemap', async () => {
