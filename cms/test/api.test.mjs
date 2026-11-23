@@ -271,7 +271,7 @@ test('revisions: list and restore as draft', async () => {
 
 test('protected blocks: tool UI survives editing; removing it needs confirmation', async () => {
   const list = await admin.req('GET', '/cms-api/pages');
-  const tool = list.data.pages.find(p => p.url === '/http-status-checker.html');
+  const tool = list.data.pages.find(p => p.url === '/http-status-checker/');
   const r = await admin.req('GET', `/cms-api/pages/${tool.id}`);
   assert.ok(r.data.regions.body.includes('data-cms-block'));
   const removed = r.data.regions.body.replace(/<div[^>]*data-cms-block[^>]*>[^<]*<\/div>/, '');

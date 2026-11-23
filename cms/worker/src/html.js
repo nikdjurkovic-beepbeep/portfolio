@@ -373,6 +373,14 @@ export function readMenuFromHtml(html) {
   return items;
 }
 
+/** Compare two menus by what the header renders (label, link, new tab, children). */
+export function sameMenu(a, b) {
+  const norm = list => (Array.isArray(list) ? list : []).map(it => ({
+    label: String(it?.label || ''), url: String(it?.url || ''), newTab: Boolean(it?.newTab), children: norm(it?.children)
+  }));
+  return JSON.stringify(norm(a)) === JSON.stringify(norm(b));
+}
+
 function relHref(url, path) {
   if (/^(https?:|mailto:|tel:)/i.test(url)) return url;
   const prefix = depthPrefix(path);
