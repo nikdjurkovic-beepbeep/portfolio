@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 700" width="600" height="700" role="img" aria-labelledby="t d">
+<title id="t">The same 10,000 products, four architectures</title>
+<desc id="d">Bar chart of a worked example, not measured data: click depth from the home page for the same 10,000 products, listed 20 per page, under four architectures. A, one category with next and previous links only, 500 listing pages in one chain: deepest product 501 clicks, median product 251.5 clicks. B, one category with numbered pagination linking two pages either side plus the first and last page: deepest 127 clicks, median 65. C, 20 subcategories with the same numbered pagination, 25 listing pages each: deepest 10 clicks, median 7. D, two levels of category pages, 20 subcategories each with 25 categories of 20 products: every product 4 clicks from the home page. Shortest paths calculated by the author; the home page links to the top category.</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.sub{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 13px Arial,Helvetica,sans-serif;letter-spacing:1.5px}
+.t{fill:#ecf2fa;font:700 18px Arial,Helvetica,sans-serif}
+.ts{fill:#ecf2fa;font:700 16px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 15px Arial,Helvetica,sans-serif}
+.ms{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.mw{fill:#d0dbe8;font:500 15px Arial,Helvetica,sans-serif}
+.yes{fill:#77e3c4;font:700 15px Arial,Helvetica,sans-serif}
+.no{fill:#a9b8c9;font:700 15px Arial,Helvetica,sans-serif}
+.note{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.tick{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.va{fill:#77e3c4;font:700 16px Arial,Helvetica,sans-serif}
+.vg{fill:#a9b8c9;font:700 16px Arial,Helvetica,sans-serif}
+.grid{stroke:#26374b;stroke-width:1}
+.base{stroke:#6f8196;stroke-width:1.5}
+.bar{fill:#77e3c4}
+.bar-l{fill:#77e3c4;fill-opacity:.45}
+.bar-g{fill:#6f8196}
+.med{fill:#0e192a;stroke:#ecf2fa;stroke-width:2.5}
+.ic-y{fill:none;stroke:#77e3c4;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.ic-n{fill:none;stroke:#6f8196;stroke-width:2.5;stroke-linecap:round}
+.ring-y{fill:#0e192a;stroke:#77e3c4;stroke-width:2}
+.ring-n{fill:#0e192a;stroke:#6f8196;stroke-width:2}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="30.0" y="50.0" class="title" text-anchor="start">The same 10,000 products, four</text>
+<text x="30.0" y="86.0" class="title" text-anchor="start">architectures</text>
+<text x="30.0" y="122.0" class="sub" text-anchor="start">Clicks from the home page to the deepest product (bar) and the median</text>
+<text x="30.0" y="146.0" class="sub" text-anchor="start">product (dot).</text>
+<line x1="30.0" y1="186" x2="30.0" y2="582" class="grid"/>
+<text x="30.0" y="602.0" class="tick" text-anchor="start">0</text>
+<line x1="131.9" y1="186" x2="131.9" y2="582" class="grid"/>
+<text x="131.9" y="602.0" class="tick" text-anchor="middle">100</text>
+<line x1="233.8" y1="186" x2="233.8" y2="582" class="grid"/>
+<text x="233.8" y="602.0" class="tick" text-anchor="middle">200</text>
+<line x1="335.8" y1="186" x2="335.8" y2="582" class="grid"/>
+<text x="335.8" y="602.0" class="tick" text-anchor="middle">300</text>
+<line x1="437.7" y1="186" x2="437.7" y2="582" class="grid"/>
+<text x="437.7" y="602.0" class="tick" text-anchor="middle">400</text>
+<line x1="539.6" y1="186" x2="539.6" y2="582" class="grid"/>
+<text x="539.6" y="602.0" class="tick" text-anchor="middle">500</text>
+<text x="30.0" y="202.0" class="ts" text-anchor="start">A. One category, next and previous links only</text>
+<text x="30.0" y="222.0" class="ms" text-anchor="start">500 listing pages in one chain</text>
+<rect x="30" y="234" width="510.6" height="24" rx="4" class="bar"/>
+<circle cx="286.3" cy="246.0" r="5.5" class="med"/>
+<text x="30.0" y="280.0" class="va" text-anchor="start">501 max · 251.5 median</text>
+<text x="30.0" y="322.0" class="ts" text-anchor="start">B. One category, numbered pagination</text>
+<text x="30.0" y="342.0" class="ms" text-anchor="start">Links two pages either side, plus first and last</text>
+<rect x="30" y="354" width="129.4" height="24" rx="4" class="bar"/>
+<circle cx="96.2" cy="366.0" r="5.5" class="med"/>
+<text x="169.4" y="372.0" class="va" text-anchor="start">127 max · 65 median</text>
+<text x="30.0" y="416.0" class="ts" text-anchor="start">C. 20 subcategories, numbered pagination</text>
+<text x="30.0" y="436.0" class="ms" text-anchor="start">25 listing pages in each subcategory</text>
+<rect x="30" y="448" width="10.2" height="24" rx="4" class="bar"/>
+<circle cx="37.1" cy="460.0" r="5.5" class="med"/>
+<text x="50.2" y="466.0" class="va" text-anchor="start">10 max · 7 median</text>
+<text x="30.0" y="510.0" class="ts" text-anchor="start">D. Two levels of category pages</text>
+<text x="30.0" y="530.0" class="ms" text-anchor="start">20 subcategories × 25 categories of 20 products</text>
+<rect x="30" y="542" width="4.1" height="24" rx="4" class="bar"/>
+<circle cx="34.1" cy="554.0" r="5.5" class="med"/>
+<text x="44.1" y="560.0" class="va" text-anchor="start">4 for every product</text>
+<text x="30.0" y="624.0" class="tick" text-anchor="start">Clicks from the home page</text>
+<text x="30.0" y="652.0" class="note" text-anchor="start">Worked example, not measured data. Shortest path from the home page, which links</text>
+<text x="30.0" y="671.0" class="note" text-anchor="start">to the top category. Calculated by the author.</text>
+</svg>

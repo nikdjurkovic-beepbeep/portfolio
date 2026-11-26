@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 668" width="1000" height="668" role="img" aria-labelledby="t d">
+<title id="t">Internal-link split tests: results vary by page group</title>
+<desc id="d">Bar chart of published SearchPilot SEO split tests that changed internal links, showing the change in organic traffic for variant pages versus control. Grocery retailer, 2020, links from level-2 to level-3 category pages, both levels: plus 25%, confidence level not stated. Regional location pages, 2021, links to the six nearest locations, pages gaining links: plus 7%, confidence level not stated. Retail content hub, 2021, related article links increased from two to four: pages carrying the links plus 16% at 95% confidence; pages receiving the links, no detectable impact. Home page footer, 2021, footer links increased from 30 to more than 100: newly linked pages on desktop plus 10% at 95% confidence; all devices plus 5%, not significant at 95%. Travel site, 2024, shorter link block with some links behind a Show more button: predicted plus 10.2%, inconclusive at 95%. Travel site, 2026, link block to the top 30 destinations: no noticeable change in two tests. Vendor-reported results, one site per test.</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.sub{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 13px Arial,Helvetica,sans-serif;letter-spacing:1.5px}
+.t{fill:#ecf2fa;font:700 18px Arial,Helvetica,sans-serif}
+.ts{fill:#ecf2fa;font:700 16px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 15px Arial,Helvetica,sans-serif}
+.ms{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.mw{fill:#d0dbe8;font:500 15px Arial,Helvetica,sans-serif}
+.yes{fill:#77e3c4;font:700 15px Arial,Helvetica,sans-serif}
+.no{fill:#a9b8c9;font:700 15px Arial,Helvetica,sans-serif}
+.note{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.tick{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.va{fill:#77e3c4;font:700 16px Arial,Helvetica,sans-serif}
+.vg{fill:#a9b8c9;font:700 16px Arial,Helvetica,sans-serif}
+.grid{stroke:#26374b;stroke-width:1}
+.base{stroke:#6f8196;stroke-width:1.5}
+.bar{fill:#77e3c4}
+.bar-l{fill:#77e3c4;fill-opacity:.45}
+.bar-g{fill:#6f8196}
+.med{fill:#0e192a;stroke:#ecf2fa;stroke-width:2.5}
+.ic-y{fill:none;stroke:#77e3c4;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.ic-n{fill:none;stroke:#6f8196;stroke-width:2.5;stroke-linecap:round}
+.ring-y{fill:#0e192a;stroke:#77e3c4;stroke-width:2}
+.ring-n{fill:#0e192a;stroke:#6f8196;stroke-width:2}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="40.0" y="50.0" class="title" text-anchor="start">Internal-link split tests: results vary by page group</text>
+<text x="40.0" y="80.0" class="sub" text-anchor="start">SearchPilot tests. Change in organic traffic, variant pages vs control, by measured page group.</text>
+<rect x="40" y="104" width="16" height="14" rx="3" class="bar"/>
+<text x="64.0" y="116.0" class="ms" text-anchor="start">Positive at 95% confidence</text>
+<rect x="260.0625" y="104" width="16" height="14" rx="3" class="bar-l"/>
+<text x="284.1" y="116.0" class="ms" text-anchor="start">Positive, confidence not stated</text>
+<rect x="501.90625" y="104" width="16" height="14" rx="3" class="bar-g"/>
+<text x="525.9" y="116.0" class="ms" text-anchor="start">Not significant at 95% or no effect</text>
+<line x1="470.0" y1="140" x2="470.0" y2="588" class="grid"/>
+<text x="470.0" y="610.0" class="tick" text-anchor="middle">0%</text>
+<line x1="613.3" y1="140" x2="613.3" y2="588" class="grid"/>
+<text x="613.3" y="610.0" class="tick" text-anchor="middle">10%</text>
+<line x1="756.7" y1="140" x2="756.7" y2="588" class="grid"/>
+<text x="756.7" y="610.0" class="tick" text-anchor="middle">20%</text>
+<line x1="900.0" y1="140" x2="900.0" y2="588" class="grid"/>
+<text x="900.0" y="610.0" class="tick" text-anchor="middle">30%</text>
+<text x="40.0" y="164.0" class="ts" text-anchor="start">Grocery retailer, 2020</text>
+<text x="40.0" y="184.0" class="ms" text-anchor="start">Level-2 to level-3 category links · both levels</text>
+<rect x="470" y="154" width="358.3" height="26" rx="4" class="bar-l"/>
+<text x="838.3" y="173.0" class="va" text-anchor="start">+25%</text>
+<text x="40.0" y="220.0" class="ts" text-anchor="start">Regional location pages, 2021</text>
+<text x="40.0" y="240.0" class="ms" text-anchor="start">Links to six nearest locations · pages gaining links</text>
+<rect x="470" y="210" width="100.3" height="26" rx="4" class="bar-l"/>
+<text x="580.3" y="229.0" class="va" text-anchor="start">+7%</text>
+<text x="40.0" y="276.0" class="ts" text-anchor="start">Retail content hub, 2021</text>
+<text x="40.0" y="296.0" class="ms" text-anchor="start">Related links 2 → 4 · pages carrying the links</text>
+<rect x="470" y="266" width="229.3" height="26" rx="4" class="bar"/>
+<text x="709.3" y="285.0" class="va" text-anchor="start">+16%</text>
+<text x="40.0" y="332.0" class="ts" text-anchor="start">Retail content hub, 2021</text>
+<text x="40.0" y="352.0" class="ms" text-anchor="start">Same test · pages receiving the links</text>
+<text x="480.0" y="341.0" class="vg" text-anchor="start">No detectable impact</text>
+<text x="40.0" y="388.0" class="ts" text-anchor="start">Home page footer, 2021</text>
+<text x="40.0" y="408.0" class="ms" text-anchor="start">30 → 100+ footer links · linked pages, desktop</text>
+<rect x="470" y="378" width="143.3" height="26" rx="4" class="bar"/>
+<text x="623.3" y="397.0" class="va" text-anchor="start">+10%</text>
+<text x="40.0" y="444.0" class="ts" text-anchor="start">Home page footer, 2021</text>
+<text x="40.0" y="464.0" class="ms" text-anchor="start">Same test · linked pages, all devices</text>
+<rect x="470" y="434" width="71.7" height="26" rx="4" class="bar-g"/>
+<text x="551.7" y="453.0" class="vg" text-anchor="start">+5%, not significant at 95%</text>
+<text x="40.0" y="500.0" class="ts" text-anchor="start">Travel site, 2024</text>
+<text x="40.0" y="520.0" class="ms" text-anchor="start">Shorter link block, “Show more” · predicted</text>
+<rect x="470" y="490" width="146.2" height="26" rx="4" class="bar-g"/>
+<text x="626.2" y="509.0" class="vg" text-anchor="start">+10.2%, inconclusive at 95%</text>
+<text x="40.0" y="556.0" class="ts" text-anchor="start">Travel site, 2026</text>
+<text x="40.0" y="576.0" class="ms" text-anchor="start">Top-30 destinations link block · two tests</text>
+<text x="480.0" y="565.0" class="vg" text-anchor="start">No noticeable change</text>
+<line x1="470" y1="140" x2="470" y2="588" class="base"/>
+<text x="40.0" y="644.0" class="note" text-anchor="start">Vendor-reported; one site per test; SearchPilot chooses which tests to publish.</text>
+</svg>

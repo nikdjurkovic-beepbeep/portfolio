@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 590" width="1000" height="590" role="img" aria-labelledby="t d">
+<title id="t">Only a crawlable link does all three jobs</title>
+<desc id="d">Comparison matrix of what an internal link does and whether its common substitutes do the same, with three columns: discovery, importance and anchor text. HTML link with an href, in content, menus and listings: discovery yes, Google extracts it to find new pages; importance yes, pages linked from the home page are seen as more important; anchor text yes, its words describe the page it points to. XML sitemap entry: discovery yes, it helps discovery but crawling is not guaranteed; importance no, Google points to internal links for importance; anchor text no, a sitemap entry has no anchor text. Breadcrumb structured data, URLs in schema markup: not used in the same way as normal internal links on a page. Link without an href, such as an onclick handler or clickable span: generally not parsed or extracted by Google’s crawlers. Footer quote from Google: Every page you care about should have a link from at least one other page on your site.</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.sub{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 13px Arial,Helvetica,sans-serif;letter-spacing:1.5px}
+.t{fill:#ecf2fa;font:700 18px Arial,Helvetica,sans-serif}
+.ts{fill:#ecf2fa;font:700 16px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 15px Arial,Helvetica,sans-serif}
+.ms{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.mw{fill:#d0dbe8;font:500 15px Arial,Helvetica,sans-serif}
+.yes{fill:#77e3c4;font:700 15px Arial,Helvetica,sans-serif}
+.no{fill:#a9b8c9;font:700 15px Arial,Helvetica,sans-serif}
+.note{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.tick{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.va{fill:#77e3c4;font:700 16px Arial,Helvetica,sans-serif}
+.vg{fill:#a9b8c9;font:700 16px Arial,Helvetica,sans-serif}
+.grid{stroke:#26374b;stroke-width:1}
+.base{stroke:#6f8196;stroke-width:1.5}
+.bar{fill:#77e3c4}
+.bar-l{fill:#77e3c4;fill-opacity:.45}
+.bar-g{fill:#6f8196}
+.med{fill:#0e192a;stroke:#ecf2fa;stroke-width:2.5}
+.ic-y{fill:none;stroke:#77e3c4;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.ic-n{fill:none;stroke:#6f8196;stroke-width:2.5;stroke-linecap:round}
+.ring-y{fill:#0e192a;stroke:#77e3c4;stroke-width:2}
+.ring-n{fill:#0e192a;stroke:#6f8196;stroke-width:2}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="40.0" y="50.0" class="title" text-anchor="start">Only a crawlable link does all three jobs</text>
+<text x="40.0" y="80.0" class="sub" text-anchor="start">What an internal link does, compared with its common substitutes.</text>
+<text x="306.0" y="126.0" class="h" text-anchor="start">DISCOVERY</text>
+<text x="541.0" y="126.0" class="h" text-anchor="start">IMPORTANCE</text>
+<text x="776.0" y="126.0" class="h" text-anchor="start">ANCHOR TEXT</text>
+<rect x="30" y="142" width="940" height="84" rx="12" class="panel"/>
+<text x="48.0" y="176.0" class="t" text-anchor="start">HTML link with an href</text>
+<text x="48.0" y="200.0" class="ms" text-anchor="start">In content, menus and listings</text>
+<circle cx="317" cy="171" r="11" class="ring-y"/><path d="M312 171 l3.5 4 l6.5 -8" class="ic-y"/>
+<text x="336.0" y="176.0" class="yes" text-anchor="start">Yes</text>
+<text x="306.0" y="200.0" class="ms" text-anchor="start">Google extracts it to find new</text>
+<text x="306.0" y="217.0" class="ms" text-anchor="start">pages</text>
+<circle cx="552" cy="171" r="11" class="ring-y"/><path d="M547 171 l3.5 4 l6.5 -8" class="ic-y"/>
+<text x="571.0" y="176.0" class="yes" text-anchor="start">Yes</text>
+<text x="541.0" y="200.0" class="ms" text-anchor="start">Pages linked from the home</text>
+<text x="541.0" y="217.0" class="ms" text-anchor="start">page seen as more important</text>
+<circle cx="787" cy="171" r="11" class="ring-y"/><path d="M782 171 l3.5 4 l6.5 -8" class="ic-y"/>
+<text x="806.0" y="176.0" class="yes" text-anchor="start">Yes</text>
+<text x="776.0" y="200.0" class="ms" text-anchor="start">Words describe the page it</text>
+<text x="776.0" y="217.0" class="ms" text-anchor="start">points to</text>
+<rect x="30" y="238" width="940" height="84" rx="12" class="panel"/>
+<text x="48.0" y="272.0" class="t" text-anchor="start">XML sitemap entry</text>
+<text x="48.0" y="296.0" class="ms" text-anchor="start">Listed in a sitemap file</text>
+<circle cx="317" cy="267" r="11" class="ring-y"/><path d="M312 267 l3.5 4 l6.5 -8" class="ic-y"/>
+<text x="336.0" y="272.0" class="yes" text-anchor="start">Yes</text>
+<text x="306.0" y="296.0" class="ms" text-anchor="start">Helps discovery; crawling not</text>
+<text x="306.0" y="313.0" class="ms" text-anchor="start">guaranteed</text>
+<circle cx="552" cy="267" r="11" class="ring-n"/><path d="M547.5 262.5 l9 9 M556.5 262.5 l-9 9" class="ic-n"/>
+<text x="571.0" y="272.0" class="no" text-anchor="start">No</text>
+<text x="541.0" y="296.0" class="ms" text-anchor="start">Google points to internal links</text>
+<text x="541.0" y="313.0" class="ms" text-anchor="start">for importance</text>
+<circle cx="787" cy="267" r="11" class="ring-n"/><path d="M782.5 262.5 l9 9 M791.5 262.5 l-9 9" class="ic-n"/>
+<text x="806.0" y="272.0" class="no" text-anchor="start">No</text>
+<text x="776.0" y="296.0" class="ms" text-anchor="start">A sitemap entry has no anchor</text>
+<text x="776.0" y="313.0" class="ms" text-anchor="start">text</text>
+<rect x="30" y="334" width="940" height="84" rx="12" class="panel"/>
+<text x="48.0" y="368.0" class="t" text-anchor="start">Breadcrumb structured data</text>
+<text x="48.0" y="392.0" class="ms" text-anchor="start">URLs in schema markup</text>
+<circle cx="317" cy="363" r="11" class="ring-n"/><path d="M312.5 358.5 l9 9 M321.5 358.5 l-9 9" class="ic-n"/>
+<text x="336.0" y="368.0" class="no" text-anchor="start">Not a substitute</text>
+<text x="306.0" y="392.0" class="mw" text-anchor="start">Not used in the same way as normal internal links on a page</text>
+<rect x="30" y="430" width="940" height="84" rx="12" class="panel"/>
+<text x="48.0" y="464.0" class="t" text-anchor="start">Link without an href</text>
+<text x="48.0" y="488.0" class="ms" text-anchor="start">onclick handler, clickable span</text>
+<circle cx="317" cy="459" r="11" class="ring-n"/><path d="M312.5 454.5 l9 9 M321.5 454.5 l-9 9" class="ic-n"/>
+<text x="336.0" y="464.0" class="no" text-anchor="start">Not a substitute</text>
+<text x="306.0" y="488.0" class="mw" text-anchor="start">Generally not parsed or extracted by Google’s crawlers</text>
+<text x="40.0" y="540.0" class="mw" text-anchor="start">Google: “Every page you care about should have a link from at least one other page on your site.”</text>
+<text x="40.0" y="566.0" class="note" text-anchor="start">Sources: Google link best practices and sitemap documentation; John Mueller, 2021 and 2022.</text>
+</svg>
