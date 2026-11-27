@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800" role="img" aria-labelledby="t d">
+<title id="t">When does an hreflang pair count?</title>
+<desc id="d">Diagram of five conditions that must hold for both pages before Google uses an hreflang pair, with what happens when each fails. 1. Both pages are crawled and indexed: Annotations are picked up once all linked pages are crawled and (re)indexed. If it fails: The pair is not used until both are indexed. Hreflang does not guarantee indexing. 2. Both pages are canonical: Each canonical stays in the same language and is part of the hreflang pairs. If it fails: Hreflang is ignored. A canonical to another language can keep a version out of the index. 3. Both pages list each other, and themselves: If page X links to page Y, page Y must link back to page X. If it fails: The pair is ignored. Pairs that do link both ways still work. 4. Both codes are valid: ISO 639-1 language, optionally with an ISO 3166-1 Alpha 2 region. If it fails: Region alone and codes like es-419 are not supported. Reserved codes like UK are ignored. 5. The annotations can be read and agree: Tags sit before any invalid element in the head; HTML and sitemap say the same. If it fails: Tags after an invalid head element are not read. A conflicting pair is probably dropped. Result: Google can show the version that matches the user. Same-language versions may still be folded into one canonical; hreflang may swap the URL, and reporting goes to the canonical.</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.title-m{fill:#ecf2fa;font:700 26px Arial,Helvetica,sans-serif}
+.sub{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 13px Arial,Helvetica,sans-serif;letter-spacing:1.5px}
+.t{fill:#ecf2fa;font:700 18px Arial,Helvetica,sans-serif}
+.ts{fill:#ecf2fa;font:700 16px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 15px Arial,Helvetica,sans-serif}
+.ms{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.mw{fill:#d0dbe8;font:500 15px Arial,Helvetica,sans-serif}
+.note{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.tick{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.va{fill:#77e3c4;font:700 16px Arial,Helvetica,sans-serif}
+.vb{fill:#ecf2fa;font:700 16px Arial,Helvetica,sans-serif}
+.vg{fill:#a9b8c9;font:700 16px Arial,Helvetica,sans-serif}
+.num{fill:#0e192a;font:700 16px Arial,Helvetica,sans-serif}
+.grid{stroke:#26374b;stroke-width:1}
+.base{stroke:#6f8196;stroke-width:1.5}
+.bar{fill:#77e3c4}
+.bar-l{fill:#77e3c4;fill-opacity:.45}
+.bar-g{fill:#6f8196}
+.dot{fill:#77e3c4}
+.line-a{stroke:#77e3c4;stroke-width:2;fill:none}
+.arrow{stroke:#6f8196;stroke-width:2;fill:none}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="40.0" y="50.0" class="title" text-anchor="start">When does an hreflang pair count?</text>
+<text x="40.0" y="80.0" class="sub" text-anchor="start">Every condition has to hold for both pages in the pair.</text>
+<text x="110.0" y="118.0" class="h" text-anchor="start">CONDITION</text>
+<text x="600.0" y="118.0" class="h" text-anchor="start">IF IT FAILS</text>
+<rect x="40" y="132" width="920" height="99" rx="12" class="panel"/>
+<circle cx="74" cy="181.5" r="17" class="dot"/>
+<text x="74.0" y="187.5" class="num" text-anchor="middle">1</text>
+<text x="110.0" y="160.0" class="t" text-anchor="start">Both pages are crawled and indexed</text>
+<text x="110.0" y="182.0" class="mw" text-anchor="start">Annotations are picked up once all linked pages are crawled</text>
+<text x="110.0" y="203.0" class="mw" text-anchor="start">and (re)indexed.</text>
+<line x1="580" y1="146" x2="580" y2="217" class="grid"/>
+<text x="600.0" y="160.0" class="m" text-anchor="start">The pair is not used until both are indexed.</text>
+<text x="600.0" y="181.0" class="m" text-anchor="start">Hreflang does not guarantee indexing.</text>
+<rect x="40" y="241" width="920" height="99" rx="12" class="panel"/>
+<circle cx="74" cy="290.5" r="17" class="dot"/>
+<text x="74.0" y="296.5" class="num" text-anchor="middle">2</text>
+<text x="110.0" y="269.0" class="t" text-anchor="start">Both pages are canonical</text>
+<text x="110.0" y="291.0" class="mw" text-anchor="start">Each canonical stays in the same language and is part of the</text>
+<text x="110.0" y="312.0" class="mw" text-anchor="start">hreflang pairs.</text>
+<line x1="580" y1="255" x2="580" y2="326" class="grid"/>
+<text x="600.0" y="269.0" class="m" text-anchor="start">Hreflang is ignored. A canonical to another</text>
+<text x="600.0" y="290.0" class="m" text-anchor="start">language can keep a version out of the index.</text>
+<rect x="40" y="350" width="920" height="78" rx="12" class="panel"/>
+<circle cx="74" cy="389.0" r="17" class="dot"/>
+<text x="74.0" y="395.0" class="num" text-anchor="middle">3</text>
+<text x="110.0" y="378.0" class="t" text-anchor="start">Both pages list each other, and themselves</text>
+<text x="110.0" y="400.0" class="mw" text-anchor="start">If page X links to page Y, page Y must link back to page X.</text>
+<line x1="580" y1="364" x2="580" y2="414" class="grid"/>
+<text x="600.0" y="378.0" class="m" text-anchor="start">The pair is ignored. Pairs that do link both ways</text>
+<text x="600.0" y="399.0" class="m" text-anchor="start">still work.</text>
+<rect x="40" y="438" width="920" height="99" rx="12" class="panel"/>
+<circle cx="74" cy="487.5" r="17" class="dot"/>
+<text x="74.0" y="493.5" class="num" text-anchor="middle">4</text>
+<text x="110.0" y="466.0" class="t" text-anchor="start">Both codes are valid</text>
+<text x="110.0" y="488.0" class="mw" text-anchor="start">ISO 639-1 language, optionally with an ISO 3166-1 Alpha 2</text>
+<text x="110.0" y="509.0" class="mw" text-anchor="start">region.</text>
+<line x1="580" y1="452" x2="580" y2="523" class="grid"/>
+<text x="600.0" y="466.0" class="m" text-anchor="start">Region alone and codes like es-419 are not</text>
+<text x="600.0" y="487.0" class="m" text-anchor="start">supported. Reserved codes like UK are ignored.</text>
+<rect x="40" y="547" width="920" height="99" rx="12" class="panel"/>
+<circle cx="74" cy="596.5" r="17" class="dot"/>
+<text x="74.0" y="602.5" class="num" text-anchor="middle">5</text>
+<text x="110.0" y="575.0" class="t" text-anchor="start">The annotations can be read and agree</text>
+<text x="110.0" y="597.0" class="mw" text-anchor="start">Tags sit before any invalid element in the head; HTML and</text>
+<text x="110.0" y="618.0" class="mw" text-anchor="start">sitemap say the same.</text>
+<line x1="580" y1="561" x2="580" y2="632" class="grid"/>
+<text x="600.0" y="575.0" class="m" text-anchor="start">Tags after an invalid head element are not read.</text>
+<text x="600.0" y="596.0" class="m" text-anchor="start">A conflicting pair is probably dropped.</text>
+<rect x="40" y="660" width="920" height="86" rx="12" class="panel-a"/>
+<text x="64.0" y="688.0" class="va" text-anchor="start">Result: Google can show the version that matches the user.</text>
+<text x="64.0" y="712.0" class="mw" text-anchor="start">Same-language versions may still be folded into one canonical; hreflang may swap the URL, and reporting goes to the</text>
+<text x="64.0" y="733.0" class="mw" text-anchor="start">canonical.</text>
+<text x="40.0" y="776.0" class="note" text-anchor="start">Sources: Google Search Central documentation; statements by John Mueller (2015, 2016, 2020, 2025) and Gary Illyes (2020).</text>
+</svg>

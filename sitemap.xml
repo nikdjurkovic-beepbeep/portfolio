@@ -62,14 +62,18 @@
   </url>
   <url>
     <loc>https://nikolaseo.com/seo-migrations/</loc>
-    <lastmod>2026-11-22</lastmod>
+    <lastmod>2026-11-27</lastmod>
   </url>
   <url>
     <loc>https://nikolaseo.com/crawlability-vs-indexability/</loc>
-    <lastmod>2026-11-26</lastmod>
+    <lastmod>2026-11-27</lastmod>
   </url>
   <url>
     <loc>https://nikolaseo.com/internal-linking/</loc>
     <lastmod>2026-11-26</lastmod>
+  </url>
+  <url>
+    <loc>https://nikolaseo.com/hreflang/</loc>
+    <lastmod>2026-11-27</lastmod>
   </url>
 </urlset>

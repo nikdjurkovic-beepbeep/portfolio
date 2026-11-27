@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" width="1000" height="600" role="img" aria-labelledby="t d">
+<title id="t">Hreflang annotations grow with the square of locales</title>
+<desc id="d">Bar chart of a worked example, not measured data: the number of hreflang annotations needed for a site of 10,000 pages as the number of locales grows, when every version lists every version including itself. 2 locales: 20,000 URLs, 40,000 annotations, of which 20,000 name another page and must be confirmed by it. 5 locales: 50,000 URLs, 250,000 annotations, of which 200,000 name another page and must be confirmed by it. 10 locales: 100,000 URLs, 1,000,000 annotations, of which 900,000 name another page and must be confirmed by it. 20 locales: 200,000 URLs, 4,000,000 annotations, of which 3,800,000 name another page and must be confirmed by it. 40 locales: 400,000 URLs, 16,000,000 annotations, of which 15,600,000 name another page and must be confirmed by it. URLs grow in proportion to the number of locales; annotations grow with its square. Calculated by the author.</desc>
+<style>
+.bg{fill:#0e192a}
+.panel{fill:#111d30;stroke:#26374b;stroke-width:2}
+.panel-a{fill:#111d30;stroke:#77e3c4;stroke-width:2.5}
+.title{fill:#ecf2fa;font:700 30px Arial,Helvetica,sans-serif}
+.title-m{fill:#ecf2fa;font:700 26px Arial,Helvetica,sans-serif}
+.sub{fill:#a9b8c9;font:500 17px Arial,Helvetica,sans-serif}
+.h{fill:#77e3c4;font:700 13px Arial,Helvetica,sans-serif;letter-spacing:1.5px}
+.t{fill:#ecf2fa;font:700 18px Arial,Helvetica,sans-serif}
+.ts{fill:#ecf2fa;font:700 16px Arial,Helvetica,sans-serif}
+.m{fill:#a9b8c9;font:500 15px Arial,Helvetica,sans-serif}
+.ms{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.mw{fill:#d0dbe8;font:500 15px Arial,Helvetica,sans-serif}
+.note{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.tick{fill:#a9b8c9;font:500 14px Arial,Helvetica,sans-serif}
+.va{fill:#77e3c4;font:700 16px Arial,Helvetica,sans-serif}
+.vb{fill:#ecf2fa;font:700 16px Arial,Helvetica,sans-serif}
+.vg{fill:#a9b8c9;font:700 16px Arial,Helvetica,sans-serif}
+.num{fill:#0e192a;font:700 16px Arial,Helvetica,sans-serif}
+.grid{stroke:#26374b;stroke-width:1}
+.base{stroke:#6f8196;stroke-width:1.5}
+.bar{fill:#77e3c4}
+.bar-l{fill:#77e3c4;fill-opacity:.45}
+.bar-g{fill:#6f8196}
+.dot{fill:#77e3c4}
+.line-a{stroke:#77e3c4;stroke-width:2;fill:none}
+.arrow{stroke:#6f8196;stroke-width:2;fill:none}
+</style>
+<rect width="100%" height="100%" class="bg"/>
+<text x="40.0" y="50.0" class="title" text-anchor="start">Hreflang annotations grow with the square of locales</text>
+<text x="40.0" y="80.0" class="sub" text-anchor="start">Worked example: 10,000 pages, each version lists every version, including itself.</text>
+<line x1="130" y1="440.0" x2="960" y2="440.0" class="grid"/>
+<text x="118.0" y="445.0" class="tick" text-anchor="end">0</text>
+<line x1="130" y1="365.0" x2="960" y2="365.0" class="grid"/>
+<text x="118.0" y="370.0" class="tick" text-anchor="end">4M</text>
+<line x1="130" y1="290.0" x2="960" y2="290.0" class="grid"/>
+<text x="118.0" y="295.0" class="tick" text-anchor="end">8M</text>
+<line x1="130" y1="215.0" x2="960" y2="215.0" class="grid"/>
+<text x="118.0" y="220.0" class="tick" text-anchor="end">12M</text>
+<line x1="130" y1="140.0" x2="960" y2="140.0" class="grid"/>
+<text x="118.0" y="145.0" class="tick" text-anchor="end">16M</text>
+<text x="40.0" y="122.0" class="h" text-anchor="start">ANNOTATIONS</text>
+<rect x="167.0" y="437.0" width="92" height="3.0" rx="4" class="bar"/>
+<text x="213.0" y="425.0" class="va" text-anchor="middle">40,000</text>
+<text x="213.0" y="468.0" class="ts" text-anchor="middle">2 locales</text>
+<text x="213.0" y="490.0" class="m" text-anchor="middle">20,000 URLs</text>
+<text x="213.0" y="512.0" class="ms" text-anchor="middle">20k return-link claims</text>
+<rect x="333.0" y="435.3" width="92" height="4.7" rx="4" class="bar"/>
+<text x="379.0" y="423.3" class="va" text-anchor="middle">250,000</text>
+<text x="379.0" y="468.0" class="ts" text-anchor="middle">5 locales</text>
+<text x="379.0" y="490.0" class="m" text-anchor="middle">50,000 URLs</text>
+<text x="379.0" y="512.0" class="ms" text-anchor="middle">200k return-link claims</text>
+<rect x="499.0" y="421.2" width="92" height="18.8" rx="4" class="bar"/>
+<text x="545.0" y="409.2" class="va" text-anchor="middle">1,000,000</text>
+<text x="545.0" y="468.0" class="ts" text-anchor="middle">10 locales</text>
+<text x="545.0" y="490.0" class="m" text-anchor="middle">100,000 URLs</text>
+<text x="545.0" y="512.0" class="ms" text-anchor="middle">900k return-link claims</text>
+<rect x="665.0" y="365.0" width="92" height="75.0" rx="4" class="bar"/>
+<text x="711.0" y="353.0" class="va" text-anchor="middle">4,000,000</text>
+<text x="711.0" y="468.0" class="ts" text-anchor="middle">20 locales</text>
+<text x="711.0" y="490.0" class="m" text-anchor="middle">200,000 URLs</text>
+<text x="711.0" y="512.0" class="ms" text-anchor="middle">3.8M return-link claims</text>
+<rect x="831.0" y="140.0" width="92" height="300.0" rx="4" class="bar"/>
+<text x="877.0" y="128.0" class="va" text-anchor="middle">16,000,000</text>
+<text x="877.0" y="468.0" class="ts" text-anchor="middle">40 locales</text>
+<text x="877.0" y="490.0" class="m" text-anchor="middle">400,000 URLs</text>
+<text x="877.0" y="512.0" class="ms" text-anchor="middle">15.6M return-link claims</text>
+<line x1="130" y1="440" x2="960" y2="440" class="base"/>
+<text x="40.0" y="560.0" class="note" text-anchor="start">Return-link claims = annotations that name another page, which that page must confirm. Calculated by the author.</text>
+</svg>
